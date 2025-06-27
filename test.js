@@ -1,21 +1,23 @@
-import * as os from "os"
-import * as minnet from "./lib/minnet-quickjs/minnet.so"
-print(os.getcwd())
-console.log("Hey, this is a test from js!")
-
-
-function getDownloadCount() {
-    const res = minnet.fetch("https://api.github.com/repos/khanhas/spicetify-cli/releases")
-    const dl_count = res.json().reduce((total, tag) => {
-        return total += tag.assets.reduce((tag_total, asset) => {
-            return tag_total += asset.download_count
-        }, 0)
-    }, 0)
-    print("Fetch:", res.url)
-    print("STATUS: ", res.status, "OK: ", res.ok, "TYPE: ", res.type)
-    print("RESULT: ", dl_count)
-    return `${dl_count}`
-}
-getDownloadCount()
-
-print("Request done")
+import * as React from "./libgui.so";
+console.log("JSX test started...");
+var test = React.createElement("div", null, "Test");
+// class MyComponent extends React.Component {
+var MyComponent = /** @class */ (function () {
+    function MyComponent(props) {
+        this.props = props;
+    }
+    MyComponent.prototype.anotherFunc = function () {
+        return true;
+    };
+    MyComponent.prototype.render = function () {
+        return React.createElement("h1", { id: "container", width: 120 },
+            React.createElement("h2", { id: "nested" },
+                "Nested",
+                React.createElement("h3", { id: "super nested" }, 1234)),
+            React.createElement("h4", { id: "same level as nested" }));
+    };
+    return MyComponent;
+}());
+// React.render(<MyComponent props="prop rendered!" />)
+React.render(React.createElement("text", null, "Hello"));
+print(test, JSON.stringify(new MyComponent().render()));

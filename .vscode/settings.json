@@ -1,6 +1,8 @@
 {
   "files.associations": {
     "raylib.h": "c",
-    "quickjs-libc.h": "c"
+    "quickjs-libc.h": "c",
+    "__node_handle": "c",
+    "*.m": "c"
   }
 }

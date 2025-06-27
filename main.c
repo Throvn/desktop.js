@@ -3,6 +3,7 @@
 #include "quickjs-libc.h"
 #include "minnet.h"
 #include "raylib.h"
+#include "gui.h"
 
 int main()
 {
@@ -12,9 +13,8 @@ int main()
         fprintf(stderr, "Cannot allocate runtime");
         exit(2);
     }
-    JS_SetMemoryLimit(rt, 0x4000000);
-    // 64 Kb
-    JS_SetMaxStackSize(rt, 0x100000);
+    // JS_SetMemoryLimit(rt, 0x4000000);
+    // JS_SetMaxStackSize(rt, 0x100000);
 
     JSContext *ctx = JS_NewContext(rt);
     if (ctx == NULL)
@@ -30,6 +30,12 @@ int main()
 
     // loader for ES6 modules
     JS_SetModuleLoaderFunc2(rt, NULL, js_module_loader, js_module_check_attributes, NULL);
+
+    InitWindow(600, 300, "Raylib");
+
+    // Fix to kick off drawing cycle. Otherwise no drawing is done.
+    ToggleBorderlessWindowed();
+    ToggleBorderlessWindowed();
 
     char *rawJS = LoadFileText("./test.js");
     JSValue ret = JS_Eval(ctx, rawJS, strlen(rawJS), "", JS_EVAL_TYPE_MODULE);
@@ -60,16 +66,14 @@ int main()
         JS_FreeValue(ctx, exception);
     }
 
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(300, 300, "Raylib");
-
     while (!WindowShouldClose())
     {
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
+        // ClearBackground(RAYWHITE);
 
-        DrawText("Congrats! You created your first window!", 20, 20, 100, LIGHTGRAY);
+        DrawText("Congrats! You created your first window!", 20, 20, 10, LIGHTGRAY);
+        DrawFPS(20, 20);
 
         EndDrawing();
     }
@@ -77,6 +81,5 @@ int main()
 
     js_std_free_handlers(rt);
     JS_FreeContext(ctx);
-    JS_FreeRuntime(rt);
     return 0;
 }
