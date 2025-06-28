@@ -1,9 +1,8 @@
 #include <stdlib.h>
 #include "./lib/quickjs/quickjs.h"
+#define CLAY_IMPLEMENTATION
 #include "gui.h"
 
-#define CLAY_IMPLEMENTATION
-#include "./lib/clay/clay.h"
 #include "./lib/clay/renderers/raylib/clay_renderer_raylib.c"
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
@@ -131,7 +130,7 @@ int js_gui_init(JSContext *ctx, JSModuleDef *m)
 
 JSModuleDef *JS_INIT_MODULE(JSContext *ctx, const char *module_name)
 {
-    printf("HILFE!!!!!!");
+    printf("LIBGUI initializing...\n");
     // Create new module
     JSModuleDef *m;
     m = JS_NewCModule(ctx, module_name, js_gui_init);
@@ -171,4 +170,43 @@ void gui_init(int width, int height)
 void gui_deinit()
 {
     Clay_Raylib_Close();
+}
+
+Clay_RenderCommandArray gui_create_render_tree()
+{
+    const Clay_Color COLOR_LIGHT = (Clay_Color){224, 215, 210, 255};
+    const Clay_Color COLOR_RED = (Clay_Color){168, 66, 28, 255};
+    const Clay_Color COLOR_ORANGE = (Clay_Color){225, 138, 50, 255};
+
+    Clay_BeginLayout();
+    // An example of laying out a UI with a fixed width sidebar and flexible width main content
+    CLAY({.id = CLAY_ID("OuterContainer"),
+          .layout = {.layoutDirection = CLAY_LEFT_TO_RIGHT, // Add this for side-by-side layout
+                     .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+                     .padding = CLAY_PADDING_ALL(16)},
+          .backgroundColor = {250, 250, 255, 255}})
+    {
+        CLAY({.id = CLAY_ID("SideBar"),
+              .layout = {.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                         .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}, // Fixed width, full height
+              .backgroundColor = COLOR_LIGHT})
+        {
+            // Sidebar content goes here
+        }
+
+        CLAY({.id = CLAY_ID("MainContent"),
+              .layout = {.sizing = {CLAY_SIZING_GROW(1), CLAY_SIZING_GROW(1)}}, // Grow to fill remaining space
+              .backgroundColor = COLOR_RED})
+        {
+            CLAY_TEXT(
+                CLAY_STRING("This is the main content"),
+                CLAY_TEXT_CONFIG({
+                    .fontSize = 20,
+                    .textColor = {0, 0, 0, 255}, // Changed alpha to 255 for visible text
+                }));
+        }
+    }
+
+    Clay_RenderCommandArray renderCommands = Clay_EndLayout();
+    return renderCommands;
 }

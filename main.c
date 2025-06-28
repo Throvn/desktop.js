@@ -48,10 +48,6 @@ int main()
         JS_FreeValue(ctx, exception);
     }
 
-    const Clay_Color COLOR_LIGHT = (Clay_Color){224, 215, 210, 255};
-    const Clay_Color COLOR_RED = (Clay_Color){168, 66, 28, 255};
-    const Clay_Color COLOR_ORANGE = (Clay_Color){225, 138, 50, 255};
-
     Font fonts[1];
     fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 48, 0, 400);
     SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
@@ -61,39 +57,11 @@ int main()
     {
         Clay_SetLayoutDimensions((Clay_Dimensions){GetScreenWidth(), GetScreenHeight()});
 
-        Clay_BeginLayout();
-        // An example of laying out a UI with a fixed width sidebar and flexible width main content
-        CLAY({.id = CLAY_ID("OuterContainer"),
-              .layout = {.layoutDirection = CLAY_LEFT_TO_RIGHT, // Add this for side-by-side layout
-                         .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
-                         .padding = CLAY_PADDING_ALL(16)},
-              .backgroundColor = {250, 250, 255, 255}})
-        {
-            CLAY({.id = CLAY_ID("SideBar"),
-                  .layout = {.layoutDirection = CLAY_TOP_TO_BOTTOM,
-                             .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}, // Fixed width, full height
-                  .backgroundColor = COLOR_LIGHT})
-            {
-                // Sidebar content goes here
-            }
+        Clay_RenderCommandArray renderCommands = gui_create_render_tree();
 
-            CLAY({.id = CLAY_ID("MainContent"),
-                  .layout = {.sizing = {CLAY_SIZING_GROW(1), CLAY_SIZING_GROW(1)}}, // Grow to fill remaining space
-                  .backgroundColor = COLOR_RED})
-            {
-                CLAY_TEXT(
-                    CLAY_STRING("This is the main content"),
-                    CLAY_TEXT_CONFIG({
-                        .fontSize = 20,
-                        .textColor = {0, 0, 0, 255}, // Changed alpha to 255 for visible text
-                    }));
-            }
-        }
-
-        Clay_RenderCommandArray renderCommands = Clay_EndLayout();
         BeginDrawing();
         ClearBackground(BLACK);
-        Clay_Raylib_Render(renderCommands, (Font[]){});
+        Clay_Raylib_Render(renderCommands, fonts);
         EndDrawing();
     }
 
