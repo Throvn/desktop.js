@@ -1,7 +1,10 @@
 #include <stdlib.h>
-#include "./lib/raylib/raylib/include/raylib.h"
 #include "./lib/quickjs/quickjs.h"
 #include "gui.h"
+
+#define CLAY_IMPLEMENTATION
+#include "./lib/clay/clay.h"
+#include "./lib/clay/renderers/raylib/clay_renderer_raylib.c"
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -21,12 +24,16 @@ static int renderElement(JSContext *ctx, JSValue comp, int posX, int posY, int w
     if (node == NULL)
     {
         fprintf(stderr, "Could not get attached C struct from element\n");
-        return -1;
-        // exit(2);
+        exit(2);
     }
-    fprintf(stdout, "Key from C struct: %d", node->key);
     // if (0 == strcmp(typeStr, "div"))
     {
+        CLAY({
+            .id = CLAY_ID("node->key"),
+        })
+        {
+            CLAY_TEXT(CLAY_STRING("Cool"), CLAY_TEXT_CONFIG({.fontSize = 24, .textColor = {255, 255, 255, 255}}));
+        };
         DrawRectangle(50, 50, 100, 100, WHITE);
         DrawRectangleLines(posX - 1, posY - 1, width - 2, height - 2, WHITE);
     }
@@ -58,7 +65,7 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
 
     fprintf(stdout, "Wants to create a new %s\n", componentName);
 
-    // Start building JSON obj similar to React.
+    // Start building JSON obj similar to React.JSValue
     JSValue ret = JS_NewObjectClass(ctx, js_element_class_id);
     JS_SetPropertyStr(ctx, ret, "type", JS_DupValue(ctx, componentView));
     JS_SetPropertyStr(ctx, ret, "key", JS_NewInt32(ctx, key));
@@ -87,32 +94,29 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
     return ret;
 }
 
-static JSClassID js_component_class_id;
-
 static void js_element_class_finalizer(JSRuntime *rt, JSValue val)
 {
-    struct DOMNode *s = JS_GetOpaque(val, js_component_class_id);
+    struct DOMNode *s = JS_GetOpaque(val, js_element_class_id);
     /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+    free(s->type);
+    free(s->descendants);
     js_free_rt(rt, s);
+    // TODO: Clean up memory accordingly!
+    // TODO: Make sure that there are no dangling pointers left.
 }
 static JSClassDef js_element_class = {
     .class_name = "Element",
     .finalizer = js_element_class_finalizer,
 };
 
-// Pretty much same as Element. The difference between an Element and a Component is that an Element is built in.
-static JSClassDef js_component_class = {
-    .class_name = "Component",
-    .finalizer = js_element_class_finalizer,
-};
-
+/// @brief Initializes all classes whic are needed for the gui JS module
+/// @param ctx QuickJS context
 static void initGuiClasses(JSContext *ctx)
 {
     JS_NewClassID(&js_element_class_id);
     JS_NewClass(JS_GetRuntime(ctx), js_element_class_id, &js_element_class);
 
-    JS_NewClassID(&js_component_class_id);
-    JS_NewClass(JS_GetRuntime(ctx), js_component_class_id, &js_component_class);
+    // TODO: Add Component class (similar to React.Component)
 }
 
 static JSCFunctionListEntry js_gui_functions[] = {
@@ -127,6 +131,8 @@ int js_gui_init(JSContext *ctx, JSModuleDef *m)
 
 JSModuleDef *JS_INIT_MODULE(JSContext *ctx, const char *module_name)
 {
+    printf("HILFE!!!!!!");
+    // Create new module
     JSModuleDef *m;
     m = JS_NewCModule(ctx, module_name, js_gui_init);
 
@@ -136,4 +142,33 @@ JSModuleDef *JS_INIT_MODULE(JSContext *ctx, const char *module_name)
     initGuiClasses(ctx);
     JS_AddModuleExportList(ctx, m, js_gui_functions, countof(js_gui_functions));
     return m;
+}
+
+////////////////
+// Clay Stuff //
+////////////////
+
+void HandleClayErrors(Clay_ErrorData errorData)
+{
+    // See the Clay_ErrorData struct for more information
+    printf("%s", errorData.errorText.chars);
+
+    // TODO: Handle errors.
+}
+
+void gui_init(int width, int height)
+{
+    Clay_Raylib_Initialize(width, height, NULL, FLAG_WINDOW_RESIZABLE);
+    ToggleBorderlessWindowed();
+    ToggleBorderlessWindowed();
+
+    uint64_t totalMemorySize = Clay_MinMemorySize();
+    Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, malloc(totalMemorySize));
+
+    Clay_Initialize(arena, (Clay_Dimensions){width, height}, (Clay_ErrorHandler){HandleClayErrors});
+}
+
+void gui_deinit()
+{
+    Clay_Raylib_Close();
 }

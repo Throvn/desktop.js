@@ -3,6 +3,10 @@
     "raylib.h": "c",
     "quickjs-libc.h": "c",
     "__node_handle": "c",
-    "*.m": "c"
+    "*.m": "c",
+    "quickjs.h": "c",
+    "gui.h": "c",
+    "__locale": "c",
+    "clay.h": "c"
   }
 }

@@ -1,44 +1,26 @@
 #include <stdlib.h>
 #include "quickjs.h"
-#include "quickjs-libc.h"
 #include "minnet.h"
 #include "raylib.h"
+#include "engine.h"
+
+#include "./lib/clay/clay.h"
+#include "./lib/clay/renderers/raylib/clay_renderer_raylib.c"
 #include "gui.h"
 
 int main()
 {
-    JSRuntime *rt = JS_NewRuntime();
-    if (rt == NULL)
-    {
-        fprintf(stderr, "Cannot allocate runtime");
-        exit(2);
-    }
-    // JS_SetMemoryLimit(rt, 0x4000000);
-    // JS_SetMaxStackSize(rt, 0x100000);
+    JSRuntime *rt;
+    JSContext *ctx;
+    engine_init(&rt, &ctx);
 
-    JSContext *ctx = JS_NewContext(rt);
-    if (ctx == NULL)
-    {
-        fprintf(stderr, "Cannot allocate context");
-        exit(2);
-    }
+    int windowWidth = 600;
+    int windowHeight = 300;
+    gui_init(windowWidth, windowHeight);
 
-    js_std_init_handlers(rt);
-    // Needed to add console.log to the global context
-    js_std_add_helpers(ctx, 0, NULL);
-    js_init_module_os(ctx, "os");
-
-    // loader for ES6 modules
-    JS_SetModuleLoaderFunc2(rt, NULL, js_module_loader, js_module_check_attributes, NULL);
-
-    InitWindow(600, 300, "Raylib");
-
-    // Fix to kick off drawing cycle. Otherwise no drawing is done.
-    ToggleBorderlessWindowed();
-    ToggleBorderlessWindowed();
-
-    char *rawJS = LoadFileText("./test.js");
-    JSValue ret = JS_Eval(ctx, rawJS, strlen(rawJS), "", JS_EVAL_TYPE_MODULE);
+    char *scriptName = "./test.js";
+    char *rawJS = LoadFileText(scriptName);
+    JSValue ret = JS_Eval(ctx, rawJS, strlen(rawJS), scriptName, JS_EVAL_TYPE_MODULE);
 
     if (JS_IsException(ret))
     {
@@ -66,20 +48,57 @@ int main()
         JS_FreeValue(ctx, exception);
     }
 
+    const Clay_Color COLOR_LIGHT = (Clay_Color){224, 215, 210, 255};
+    const Clay_Color COLOR_RED = (Clay_Color){168, 66, 28, 255};
+    const Clay_Color COLOR_ORANGE = (Clay_Color){225, 138, 50, 255};
+
+    Font fonts[1];
+    fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 48, 0, 400);
+    SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
+    Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
+
     while (!WindowShouldClose())
     {
+        Clay_SetLayoutDimensions((Clay_Dimensions){GetScreenWidth(), GetScreenHeight()});
+
+        Clay_BeginLayout();
+        // An example of laying out a UI with a fixed width sidebar and flexible width main content
+        CLAY({.id = CLAY_ID("OuterContainer"),
+              .layout = {.layoutDirection = CLAY_LEFT_TO_RIGHT, // Add this for side-by-side layout
+                         .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+                         .padding = CLAY_PADDING_ALL(16)},
+              .backgroundColor = {250, 250, 255, 255}})
+        {
+            CLAY({.id = CLAY_ID("SideBar"),
+                  .layout = {.layoutDirection = CLAY_TOP_TO_BOTTOM,
+                             .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}, // Fixed width, full height
+                  .backgroundColor = COLOR_LIGHT})
+            {
+                // Sidebar content goes here
+            }
+
+            CLAY({.id = CLAY_ID("MainContent"),
+                  .layout = {.sizing = {CLAY_SIZING_GROW(1), CLAY_SIZING_GROW(1)}}, // Grow to fill remaining space
+                  .backgroundColor = COLOR_RED})
+            {
+                CLAY_TEXT(
+                    CLAY_STRING("This is the main content"),
+                    CLAY_TEXT_CONFIG({
+                        .fontSize = 20,
+                        .textColor = {0, 0, 0, 255}, // Changed alpha to 255 for visible text
+                    }));
+            }
+        }
+
+        Clay_RenderCommandArray renderCommands = Clay_EndLayout();
         BeginDrawing();
-
-        // ClearBackground(RAYWHITE);
-
-        DrawText("Congrats! You created your first window!", 20, 20, 10, LIGHTGRAY);
-        DrawFPS(20, 20);
-
+        ClearBackground(BLACK);
+        Clay_Raylib_Render(renderCommands, (Font[]){});
         EndDrawing();
     }
-    CloseWindow();
 
-    js_std_free_handlers(rt);
-    JS_FreeContext(ctx);
+    engine_deinit(ctx);
+    gui_deinit();
+
     return 0;
 }

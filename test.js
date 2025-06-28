@@ -1,23 +1,33 @@
-import * as React from "./libgui.so";
-console.log("JSX test started...");
-var test = React.createElement("div", null, "Test");
+// import * as React from "./libgui.so"
+// console.log("JSX test started...")
+// const test = <div>
+//     Test
+// </div>
 // class MyComponent extends React.Component {
-var MyComponent = /** @class */ (function () {
-    function MyComponent(props) {
-        this.props = props;
-    }
-    MyComponent.prototype.anotherFunc = function () {
-        return true;
-    };
-    MyComponent.prototype.render = function () {
-        return React.createElement("h1", { id: "container", width: 120 },
-            React.createElement("h2", { id: "nested" },
-                "Nested",
-                React.createElement("h3", { id: "super nested" }, 1234)),
-            React.createElement("h4", { id: "same level as nested" }));
-    };
-    return MyComponent;
-}());
+// class MyComponent {
+//     constructor(props) {
+//         this.props = props
+//     }
+//     anotherFunc() {
+//         return true
+//     }
+//     render() {
+//         return <h1 id="container" width={120}>
+//             <h2 id="nested">
+//                 Nested
+//                 <h3 id="super nested">
+//                     {1234}
+//                 </h3>
+//             </h2>
+//             <h4 id="same level as nested">
+//             </h4>
+//         </h1>;
+//     }
+// }
 // React.render(<MyComponent props="prop rendered!" />)
-React.render(React.createElement("text", null, "Hello"));
-print(test, JSON.stringify(new MyComponent().render()));
+// React.render(<text>Hello</text>)
+// React.render(<text>Hello</text>)
+// setInterval(() => {
+//     print("Interval")
+// }, 3000)
+// print(test, JSON.stringify(new MyComponent().render()))
