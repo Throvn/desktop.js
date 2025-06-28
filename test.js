@@ -25,7 +25,16 @@ var MyComponent = /** @class */ (function () {
     };
     return MyComponent;
 }());
-React.render(React.createElement(MyComponent, { props: "prop rendered!" }));
+// React.render(<MyComponent props="prop rendered!" />)
+React.render(React.createElement("text", null,
+    React.createElement("h1", null,
+        "Heading 1",
+        React.createElement("header", null),
+        React.createElement("footer", null)),
+    React.createElement("h2", null,
+        "Heading 2",
+        React.createElement("div", null, "Other"),
+        React.createElement("div", null, "Second Div"))));
 setInterval(function () {
     print("Interval");
 }, 3000);

@@ -36,7 +36,24 @@ class MyComponent {
     }
 }
 
-React.render(<MyComponent props="prop rendered!" />)
+// React.render(<MyComponent props="prop rendered!" />)
+React.render(<text>
+    <h1>Heading 1
+        <header>
+        </header>
+        <footer>
+        </footer>
+    </h1>
+    <h2>
+        Heading 2
+        <div>
+            Other
+        </div>
+        <div>
+            Second Div
+        </div>
+    </h2>
+</text>)
 setInterval(() => {
     print("Interval")
 }, 3000)

@@ -15,26 +15,31 @@
 
 static JSClassID js_element_class_id;
 
-static int renderElement(JSContext *ctx, JSValue comp, int posX, int posY, int width, int height)
+static struct DOMNode *rootElement = NULL;
+
+static int renderElement(struct DOMNode *node)
 {
-    JSValue typeVal = JS_GetPropertyStr(ctx, comp, "type");
-    char *typeStr = JS_ToCString(ctx, typeVal);
-    struct DOMNode *node = JS_GetOpaque(comp, js_element_class_id);
     if (node == NULL)
     {
-        fprintf(stderr, "Could not get attached C struct from element\n");
-        exit(2);
+        return 1;
     }
-    // if (0 == strcmp(typeStr, "div"))
+
+    char *type = node->type;
+    Clay_String clString = (Clay_String){.length = strlen(type), .chars = type};
+    CLAY({.layout = {.layoutDirection = CLAY_TOP_TO_BOTTOM, .padding = CLAY_PADDING_ALL(5), .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
     {
-        CLAY({
-            .id = CLAY_ID("node->key"),
-        })
+        CLAY({.layout = {.sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
         {
-            CLAY_TEXT(CLAY_STRING("Cool"), CLAY_TEXT_CONFIG({.fontSize = 24, .textColor = {255, 255, 255, 255}}));
+            CLAY_TEXT(clString, CLAY_TEXT_CONFIG({.fontSize = 24, .textColor = {255, 255, 255, 255}}));
+        }
+
+        CLAY({.layout = {.layoutDirection = CLAY_LEFT_TO_RIGHT, .padding = CLAY_PADDING_ALL(10), .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
+        {
+            for (int i = 0; i < node->num_descendants; i++)
+            {
+                renderElement(node->descendants[i]);
+            };
         };
-        DrawRectangle(50, 50, 100, 100, WHITE);
-        DrawRectangleLines(posX - 1, posY - 1, width - 2, height - 2, WHITE);
     }
     return 0;
 }
@@ -45,12 +50,15 @@ static JSValue render(JSContext *ctx, JSValue this_func, int argc, JSValueConst 
     int width = GetRenderWidth();
     int height = GetRenderHeight();
 
-    int status = renderElement(ctx, argv[0], 20, 20, width - 20, height - 20);
-    if (status != 0)
+    struct DOMNode *potentialElement = JS_GetOpaque(argv[0], js_element_class_id);
+    printf("Test: %s\n", potentialElement->type);
+    if (potentialElement == NULL)
     {
-        fprintf(stderr, "Status was: %d\n", status);
+        fprintf(stderr, "[render] Could not find DOMNode from JS render value");
+        exit(1);
     }
-    return JS_FALSE;
+    rootElement = potentialElement;
+    return JS_TRUE;
 }
 
 // Turns the component into React component json (Like real react)
@@ -97,9 +105,9 @@ static void js_element_class_finalizer(JSRuntime *rt, JSValue val)
 {
     struct DOMNode *s = JS_GetOpaque(val, js_element_class_id);
     /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-    free(s->type);
-    free(s->descendants);
-    js_free_rt(rt, s);
+    // free(s->type);
+    // free(s->descendants);
+    // js_free_rt(rt, s);
     // TODO: Clean up memory accordingly!
     // TODO: Make sure that there are no dangling pointers left.
 }
@@ -150,8 +158,8 @@ JSModuleDef *JS_INIT_MODULE(JSContext *ctx, const char *module_name)
 void HandleClayErrors(Clay_ErrorData errorData)
 {
     // See the Clay_ErrorData struct for more information
-    printf("%s", errorData.errorText.chars);
-
+    fprintf(stderr, "%s", errorData.errorText.chars);
+    exit(1000);
     // TODO: Handle errors.
 }
 
@@ -179,33 +187,13 @@ Clay_RenderCommandArray gui_create_render_tree()
     const Clay_Color COLOR_ORANGE = (Clay_Color){225, 138, 50, 255};
 
     Clay_BeginLayout();
-    // An example of laying out a UI with a fixed width sidebar and flexible width main content
-    CLAY({.id = CLAY_ID("OuterContainer"),
-          .layout = {.layoutDirection = CLAY_LEFT_TO_RIGHT, // Add this for side-by-side layout
-                     .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
-                     .padding = CLAY_PADDING_ALL(16)},
-          .backgroundColor = {250, 250, 255, 255}})
-    {
-        CLAY({.id = CLAY_ID("SideBar"),
-              .layout = {.layoutDirection = CLAY_TOP_TO_BOTTOM,
-                         .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}, // Fixed width, full height
-              .backgroundColor = COLOR_LIGHT})
-        {
-            // Sidebar content goes here
-        }
 
-        CLAY({.id = CLAY_ID("MainContent"),
-              .layout = {.sizing = {CLAY_SIZING_GROW(1), CLAY_SIZING_GROW(1)}}, // Grow to fill remaining space
-              .backgroundColor = COLOR_RED})
-        {
-            CLAY_TEXT(
-                CLAY_STRING("This is the main content"),
-                CLAY_TEXT_CONFIG({
-                    .fontSize = 20,
-                    .textColor = {0, 0, 0, 255}, // Changed alpha to 255 for visible text
-                }));
-        }
+    if (rootElement == NULL)
+    {
+        return Clay_EndLayout();
     }
+
+    renderElement(rootElement);
 
     Clay_RenderCommandArray renderCommands = Clay_EndLayout();
     return renderCommands;
