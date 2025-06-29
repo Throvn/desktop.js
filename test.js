@@ -1,22 +1,26 @@
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
 import * as React from "./libgui.so";
 console.log("JSX test started...");
-var test = React.createElement("div", null, "Test");
+// const test = <div>
+//     Test
+// </div>
 // class MyComponent extends React.Component {
 var MyComponent = /** @class */ (function () {
     function MyComponent(props) {
         this.props = props;
+        print("MyComponent constructor was called!");
     }
-    MyComponent.prototype.anotherFunc = function () {
-        return true;
-    };
-    MyComponent.prototype.style = function () {
-        return css(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n            * {\n                background-color: black;\n            }\n        "], ["\n            * {\n                background-color: black;\n            }\n        "])));
-    };
+    // anotherFunc() {
+    //     return true
+    // }
+    // style() {
+    //     return `
+    //         * {
+    //             background-color: black;
+    //         }
+    //     `
+    // }
     MyComponent.prototype.render = function () {
+        print("called render()");
         return React.createElement("h1", { id: "container", width: 120 },
             React.createElement("h2", { id: "nested" },
                 "Nested",
@@ -25,18 +29,37 @@ var MyComponent = /** @class */ (function () {
     };
     return MyComponent;
 }());
-// React.render(<MyComponent props="prop rendered!" />)
-React.render(React.createElement("text", null,
-    React.createElement("h1", null,
-        "Heading 1",
-        React.createElement("header", null),
-        React.createElement("footer", null)),
-    React.createElement("h2", null,
-        "Heading 2",
-        React.createElement("div", null, "Other"),
-        React.createElement("div", null, "Second Div"))));
-setInterval(function () {
-    print("Interval");
-}, 3000);
-print(test, JSON.stringify(new MyComponent().render()));
-var templateObject_1;
+// React.render(<text>
+//     <h1>Heading 1
+//         <vStack>
+//             <header>
+//             </header>
+//             <footer>
+//             </footer>
+//         </vStack>
+//     </h1>
+//     <h2>
+//         Heading 2
+//         <hStack>
+//             <div
+//                 onClick={() => console.log("Cool!")}
+//                 width={300}
+//                 height={400}
+//                 borderRadius={25}
+//                 color="red"
+//             >
+//                 Other
+//             </div>
+//             <div>
+//                 Second Div
+//             </div>
+//         </hStack>
+//     </h2>
+// </text>)
+print("Pre render...");
+React.render(React.createElement(MyComponent, { props: "prop rendered!" }));
+print("After render...");
+// setInterval(() => {
+//     print("Interval")
+// }, 3000)
+// print(test, JSON.stringify(new MyComponent().render()))

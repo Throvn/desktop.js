@@ -51,7 +51,6 @@ static JSValue render(JSContext *ctx, JSValue this_func, int argc, JSValueConst 
     int height = GetRenderHeight();
 
     struct DOMNode *potentialElement = JS_GetOpaque(argv[0], js_element_class_id);
-    printf("Test: %s\n", potentialElement->type);
     if (potentialElement == NULL)
     {
         fprintf(stderr, "[render] Could not find DOMNode from JS render value");
@@ -61,46 +60,96 @@ static JSValue render(JSContext *ctx, JSValue this_func, int argc, JSValueConst 
     return JS_TRUE;
 }
 
-// Turns the component into React component json (Like real react)
+static JSValue createChildren(JSContext *ctx, int argc, JSValue argv[], struct DOMNode ***descendants)
+{
+    // Append Children to the tree.
+    JSValue children = JS_NewArray(ctx);
+    *descendants = calloc(argc, sizeof(struct DOMNode *));
+    for (int i = 0; i < argc; i++)
+    {
+        struct DOMNode *descendant = JS_GetOpaque(argv[i], js_element_class_id);
+        (*descendants)[i] = descendant;
+        JS_SetPropertyUint32(ctx, children, i, JS_DupValue(ctx, argv[i]));
+    };
+
+    return children;
+}
+
+/// @brief Turns the component into React component json (Like real react), and creates a DOMNode element for drawing later.
+/// @brief Called from JS!
+/// @param ctx QuickJS Context
+/// @param this_val QuickJS function (React.createElement)
+/// @param argc Number of supplied JS arguments
+/// @param argv the JS arguments itself
+/// @return A JS Object which contains all of the JSX information.
 static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValueConst argv[])
 {
+    JSValueConst componentView = argv[0];
+    char *componentName = JS_ToCString(ctx, componentView);
+    fprintf(stdout, "Wants to create a new %s\n", componentName);
+
     // Unique id to recognize this component.
     int key = rand();
 
-    JSValueConst componentView = argv[0];
-    char *componentName = JS_ToCString(ctx, componentView);
+    JSValue props = JS_IsNull(argv[1]) ? JS_NewObject(ctx) : JS_DupValue(ctx, argv[1]);
 
-    fprintf(stdout, "Wants to create a new %s\n", componentName);
+    int num_descendants = argc - 2;
+    struct DOMNode **descendants;
+    struct JSValue children;
+    if (JS_IsFunction(ctx, componentView))
+    {
+        // Call constructor of custom component
+        JSValue propArray[] = {props};
+        JSValue instance = JS_CallConstructor(ctx, componentView, 1, propArray);
+
+        // TODO: Register component and its functions and stuff.
+
+        // Call render function
+        int hasRenderFunction = JS_HasProperty(ctx, instance, JS_NewAtom(ctx, "render"));
+        if (hasRenderFunction == true)
+        {
+            JSValue jsRenderFunction = JS_GetPropertyStr(ctx, instance, "render");
+            JSValue jsRenderReturn = JS_Call(ctx, jsRenderFunction, instance, 0, NULL);
+            num_descendants = 1;
+            JSValue elements[] = {jsRenderReturn};
+            children = createChildren(ctx, num_descendants, elements, &descendants);
+        }
+        else if (hasRenderFunction == false)
+        {
+            fprintf(stderr, "Component does not have render() function");
+            return JS_ThrowTypeError(ctx, "your custom component doesn't have a render() function but was used in your JSX tree.");
+        }
+        else
+        {
+            return JS_ThrowInternalError(ctx, "lookup for the render function failed.");
+        }
+    }
+    else
+    {
+        children = createChildren(ctx, num_descendants, &argv[2], &descendants);
+    }
 
     // Start building JSON obj similar to React.JSValue
     JSValue ret = JS_NewObjectClass(ctx, js_element_class_id);
     JS_SetPropertyStr(ctx, ret, "type", JS_DupValue(ctx, componentView));
     JS_SetPropertyStr(ctx, ret, "key", JS_NewInt32(ctx, key));
 
-    JSValue props = JS_IsNull(argv[1]) ? JS_NewObject(ctx) : JS_DupValue(ctx, argv[1]);
-
-    JSValue children = JS_NewArray(ctx);
-    struct DOMNode **descendants = calloc(argc - 2, sizeof(struct DOMNode *));
-    for (int i = 2; i < argc; i++)
-    {
-        struct DOMNode *descendant = JS_GetOpaque(argv[i], js_element_class_id);
-        descendants[i - 2] = descendant;
-        JS_SetPropertyUint32(ctx, children, i - 2, JS_DupValue(ctx, argv[i]));
-    };
-    JS_SetPropertyStr(ctx, props, "children", children);
-
-    JS_SetPropertyStr(ctx, ret, "props", props);
-
     struct DOMNode *domNode = calloc(1, sizeof(struct DOMNode));
+    JS_SetPropertyStr(ctx, props, "children", children);
+    JS_SetPropertyStr(ctx, ret, "props", JS_DupValue(ctx, props));
+
     domNode->type = strdup(componentName);
     domNode->key = key;
-    domNode->num_descendants = argc - 2;
+    domNode->num_descendants = num_descendants;
     domNode->descendants = descendants;
 
     JS_SetOpaque(ret, domNode);
     return ret;
 }
 
+/// @brief Handles cleanup when JSX components go out of JS scope.
+/// @param rt QuickJS Runtime
+/// @param val JSValue which goes out of Scope
 static void js_element_class_finalizer(JSRuntime *rt, JSValue val)
 {
     struct DOMNode *s = JS_GetOpaque(val, js_element_class_id);
