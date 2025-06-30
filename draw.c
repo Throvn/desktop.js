@@ -131,6 +131,23 @@ void GUI_RenderString(struct DOMNode *node)
     }
 }
 
+void GUI_RenderText(struct DOMNode *node)
+{
+    JSValue jsBgColor = JS_GetPropertyStr(node->ctx, node->properties, "$backgroundColor");
+    char *backgroundColorStr = JS_ToCString(node->ctx, jsBgColor);
+    // printf("$backgroundColor for %cStack is %s", direction, colorStr);
+    Clay_Color backgroundColor = parseColor(backgroundColorStr);
+
+    CLAY((Clay_ElementDeclaration){
+        .backgroundColor = backgroundColor})
+    {
+        for (int i = 0; i < node->num_descendants; i++)
+        {
+            GUI_RenderString(node->descendants[i]);
+        }
+    }
+}
+
 int renderElement(struct DOMNode *node)
 {
     if (node == NULL)
@@ -159,6 +176,10 @@ int renderElement(struct DOMNode *node)
     else if (0 == strcmp(type, "spacer"))
     {
         GUI_RenderSpacer(node);
+    }
+    else if (0 == strcmp(type, "text"))
+    {
+        GUI_RenderText(node);
     }
     else
     {

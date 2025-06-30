@@ -30,37 +30,26 @@ var MyComponent = /** @class */ (function () {
     };
     return MyComponent;
 }());
-// React.render(<text>
-//     <h1>Heading 1
-//         <vStack>
-//             <header>
-//             </header>
-//             <footer>
-//             </footer>
-//         </vStack>
-//     </h1>
-//     <h2>
-//         Heading 2
-//         <hStack>
-//             <div
-//                 onClick={() => console.log("Cool!")}
-//                 width={300}
-//                 height={400}
-//                 borderRadius={25}
-//                 color="red"
-//             >
-//                 Other
-//             </div>
-//             <div>
-//                 Second Div
-//             </div>
-//         </hStack>
-//     </h2>
-// </text>)
+React.render(React.createElement("text", null,
+    React.createElement("h1", null,
+        "Heading 1",
+        React.createElement("vStack", null,
+            React.createElement("header", null),
+            React.createElement("footer", null))),
+    React.createElement("h2", null,
+        "Heading 2",
+        React.createElement("hStack", null,
+            React.createElement("div", { onClick: function () { return console.log("Cool!"); }, width: 300, height: 400, borderRadius: 25, color: "red" }, "Other"),
+            React.createElement("spacer", null),
+            React.createElement("div", null, "Second Div")))));
 print("Pre render...");
 React.render(React.createElement("group", { "$backgroundColor": "#00af00f0" },
     React.createElement("hStack", null,
-        "Another String!",
+        React.createElement("group", { "$backgroundColor": "#0000ff6f" },
+            React.createElement("text", null, "Cool String"),
+            React.createElement("text", null, "Another String"),
+            React.createElement("spacer", null),
+            "Yeah!"),
         React.createElement("spacer", null)),
     React.createElement("vStack", { "$backgroundColor": "green", "$hello": "aaaa", id: "parentDiv" },
         "This is a test!",

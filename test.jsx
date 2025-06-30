@@ -39,37 +39,43 @@ class MyComponent {
     }
 }
 
-// React.render(<text>
-//     <h1>Heading 1
-//         <vStack>
-//             <header>
-//             </header>
-//             <footer>
-//             </footer>
-//         </vStack>
-//     </h1>
-//     <h2>
-//         Heading 2
-//         <hStack>
-//             <div
-//                 onClick={() => console.log("Cool!")}
-//                 width={300}
-//                 height={400}
-//                 borderRadius={25}
-//                 color="red"
-//             >
-//                 Other
-//             </div>
-//             <div>
-//                 Second Div
-//             </div>
-//         </hStack>
-//     </h2>
-// </text>)
+React.render(<text>
+    <h1>Heading 1
+        <vStack>
+            <header>
+            </header>
+            <footer>
+            </footer>
+        </vStack>
+    </h1>
+    <h2>
+        Heading 2
+        <hStack>
+            <div
+                onClick={() => console.log("Cool!")}
+                width={300}
+                height={400}
+                borderRadius={25}
+                color="red"
+            >
+                Other
+            </div>
+            <spacer />
+            <div>
+                Second Div
+            </div>
+        </hStack>
+    </h2>
+</text>)
 print("Pre render...")
 React.render(<group $backgroundColor="#00af00f0">
     <hStack>
-        Another String!
+        <group $backgroundColor="#0000ff6f">
+            <text>Cool String</text>
+            <text>Another String</text>
+            <spacer />
+            Yeah!
+        </group>
         <spacer />
     </hStack>
     <vStack $backgroundColor="green" $hello={"aaaa"} id="parentDiv">

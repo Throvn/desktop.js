@@ -64,10 +64,71 @@ This has two advantages:
 1. you can differentiate them more easily from the rest of your props.
 2. it can be used for an autocomplete trigger in your IDE. I don't have tool support yet though, feel free to start one though.
 
+### Built in Style Properties
+
+> **Note:** If you are here the first time, you might want to read the [Built in Components](#built-in-components) section first.
+
+| Property Name    | Property Type | Examples                         | Description                                                                         |
+| ---------------- | ------------- | -------------------------------- | ----------------------------------------------------------------------------------- |
+| $backgroundColor | `string`      | `#aabbcc`, `#00ff00ff`, `tomato` | Supported color types are: HTML Colors or hex colors with or without an alpha value |
+
 ### Built in Components
 
 #### `<group ...props/>`
 
-A container view which applies all of its props to each child individually. E.g. useful for styling list items.
+A container component which applies all of its props to each child individually. E.g. useful for styling list items.
 
-If the same property was already defined on the child, the property is **NOT** applied. As props closer to the element always take precedent.
+- If the same property was already defined on the child, the property is **NOT** applied. As props closer to the component always take precedent.
+- If a child component doesn't specify the style, it is ignored by the child component.
+- It doesn't contribute an element to the view hierarchy. (Similar to [React.js Fragment](https://react.dev/reference/react/Fragment))
+
+##### Example
+
+When you have the following code:
+
+```jsx
+<vStack>
+  <group $backgroundColor="black">
+    <text>First Text</text>
+    <text>Second Text</text>
+  </group>
+</vStack>
+```
+
+You can think of it as:
+
+```jsx
+<vStack>
+  <text $backgroundColor="black">First Text</text>
+  <text $backgroundColor="black">Second Text</text>
+</vStack>
+```
+
+#### `<vStack>`
+
+This container component orders its child components **vertically** (from top to bottom).
+Each child is centered automatically. To change the position of children use [`<spacer />`s](#spacer).
+
+##### Style Props
+
+- `$backgroundColor`
+
+#### `<hStack>`
+
+This container component orders its child components **horizontally** (from left to right).
+For more usage details & style props see [`<vStack>`](#style-props).
+
+#### `<spacer />`
+
+A component which takes up all available space inside of its parent component.
+Use it to position children of `<hStack>` and `<vStack>`.
+
+This component doesn't take any props.
+
+#### `<text>`
+
+A component to style text.
+
+##### Style Props
+
+- `$backgroundColor`
