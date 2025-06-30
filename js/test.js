@@ -16,65 +16,27 @@ var MyComponent = /** @class */ (function () {
     MyComponent.prototype.render = function () {
         print("called render()");
         var a = "variable how fucking cool is that?";
-        return React.createElement("h1", { id: "container", width: 120 },
-            React.createElement("h2", { id: "nested" },
-                "String",
-                React.createElement("text", { padding: 16, id: "super nested" }, a)),
-            React.createElement("h4", { id: "same level as nested" }));
+        return React.createElement("text", { id: "container", width: 120 },
+            "String",
+            a);
     };
     return MyComponent;
 }());
-// React.render(<vStack>
-//     <h1>Heading 1
-//         <vStack>
-//             Test..
-//             <footer>
-//             </footer>
-//         </vStack>
-//     </h1>
-//     <h2>
-//         Heading 2
-//         <hStack>
-//             <div
-//                 onClick={() => console.log("Cool!")}
-//                 width={300}
-//                 height={400}
-//                 borderRadius={25}
-//                 color="red"
-//             >
-//                 Other
-//             </div>
-//             <spacer />
-//             <div>
-//                 Second Div
-//             </div>
-//         </hStack>
-//     </h2>
-// </vStack>)
-print("Pre render...");
 React.render(React.createElement("group", { "$backgroundColor": "#00af00f0" },
-    React.createElement("hStack", null,
+    React.createElement("hStack", { "$padding": 10 },
         React.createElement("group", { "$backgroundColor": "#0000ff6f", "$padding": 10 },
-            React.createElement("text", { "$backgroundColor": "#00ff00" }, "Cool String"),
+            React.createElement("text", { "$backgroundColor": "#00ff00" }, "About Me"),
+            React.createElement("spacer", null),
             React.createElement("text", null, "Another String"),
             React.createElement("spacer", null),
-            "Yeah!!!!!!!!!!"),
-        React.createElement("spacer", null)),
-    React.createElement("vStack", { "$backgroundColor": "green", "$hello": "aaaa", id: "parentDiv" },
-        "This is a test!",
+            "Yeah!!!!!!!!!!")),
+    React.createElement("vStack", { "$backgroundColor": "green", "$padding": { horizontal: 100 }, "$hello": "aaaa", id: "parentDiv" },
         React.createElement("spacer", null),
-        React.createElement(MyComponent, null),
-        "This is a test!",
+        "This is a test!:::::::::::::::::::::::::::::::::::::::::::::::::::::::",
         React.createElement("spacer", null),
+        React.createElement(MyComponent, { "$padding": { left: 12 } }),
         "This is a test!",
-        React.createElement("spacer", null),
-        "This is a test!",
-        React.createElement("spacer", null),
-        "This is a test!",
-        React.createElement("spacer", null),
-        "This is a test!",
-        React.createElement("spacer", null),
-        "This is a test!")));
+        React.createElement("spacer", null))));
 print("After render...");
 // setInterval(() => {
 //     print("Interval")

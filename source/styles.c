@@ -46,8 +46,8 @@ Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     JSValue placeVertical = JS_GetPropertyStr(ctx, propValue, "vertical");
     if (JS_IsNumber(placeVertical))
     {
-        int value = 0;
-        JS_ToUint32(ctx, &value, propValue);
+        u_int32_t value = 0;
+        JS_ToUint32(ctx, &value, placeVertical);
         padding.top = value;
         padding.bottom = value;
     }
@@ -55,8 +55,8 @@ Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     JSValue placeHorizontal = JS_GetPropertyStr(ctx, propValue, "horizontal");
     if (JS_IsNumber(placeHorizontal))
     {
-        int value = 0;
-        JS_ToUint32(ctx, &value, propValue);
+        u_int32_t value = 0;
+        JS_ToUint32(ctx, &value, placeHorizontal);
         padding.left = value;
         padding.right = value;
     }
@@ -65,7 +65,7 @@ Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     if (JS_IsNumber(placeLeft))
     {
         int value = 0;
-        JS_ToUint32(ctx, &value, propValue);
+        JS_ToUint32(ctx, &value, placeLeft);
         padding.left = value;
     }
 
@@ -73,7 +73,7 @@ Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     if (JS_IsNumber(placeRight))
     {
         int value = 0;
-        JS_ToUint32(ctx, &value, propValue);
+        JS_ToUint32(ctx, &value, placeRight);
         padding.right = value;
     }
 
@@ -81,7 +81,7 @@ Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     if (JS_IsNumber(placeTop))
     {
         int value = 0;
-        JS_ToUint32(ctx, &value, propValue);
+        JS_ToUint32(ctx, &value, placeTop);
         padding.top = value;
     }
 
@@ -89,7 +89,7 @@ Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     if (JS_IsNumber(placeBottom))
     {
         int value = 0;
-        JS_ToUint32(ctx, &value, propValue);
+        JS_ToUint32(ctx, &value, placeBottom);
         padding.bottom = value;
     }
 

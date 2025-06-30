@@ -26,77 +26,38 @@ class MyComponent {
     render() {
         print("called render()")
         let a = "variable how fucking cool is that?"
-        return <h1 id="container" width={120}>
-            <h2 id="nested">
-                String
-                <text padding={16} id="super nested">
-                    {a}
-                </text>
-            </h2>
-            <h4 id="same level as nested">
-            </h4>
-        </h1>;
+        return <text id="container" width={120}>
+            String
+            {a}
+        </text>;
     }
 }
 
-// React.render(<vStack>
-//     <h1>Heading 1
-//         <vStack>
-//             Test..
-//             <footer>
-//             </footer>
-//         </vStack>
-//     </h1>
-//     <h2>
-//         Heading 2
-//         <hStack>
-//             <div
-//                 onClick={() => console.log("Cool!")}
-//                 width={300}
-//                 height={400}
-//                 borderRadius={25}
-//                 color="red"
-//             >
-//                 Other
-//             </div>
-//             <spacer />
-//             <div>
-//                 Second Div
-//             </div>
-//         </hStack>
-//     </h2>
-// </vStack>)
-print("Pre render...")
 React.render(<group $backgroundColor="#00af00f0">
-    <hStack>
-        <group $backgroundColor="#0000ff6f" $padding={10}>
-            <text $backgroundColor="#00ff00">Cool String</text>
+    <hStack $padding={10}>
+        <group
+            $backgroundColor="#0000ff6f"
+            $padding={10}>
+            <text $backgroundColor="#00ff00">About Me</text>
+            <spacer />
             <text>Another String</text>
             <spacer />
             Yeah!!!!!!!!!!
         </group>
-        <spacer />
-    </hStack>
+    </hStack >
     <vStack
         $backgroundColor="green"
+        $padding={{ horizontal: 100 }}
         $hello={"aaaa"}
         id="parentDiv">
+        <spacer />
+        This is a test!:::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        <spacer />
+        <MyComponent $padding={{ left: 12 }} />
         This is a test!
         <spacer />
-        <MyComponent />
-        This is a test!
-        <spacer />
-        This is a test!
-        <spacer />
-        This is a test!
-        <spacer />
-        This is a test!
-        <spacer />
-        This is a test!
-        <spacer />
-        This is a test!
     </vStack>
-</group>)
+</group >)
 print("After render...")
 // setInterval(() => {
 //     print("Interval")
