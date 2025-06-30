@@ -14,5 +14,5 @@ lib/raylib/raylib/libraylib.a:
 	cmake .
 	$(MAKE)
 
-libgui.so: gui.c draw.c lib/quickjs/libquickjs.a lib/raylib/raylib/libraylib.a
+libgui.so: gui.c draw.c colors.c lib/quickjs/libquickjs.a lib/raylib/raylib/libraylib.a
 	gcc $(DEBUGGING) $^ -Wall -shared  -fPIC -DJS_SHARED_LIBRARY -L./lib/quickjs -o libgui.so  -framework IOKit -framework Cocoa 

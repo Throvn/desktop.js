@@ -10,6 +10,7 @@
     "clay.h": "c",
     "stdlib.h": "c",
     "unordered_map": "c",
-    "_stdlib.h": "c"
+    "_stdlib.h": "c",
+    "hashmap.h": "c"
   }
 }

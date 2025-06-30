@@ -237,7 +237,19 @@ Clay_RenderCommandArray gui_create_render_tree()
         return Clay_EndLayout();
     }
 
-    renderElement(rootElement);
+    CLAY((Clay_ElementDeclaration){
+        .backgroundColor = {255, 255, 255, 255},
+        .layout = {
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+            .childAlignment = {
+                CLAY_ALIGN_X_CENTER,
+                CLAY_ALIGN_Y_CENTER,
+            },
+        },
+    })
+    {
+        renderElement(rootElement);
+    }
 
     Clay_RenderCommandArray renderCommands = Clay_EndLayout();
     return renderCommands;

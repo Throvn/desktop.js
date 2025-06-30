@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "draw.h"
+#include "colors.h"
 
 void renderChildren(struct DOMNode *node)
 {
@@ -51,14 +52,32 @@ void GUI_RenderGroup(struct DOMNode *node)
 
 void GUI_RenderVStack(struct DOMNode *node)
 {
+    JSValue jsBgColor = JS_GetPropertyStr(node->ctx, node->properties, "$backgroundColor");
+    Clay_Color color = {0, 255, 0, 255};
+    if (JS_IsString(jsBgColor))
+    {
+        char *bgColorStr = JS_ToCString(node->ctx, jsBgColor);
+        for (int i = 0; i < COLOR_Length; i++)
+        {
+            Clay_Color c = COLOR_Values[i];
+            if (0 == strcmp(bgColorStr, COLOR_Names[i]))
+            {
+                color = COLOR_Values[i];
+                break;
+            }
+        }
+    }
+    printf("%.0f %.0f %.0f %.0f\n", color.r, color.g, color.b, color.a);
+
     CLAY((Clay_ElementDeclaration){
+        .backgroundColor = color,
         .layout = {
             .layoutDirection = CLAY_TOP_TO_BOTTOM,
             .childAlignment = {
                 CLAY_ALIGN_X_CENTER,
                 CLAY_ALIGN_Y_CENTER,
             },
-            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+            .sizing = {CLAY_SIZING_FIT(0), CLAY_SIZING_GROW(0)},
         },
     })
     {
@@ -75,11 +94,22 @@ void GUI_RenderHStack(struct DOMNode *node)
                 CLAY_ALIGN_X_CENTER,
                 CLAY_ALIGN_Y_CENTER,
             },
-            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_FIT(0)},
         },
     })
     {
         renderChildren(node);
+    }
+}
+
+void GUI_RenderSpacer(struct DOMNode *node)
+{
+    CLAY((Clay_ElementDeclaration){
+        .layout = {
+            .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_GROW()},
+        },
+    })
+    {
     }
 }
 
@@ -88,9 +118,13 @@ void GUI_RenderString(struct DOMNode *node)
     JSValue jsString = JS_GetPropertyStr(node->ctx, node->properties, "value");
     char *str = JS_ToCString(node->ctx, jsString);
     Clay_String clayString = {.chars = str, .length = strlen(str)};
+
     CLAY((Clay_ElementDeclaration){
         .layout = {
-            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+            .sizing = {
+                CLAY_SIZING_FIT(),
+                CLAY_SIZING_FIT(),
+            },
         },
     })
     {
@@ -110,33 +144,29 @@ int renderElement(struct DOMNode *node)
 
     char *type = node->type;
 
-    CLAY((Clay_ElementDeclaration){
-        .layout = {
-            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
-        },
-        .backgroundColor = {255, 255, 255, 255},
-    })
+    if (0 == strcmp(type, "group"))
     {
-        if (0 == strcmp(type, "group"))
-        {
-            GUI_RenderGroup(node);
-        }
-        else if (0 == strcmp(type, "vStack"))
-        {
-            GUI_RenderVStack(node);
-        }
-        else if (0 == strcmp(type, "hStack"))
-        {
-            GUI_RenderHStack(node);
-        }
-        else if (0 == strcmp(type, "string"))
-        {
-            GUI_RenderString(node);
-        }
-        else
-        {
-            renderChildren(node);
-        }
+        GUI_RenderGroup(node);
+    }
+    else if (0 == strcmp(type, "vStack"))
+    {
+        GUI_RenderVStack(node);
+    }
+    else if (0 == strcmp(type, "hStack"))
+    {
+        GUI_RenderHStack(node);
+    }
+    else if (0 == strcmp(type, "string"))
+    {
+        GUI_RenderString(node);
+    }
+    else if (0 == strcmp(type, "spacer"))
+    {
+        GUI_RenderSpacer(node);
+    }
+    else
+    {
+        renderChildren(node);
     }
 
     return 0;
