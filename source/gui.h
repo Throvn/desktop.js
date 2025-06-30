@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include "./lib/quickjs/quickjs.h"
-#include "./lib/clay/clay.h"
+#include "../lib/quickjs/quickjs.h"
+#include "../lib/clay/clay.h"
 
 #ifndef GUI_H
 #define GUI_H

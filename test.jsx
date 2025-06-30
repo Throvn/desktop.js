@@ -1,4 +1,4 @@
-import * as React from "./libgui.so"
+import * as React from "./build/libgui.so"
 console.log("JSX test started...")
 // const test = <div>
 //     Test

@@ -1,5 +1,5 @@
-#include "./lib/quickjs/quickjs.h"
-#include "quickjs-libc.h"
+#include "../lib/quickjs/quickjs.h"
+#include "../lib/quickjs/quickjs-libc.h"
 
 int engine_init(JSRuntime **rt, JSContext **ctx)
 {

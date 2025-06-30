@@ -1,7 +1,7 @@
 #define CLAY_IMPLEMENTATION
 #include "gui.h"
 
-#include "./lib/clay/renderers/raylib/clay_renderer_raylib.c"
+#include "../lib/clay/renderers/raylib/clay_renderer_raylib.c"
 #include "draw.h"
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))

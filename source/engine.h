@@ -1,7 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "./lib/quickjs/quickjs.h"
+#include "../lib/quickjs/quickjs.h"
 
 /// @brief Spawns a quickjs runtime
 /// @param rt Return param

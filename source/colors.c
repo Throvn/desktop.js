@@ -1,5 +1,5 @@
-#include "./lib/clay/clay.h"
-#include "./lib/quickjs/quickjs.h"
+#include "../lib/clay/clay.h"
+#include "../lib/quickjs/quickjs.h"
 #include <stdlib.h>
 
 enum ColorNames

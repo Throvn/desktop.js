@@ -1,6 +1,6 @@
 #ifndef COLORS_H
 #define COLORS_H
-#include "./lib/clay/clay.h"
+#include "../lib/clay/clay.h"
 
 enum ColorNames;
 const char *COLOR_Names[];

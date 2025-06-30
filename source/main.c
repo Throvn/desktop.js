@@ -1,11 +1,11 @@
 #include <stdlib.h>
-#include "quickjs.h"
-#include "minnet.h"
-#include "raylib.h"
+#include "../lib/quickjs/quickjs.h"
+#include "../lib/minnet-quickjs/minnet.h"
+#include "../lib/raylib/src/raylib.h"
 #include "engine.h"
 
-#include "./lib/clay/clay.h"
-#include "./lib/clay/renderers/raylib/clay_renderer_raylib.c"
+#include "../lib/clay/clay.h"
+#include "../lib/clay/renderers/raylib/clay_renderer_raylib.c"
 #include "gui.h"
 
 int main()
@@ -49,7 +49,7 @@ int main()
     }
 
     Font fonts[1];
-    fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 144, 0, 400);
+    fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 200, 0, 400);
     SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
     Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
 
