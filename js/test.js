@@ -19,7 +19,7 @@ var MyComponent = /** @class */ (function () {
         return React.createElement("h1", { id: "container", width: 120 },
             React.createElement("h2", { id: "nested" },
                 "String",
-                React.createElement("h3", { id: "super nested" }, a)),
+                React.createElement("text", { padding: 16, id: "super nested" }, a)),
             React.createElement("h4", { id: "same level as nested" }));
     };
     return MyComponent;
@@ -54,8 +54,8 @@ var MyComponent = /** @class */ (function () {
 print("Pre render...");
 React.render(React.createElement("group", { "$backgroundColor": "#00af00f0" },
     React.createElement("hStack", null,
-        React.createElement("group", { "$backgroundColor": "#0000ff6f" },
-            React.createElement("text", null, "Cool String"),
+        React.createElement("group", { "$backgroundColor": "#0000ff6f", "$padding": 10 },
+            React.createElement("text", { "$backgroundColor": "#00ff00" }, "Cool String"),
             React.createElement("text", null, "Another String"),
             React.createElement("spacer", null),
             "Yeah!!!!!!!!!!"),

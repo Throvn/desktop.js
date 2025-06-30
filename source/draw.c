@@ -1,6 +1,7 @@
 #include "gui.h"
 #include "draw.h"
 #include "colors.h"
+#include "styles.h"
 
 void renderChildren(struct DOMNode *node)
 {
@@ -52,6 +53,10 @@ void GUI_RenderGroup(struct DOMNode *node)
                 }
             }
         }
+
+        // Reapply all styles again. This is very expensive, we should do this on the create step!
+        free(desc->styles);
+        desc->styles = getAllStyles(desc);
     }
     JS_FreePropertyEnum(node->ctx, keys, num_keys);
 
@@ -78,12 +83,9 @@ void GUI_RenderStack(struct DOMNode *node, char direction)
         exit(2);
     }
 
-    JSValue jsBgColor = JS_GetPropertyStr(node->ctx, node->properties, "$backgroundColor");
-    char *colorStr = JS_ToCString(node->ctx, jsBgColor);
-    // printf("$backgroundColor for %cStack is %s", direction, colorStr);
-    Clay_Color color = parseColor(colorStr);
+    DOMStyles *styles = node->styles;
     CLAY((Clay_ElementDeclaration){
-        .backgroundColor = color,
+        .backgroundColor = styles->backgroundColor,
         .layout = {
             .layoutDirection = dir,
             .childAlignment = {
@@ -91,6 +93,7 @@ void GUI_RenderStack(struct DOMNode *node, char direction)
                 CLAY_ALIGN_Y_CENTER,
             },
             .sizing = sizing,
+            .padding = styles->padding,
         },
     })
     {
@@ -133,13 +136,13 @@ void GUI_RenderString(struct DOMNode *node)
 
 void GUI_RenderText(struct DOMNode *node)
 {
-    JSValue jsBgColor = JS_GetPropertyStr(node->ctx, node->properties, "$backgroundColor");
-    char *backgroundColorStr = JS_ToCString(node->ctx, jsBgColor);
-    // printf("$backgroundColor for %cStack is %s", direction, colorStr);
-    Clay_Color backgroundColor = parseColor(backgroundColorStr);
 
+    DOMStyles *styles = node->styles;
     CLAY((Clay_ElementDeclaration){
-        .backgroundColor = backgroundColor})
+        .backgroundColor = styles->backgroundColor,
+        .layout = {
+            .padding = styles->padding,
+        }})
     {
         for (int i = 0; i < node->num_descendants; i++)
         {

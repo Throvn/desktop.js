@@ -5,6 +5,12 @@
 #ifndef GUI_H
 #define GUI_H
 
+typedef struct DOMStyles
+{
+    Clay_Color backgroundColor;
+    Clay_Padding padding;
+} DOMStyles;
+
 struct DOMNode
 {
     char *type;
@@ -14,6 +20,8 @@ struct DOMNode
 
     JSContext *ctx;
     JSValue properties;
+
+    DOMStyles *styles;
 };
 
 /// @brief Creates a Window of the desired size

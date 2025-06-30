@@ -29,9 +29,9 @@ class MyComponent {
         return <h1 id="container" width={120}>
             <h2 id="nested">
                 String
-                <h3 id="super nested">
+                <text padding={16} id="super nested">
                     {a}
-                </h3>
+                </text>
             </h2>
             <h4 id="same level as nested">
             </h4>
@@ -69,15 +69,18 @@ class MyComponent {
 print("Pre render...")
 React.render(<group $backgroundColor="#00af00f0">
     <hStack>
-        <group $backgroundColor="#0000ff6f">
-            <text>Cool String</text>
+        <group $backgroundColor="#0000ff6f" $padding={10}>
+            <text $backgroundColor="#00ff00">Cool String</text>
             <text>Another String</text>
             <spacer />
             Yeah!!!!!!!!!!
         </group>
         <spacer />
     </hStack>
-    <vStack $backgroundColor="green" $hello={"aaaa"} id="parentDiv">
+    <vStack
+        $backgroundColor="green"
+        $hello={"aaaa"}
+        id="parentDiv">
         This is a test!
         <spacer />
         <MyComponent />

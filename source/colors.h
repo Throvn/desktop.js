@@ -7,6 +7,6 @@ const char *COLOR_Names[];
 const Clay_Color COLOR_Values[];
 
 int COLOR_Length;
-Clay_Color parseColor(char *colorStr);
+Clay_Color parseHexColor(char *hexCode);
 
 #endif

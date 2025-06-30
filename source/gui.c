@@ -1,5 +1,6 @@
 #define CLAY_IMPLEMENTATION
 #include "gui.h"
+#include "styles.h"
 
 #include "../lib/clay/renderers/raylib/clay_renderer_raylib.c"
 #include "draw.h"
@@ -137,6 +138,7 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
 
     domNode->ctx = ctx;
     domNode->properties = JS_DupValue(ctx, props);
+    domNode->styles = getAllStyles(domNode);
 
     JS_SetOpaque(ret, domNode);
     return ret;

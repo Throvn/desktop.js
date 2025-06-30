@@ -494,24 +494,3 @@ Clay_Color parseHexColor(char *hexCode)
     // printf("Generated HEX color: %.0f %.0f %.0f %.0f\n", color.r, color.g, color.b, color.a);
     return color;
 }
-
-Clay_Color parseColor(char *colorStr)
-{
-    if ('#' == colorStr[0])
-    {
-        return parseHexColor(&colorStr[1]);
-    }
-
-    Clay_Color color = {0, 0, 0, 0};
-    for (int i = 0; i < COLOR_Length; i++)
-    {
-        Clay_Color c = COLOR_Values[i];
-        if (0 == strcmp(colorStr, COLOR_Names[i]))
-        {
-            color = COLOR_Values[i];
-            break;
-        }
-    }
-
-    return color;
-}

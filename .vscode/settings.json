@@ -11,6 +11,7 @@
     "stdlib.h": "c",
     "unordered_map": "c",
     "_stdlib.h": "c",
-    "hashmap.h": "c"
+    "hashmap.h": "c",
+    "styles.h": "c"
   }
 }
