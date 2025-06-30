@@ -58,9 +58,7 @@ var MyComponent = /** @class */ (function () {
 //     </h2>
 // </text>)
 print("Pre render...");
-React.render(React.createElement("group", { "$hello": "aaaa", id: "parentDiv" },
-    React.createElement(MyComponent, { props: "prop rendered!" }),
-    React.createElement(MyComponent, null)));
+React.render(React.createElement("group", { "$hello": "aaaa", id: "parentDiv" }, "This is a test!"));
 print("After render...");
 // setInterval(() => {
 //     print("Interval")

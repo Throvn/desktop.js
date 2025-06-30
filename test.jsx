@@ -68,8 +68,7 @@ class MyComponent {
 // </text>)
 print("Pre render...")
 React.render(<group $hello={"aaaa"} id="parentDiv">
-    <MyComponent props="prop rendered!" />
-    <MyComponent />
+    This is a test!
 </group>)
 print("After render...")
 // setInterval(() => {

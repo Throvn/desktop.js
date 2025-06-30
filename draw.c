@@ -1,6 +1,17 @@
 #include "gui.h"
 #include "draw.h"
 
+void renderChildren(struct DOMNode *node)
+{
+    for (int i = 0; i < node->num_descendants; i++)
+    {
+        renderElement(node->descendants[i]);
+    }
+}
+
+/// @brief Handles rendering of the <group> component.
+/// @note The group component only appends its props to children, so nothing is rendered.
+/// @param node
 void GUI_RenderGroup(struct DOMNode *node)
 {
     int num_keys;
@@ -16,23 +27,18 @@ void GUI_RenderGroup(struct DOMNode *node)
     for (int j = 0; j < node->num_descendants; j++)
     {
         struct DOMNode *desc = node->descendants[j];
-        printf("Desc: %p\n", desc);
         // Get all JSX properties
         for (int i = 0; i < num_keys; i++)
         {
             JSPropertyEnum key = keys[i];
             char *keyStr = JS_AtomToCString(node->ctx, key.atom);
-            printf("Key str: %s\n", keyStr);
 
             // Never copy children
             if (strcmp(keyStr, "children"))
                 continue;
 
-            printf("%p %p %d | %p %p \n", desc->ctx, desc->properties, key.atom, desc->ctx, node->ctx);
             // Only add property if child prop doesn't already have it.
-            JSValue keyAtom = JS_NewAtomString(desc->ctx, keyStr);
-            JSAtom kA = JS_ValueToAtom(desc->ctx, keyAtom);
-            if (false == JS_HasProperty(desc->ctx, desc->properties, kA))
+            if (false == JS_HasProperty(desc->ctx, desc->properties, key.atom))
             {
                 JSValue groupPropValue = JS_GetProperty(node->ctx, node->properties, key.atom);
                 JS_SetProperty(desc->ctx, desc->properties, key.atom, groupPropValue);
@@ -40,13 +46,58 @@ void GUI_RenderGroup(struct DOMNode *node)
         }
     }
 
+    renderChildren(node);
+}
+
+void GUI_RenderVStack(struct DOMNode *node)
+{
     CLAY((Clay_ElementDeclaration){
-        .layout = {.layoutDirection = CLAY_TOP_TO_BOTTOM}})
+        .layout = {
+            .layoutDirection = CLAY_TOP_TO_BOTTOM,
+            .childAlignment = {
+                CLAY_ALIGN_X_CENTER,
+                CLAY_ALIGN_Y_CENTER,
+            },
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+        },
+    })
     {
-        for (int i = 0; i < node->num_descendants; i++)
-        {
-            renderElement(node->descendants[i]);
-        };
+        renderChildren(node);
+    }
+}
+
+void GUI_RenderHStack(struct DOMNode *node)
+{
+    CLAY((Clay_ElementDeclaration){
+        .layout = {
+            .layoutDirection = CLAY_LEFT_TO_RIGHT,
+            .childAlignment = {
+                CLAY_ALIGN_X_CENTER,
+                CLAY_ALIGN_Y_CENTER,
+            },
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+        },
+    })
+    {
+        renderChildren(node);
+    }
+}
+
+void GUI_RenderString(struct DOMNode *node)
+{
+    JSValue jsString = JS_GetPropertyStr(node->ctx, node->properties, "value");
+    char *str = JS_ToCString(node->ctx, jsString);
+    Clay_String clayString = {.chars = str, .length = strlen(str)};
+    CLAY((Clay_ElementDeclaration){
+        .layout = {
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+        },
+    })
+    {
+        CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
+                                  .fontSize = 12,
+                                  .textColor = {255, 0, 0, 255},
+                              }));
     }
 }
 
@@ -59,28 +110,34 @@ int renderElement(struct DOMNode *node)
 
     char *type = node->type;
 
-    JSValue idProp = JS_GetPropertyStr(node->ctx, node->properties, "id");
-    char *idStr = JS_ToCString(node->ctx, idProp);
-    if (strcmp(type, "group"))
+    CLAY((Clay_ElementDeclaration){
+        .layout = {
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+        },
+        .backgroundColor = {255, 255, 255, 255},
+    })
     {
-        GUI_RenderGroup(node);
-    }
-
-    Clay_String clString = (Clay_String){.length = strlen(idStr), .chars = idStr};
-    CLAY({.layout = {.layoutDirection = CLAY_TOP_TO_BOTTOM, .padding = CLAY_PADDING_ALL(5), .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
-    {
-        CLAY({.layout = {.sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
+        if (0 == strcmp(type, "group"))
         {
-            CLAY_TEXT(clString, CLAY_TEXT_CONFIG({.fontSize = 24, .textColor = {255, 255, 255, 255}}));
+            GUI_RenderGroup(node);
         }
-
-        CLAY({.layout = {.layoutDirection = CLAY_LEFT_TO_RIGHT, .padding = CLAY_PADDING_ALL(10), .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
+        else if (0 == strcmp(type, "vStack"))
         {
-            for (int i = 0; i < node->num_descendants; i++)
-            {
-                renderElement(node->descendants[i]);
-            };
-        };
+            GUI_RenderVStack(node);
+        }
+        else if (0 == strcmp(type, "hStack"))
+        {
+            GUI_RenderHStack(node);
+        }
+        else if (0 == strcmp(type, "string"))
+        {
+            GUI_RenderString(node);
+        }
+        else
+        {
+            renderChildren(node);
+        }
     }
+
     return 0;
 }

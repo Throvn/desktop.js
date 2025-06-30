@@ -64,7 +64,7 @@ int main()
         Clay_Raylib_Render(renderCommands, fonts);
         EndDrawing();
 
-        if (true == JS_HasException(ctx))
+        if (1 == JS_HasException(ctx))
         {
             JSValue exception = JS_GetException(ctx);
             char *exStr = JS_ToCString(ctx, exception);

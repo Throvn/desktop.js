@@ -34,11 +34,16 @@ static struct DOMNode *createStringNode(JSContext *ctx, JSValue string)
 {
     if (false == JS_IsString(string))
         return NULL;
+
+    // Store the value of the string in the properties object.
+    JSValue prop = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, prop, "value", JS_DupValue(ctx, string));
+
     struct DOMNode *node = calloc(1, sizeof(struct DOMNode));
     node->ctx = ctx;
     node->type = "string";
     node->key = rand();
-    node->properties = JS_NewObject(ctx);
+    node->properties = prop;
 
     return node;
 }
