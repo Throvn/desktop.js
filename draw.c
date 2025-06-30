@@ -33,67 +33,64 @@ void GUI_RenderGroup(struct DOMNode *node)
         {
             JSPropertyEnum key = keys[i];
             char *keyStr = JS_AtomToCString(node->ctx, key.atom);
+            JS_FreeCString(node->ctx, keyStr);
 
             // Never copy children
-            if (strcmp(keyStr, "children"))
+            if (0 == strcmp(keyStr, "children"))
                 continue;
 
             // Only add property if child prop doesn't already have it.
             if (false == JS_HasProperty(desc->ctx, desc->properties, key.atom))
             {
                 JSValue groupPropValue = JS_GetProperty(node->ctx, node->properties, key.atom);
-                JS_SetProperty(desc->ctx, desc->properties, key.atom, groupPropValue);
+                success = JS_SetProperty(desc->ctx, desc->properties, key.atom, groupPropValue);
+                printf("Property success: %d\n", success);
+                if (success != 1)
+                {
+                    printf("[Warning] could not set property in group to %s\n", keyStr);
+                    exit(2);
+                }
             }
         }
     }
+    JS_FreePropertyEnum(node->ctx, keys, num_keys);
 
     renderChildren(node);
 }
 
-void GUI_RenderVStack(struct DOMNode *node)
+void GUI_RenderStack(struct DOMNode *node, char direction)
 {
-    JSValue jsBgColor = JS_GetPropertyStr(node->ctx, node->properties, "$backgroundColor");
-    Clay_Color color = {0, 0, 0, 0};
-    if (JS_IsString(jsBgColor))
+    // Determine layout direction.
+    Clay_Sizing sizing;
+    int dir;
+    switch (direction)
     {
-        char *bgColorStr = JS_ToCString(node->ctx, jsBgColor);
-        for (int i = 0; i < COLOR_Length; i++)
-        {
-            Clay_Color c = COLOR_Values[i];
-            if (0 == strcmp(bgColorStr, COLOR_Names[i]))
-            {
-                color = COLOR_Values[i];
-                break;
-            }
-        }
+    case 'v':
+        sizing = (Clay_Sizing){CLAY_SIZING_FIT(), CLAY_SIZING_GROW()};
+        dir = CLAY_TOP_TO_BOTTOM;
+        break;
+    case 'h':
+        sizing = (Clay_Sizing){CLAY_SIZING_GROW(), CLAY_SIZING_FIT()};
+        dir = CLAY_LEFT_TO_RIGHT;
+        break;
+    default:
+        fprintf(stderr, "[GUI_RenderStack] Stack direction '%c' unknown", direction);
+        exit(2);
     }
 
+    JSValue jsBgColor = JS_GetPropertyStr(node->ctx, node->properties, "$backgroundColor");
+    char *colorStr = JS_ToCString(node->ctx, jsBgColor);
+    // printf("$backgroundColor for %cStack is %s", direction, colorStr);
+    Clay_Color color = parseColor(colorStr);
     CLAY((Clay_ElementDeclaration){
         .backgroundColor = color,
         .layout = {
-            .layoutDirection = CLAY_TOP_TO_BOTTOM,
+            .layoutDirection = dir,
             .childAlignment = {
                 CLAY_ALIGN_X_CENTER,
                 CLAY_ALIGN_Y_CENTER,
             },
-            .sizing = {CLAY_SIZING_FIT(), CLAY_SIZING_GROW(0)},
-        },
-    })
-    {
-        renderChildren(node);
-    }
-}
-
-void GUI_RenderHStack(struct DOMNode *node)
-{
-    CLAY((Clay_ElementDeclaration){
-        .layout = {
-            .layoutDirection = CLAY_LEFT_TO_RIGHT,
-            .childAlignment = {
-                CLAY_ALIGN_X_CENTER,
-                CLAY_ALIGN_Y_CENTER,
-            },
-            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_FIT()},
+            .sizing = sizing,
         },
     })
     {
@@ -149,11 +146,11 @@ int renderElement(struct DOMNode *node)
     }
     else if (0 == strcmp(type, "vStack"))
     {
-        GUI_RenderVStack(node);
+        GUI_RenderStack(node, 'v');
     }
     else if (0 == strcmp(type, "hStack"))
     {
-        GUI_RenderHStack(node);
+        GUI_RenderStack(node, 'h');
     }
     else if (0 == strcmp(type, "string"))
     {

@@ -67,7 +67,7 @@ class MyComponent {
 //     </h2>
 // </text>)
 print("Pre render...")
-React.render(<group>
+React.render(<group $backgroundColor="#00af00f0">
     <hStack>
         Another String!
         <spacer />

@@ -1,4 +1,6 @@
 #include "./lib/clay/clay.h"
+#include "./lib/quickjs/quickjs.h"
+#include <stdlib.h>
 
 enum ColorNames
 {
@@ -456,3 +458,60 @@ const Clay_Color COLOR_Values[] = {
 };
 
 const int COLOR_Length = sizeof(COLOR_Values) / sizeof(COLOR_Values[0]);
+
+Clay_Color parseHexColor(char *hexCode)
+{
+    int length = strlen(hexCode);
+    if (length != 6 && length != 8)
+    {
+        fprintf(stderr, "[praseHexColor] parameter is not 6 or 8 characters long. Example: FFAABB(CC)");
+        exit(1);
+    }
+
+    Clay_Color color;
+    char buffer[2] = {0};
+
+    strncpy(buffer, hexCode, 2);
+    color.r = (float)strtol(buffer, NULL, 16);
+
+    strncpy(buffer, &hexCode[2], 2);
+    color.g = (float)strtol(buffer, NULL, 16);
+
+    strncpy(buffer, &hexCode[4], 2);
+    color.b = (float)strtol(buffer, NULL, 16);
+
+    // If parameter has also an alpha channel given
+    if (length == 8)
+    {
+        strncpy(buffer, &hexCode[6], 2);
+        color.a = (float)strtol(buffer, NULL, 16);
+    }
+    else
+    {
+        color.a = 255;
+    }
+
+    // printf("Generated HEX color: %.0f %.0f %.0f %.0f\n", color.r, color.g, color.b, color.a);
+    return color;
+}
+
+Clay_Color parseColor(char *colorStr)
+{
+    if ('#' == colorStr[0])
+    {
+        return parseHexColor(&colorStr[1]);
+    }
+
+    Clay_Color color = {0, 0, 0, 0};
+    for (int i = 0; i < COLOR_Length; i++)
+    {
+        Clay_Color c = COLOR_Values[i];
+        if (0 == strcmp(colorStr, COLOR_Names[i]))
+        {
+            color = COLOR_Values[i];
+            break;
+        }
+    }
+
+    return color;
+}

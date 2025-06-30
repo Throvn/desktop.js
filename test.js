@@ -58,7 +58,7 @@ var MyComponent = /** @class */ (function () {
 //     </h2>
 // </text>)
 print("Pre render...");
-React.render(React.createElement("group", null,
+React.render(React.createElement("group", { "$backgroundColor": "#00af00f0" },
     React.createElement("hStack", null,
         "Another String!",
         React.createElement("spacer", null)),
