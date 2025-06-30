@@ -1,8 +1,8 @@
 import * as React from "./build/libgui.so"
 console.log("JSX test started...")
-// const test = <div>
-//     Test
-// </div>
+const test = <div>
+    Test1
+</div>
 
 // class MyComponent extends React.Component {
 class MyComponent {
@@ -25,7 +25,7 @@ class MyComponent {
 
     render() {
         print("called render()")
-        let a = "variable"
+        let a = "variable how fucking cool is that?"
         return <h1 id="container" width={120}>
             <h2 id="nested">
                 String
@@ -39,33 +39,33 @@ class MyComponent {
     }
 }
 
-React.render(<text>
-    <h1>Heading 1
-        <vStack>
-            Test..
-            <footer>
-            </footer>
-        </vStack>
-    </h1>
-    <h2>
-        Heading 2
-        <hStack>
-            <div
-                onClick={() => console.log("Cool!")}
-                width={300}
-                height={400}
-                borderRadius={25}
-                color="red"
-            >
-                Other
-            </div>
-            <spacer />
-            <div>
-                Second Div
-            </div>
-        </hStack>
-    </h2>
-</text>)
+// React.render(<vStack>
+//     <h1>Heading 1
+//         <vStack>
+//             Test..
+//             <footer>
+//             </footer>
+//         </vStack>
+//     </h1>
+//     <h2>
+//         Heading 2
+//         <hStack>
+//             <div
+//                 onClick={() => console.log("Cool!")}
+//                 width={300}
+//                 height={400}
+//                 borderRadius={25}
+//                 color="red"
+//             >
+//                 Other
+//             </div>
+//             <spacer />
+//             <div>
+//                 Second Div
+//             </div>
+//         </hStack>
+//     </h2>
+// </vStack>)
 print("Pre render...")
 React.render(<group $backgroundColor="#00af00f0">
     <hStack>
@@ -80,10 +80,7 @@ React.render(<group $backgroundColor="#00af00f0">
     <vStack $backgroundColor="green" $hello={"aaaa"} id="parentDiv">
         This is a test!
         <spacer />
-        This is a test!
-        <spacer />
-        This is a test!
-        <spacer />
+        <MyComponent />
         This is a test!
         <spacer />
         This is a test!

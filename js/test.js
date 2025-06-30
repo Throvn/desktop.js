@@ -1,8 +1,6 @@
 import * as React from "./build/libgui.so";
 console.log("JSX test started...");
-// const test = <div>
-//     Test
-// </div>
+var test = React.createElement("div", null, "Test1");
 // class MyComponent extends React.Component {
 var MyComponent = /** @class */ (function () {
     function MyComponent(props) {
@@ -17,7 +15,7 @@ var MyComponent = /** @class */ (function () {
     };
     MyComponent.prototype.render = function () {
         print("called render()");
-        var a = "variable";
+        var a = "variable how fucking cool is that?";
         return React.createElement("h1", { id: "container", width: 120 },
             React.createElement("h2", { id: "nested" },
                 "String",
@@ -26,18 +24,33 @@ var MyComponent = /** @class */ (function () {
     };
     return MyComponent;
 }());
-React.render(React.createElement("text", null,
-    React.createElement("h1", null,
-        "Heading 1",
-        React.createElement("vStack", null,
-            "Test..",
-            React.createElement("footer", null))),
-    React.createElement("h2", null,
-        "Heading 2",
-        React.createElement("hStack", null,
-            React.createElement("div", { onClick: function () { return console.log("Cool!"); }, width: 300, height: 400, borderRadius: 25, color: "red" }, "Other"),
-            React.createElement("spacer", null),
-            React.createElement("div", null, "Second Div")))));
+// React.render(<vStack>
+//     <h1>Heading 1
+//         <vStack>
+//             Test..
+//             <footer>
+//             </footer>
+//         </vStack>
+//     </h1>
+//     <h2>
+//         Heading 2
+//         <hStack>
+//             <div
+//                 onClick={() => console.log("Cool!")}
+//                 width={300}
+//                 height={400}
+//                 borderRadius={25}
+//                 color="red"
+//             >
+//                 Other
+//             </div>
+//             <spacer />
+//             <div>
+//                 Second Div
+//             </div>
+//         </hStack>
+//     </h2>
+// </vStack>)
 print("Pre render...");
 React.render(React.createElement("group", { "$backgroundColor": "#00af00f0" },
     React.createElement("hStack", null,
@@ -50,10 +63,7 @@ React.render(React.createElement("group", { "$backgroundColor": "#00af00f0" },
     React.createElement("vStack", { "$backgroundColor": "green", "$hello": "aaaa", id: "parentDiv" },
         "This is a test!",
         React.createElement("spacer", null),
-        "This is a test!",
-        React.createElement("spacer", null),
-        "This is a test!",
-        React.createElement("spacer", null),
+        React.createElement(MyComponent, null),
         "This is a test!",
         React.createElement("spacer", null),
         "This is a test!",
