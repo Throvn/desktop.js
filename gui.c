@@ -1,9 +1,8 @@
-#include <stdlib.h>
-#include "./lib/quickjs/quickjs.h"
 #define CLAY_IMPLEMENTATION
 #include "gui.h"
 
 #include "./lib/clay/renderers/raylib/clay_renderer_raylib.c"
+#include "draw.h"
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -17,38 +16,9 @@ static JSClassID js_element_class_id;
 
 static struct DOMNode *rootElement = NULL;
 
-static int renderElement(struct DOMNode *node)
-{
-    if (node == NULL)
-    {
-        return 1;
-    }
-
-    char *type = node->type;
-    Clay_String clString = (Clay_String){.length = strlen(type), .chars = type};
-    CLAY({.layout = {.layoutDirection = CLAY_TOP_TO_BOTTOM, .padding = CLAY_PADDING_ALL(5), .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
-    {
-        CLAY({.layout = {.sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
-        {
-            CLAY_TEXT(clString, CLAY_TEXT_CONFIG({.fontSize = 24, .textColor = {255, 255, 255, 255}}));
-        }
-
-        CLAY({.layout = {.layoutDirection = CLAY_LEFT_TO_RIGHT, .padding = CLAY_PADDING_ALL(10), .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)}}})
-        {
-            for (int i = 0; i < node->num_descendants; i++)
-            {
-                renderElement(node->descendants[i]);
-            };
-        };
-    }
-    return 0;
-}
-
 static JSValue render(JSContext *ctx, JSValue this_func, int argc, JSValueConst argv[])
 {
     fprintf(stdout, "Starting render...\n");
-    int width = GetRenderWidth();
-    int height = GetRenderHeight();
 
     struct DOMNode *potentialElement = JS_GetOpaque(argv[0], js_element_class_id);
     if (potentialElement == NULL)
@@ -60,6 +30,19 @@ static JSValue render(JSContext *ctx, JSValue this_func, int argc, JSValueConst 
     return JS_TRUE;
 }
 
+static struct DOMNode *createStringNode(JSContext *ctx, JSValue string)
+{
+    if (false == JS_IsString(string))
+        return NULL;
+    struct DOMNode *node = calloc(1, sizeof(struct DOMNode));
+    node->ctx = ctx;
+    node->type = "string";
+    node->key = rand();
+    node->properties = JS_NewObject(ctx);
+
+    return node;
+}
+
 static JSValue createChildren(JSContext *ctx, int argc, JSValue argv[], struct DOMNode ***descendants)
 {
     // Append Children to the tree.
@@ -67,8 +50,12 @@ static JSValue createChildren(JSContext *ctx, int argc, JSValue argv[], struct D
     *descendants = calloc(argc, sizeof(struct DOMNode *));
     for (int i = 0; i < argc; i++)
     {
-        struct DOMNode *descendant = JS_GetOpaque(argv[i], js_element_class_id);
-        (*descendants)[i] = descendant;
+        // Assume descendant is another component
+        (*descendants)[i] = JS_GetOpaque(argv[i], js_element_class_id);
+        // If descendant is not another component assume it's a string
+        if ((*descendants)[i] == NULL)
+            (*descendants)[i] = createStringNode(ctx, argv[i]);
+
         JS_SetPropertyUint32(ctx, children, i, JS_DupValue(ctx, argv[i]));
     };
 
@@ -143,6 +130,9 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
     domNode->num_descendants = num_descendants;
     domNode->descendants = descendants;
 
+    domNode->ctx = ctx;
+    domNode->properties = JS_DupValue(ctx, props);
+
     JS_SetOpaque(ret, domNode);
     return ret;
 }
@@ -214,7 +204,7 @@ void HandleClayErrors(Clay_ErrorData errorData)
 
 void gui_init(int width, int height)
 {
-    Clay_Raylib_Initialize(width, height, NULL, FLAG_WINDOW_RESIZABLE);
+    Clay_Raylib_Initialize(width, height, NULL, FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     ToggleBorderlessWindowed();
     ToggleBorderlessWindowed();
 

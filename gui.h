@@ -1,14 +1,19 @@
+#include <stdlib.h>
+#include "./lib/quickjs/quickjs.h"
+#include "./lib/clay/clay.h"
+
 #ifndef GUI_H
 #define GUI_H
 
-#include "./lib/clay/clay.h"
-
-extern struct DOMNode
+struct DOMNode
 {
     char *type;
     int key;
     size_t num_descendants;
     struct DOMNode **descendants;
+
+    JSContext *ctx;
+    JSValue properties;
 };
 
 /// @brief Creates a Window of the desired size

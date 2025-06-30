@@ -25,11 +25,12 @@ class MyComponent {
 
     render() {
         print("called render()")
+        let a = "variable"
         return <h1 id="container" width={120}>
             <h2 id="nested">
-                Nested
+                String
                 <h3 id="super nested">
-                    {1234}
+                    {a}
                 </h3>
             </h2>
             <h4 id="same level as nested">
@@ -66,7 +67,10 @@ class MyComponent {
 //     </h2>
 // </text>)
 print("Pre render...")
-React.render(<MyComponent props="prop rendered!" />)
+React.render(<group $hello={"aaaa"} id="parentDiv">
+    <MyComponent props="prop rendered!" />
+    <MyComponent />
+</group>)
 print("After render...")
 // setInterval(() => {
 //     print("Interval")

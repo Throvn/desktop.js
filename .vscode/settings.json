@@ -7,6 +7,9 @@
     "quickjs.h": "c",
     "gui.h": "c",
     "__locale": "c",
-    "clay.h": "c"
+    "clay.h": "c",
+    "stdlib.h": "c",
+    "unordered_map": "c",
+    "_stdlib.h": "c"
   }
 }

@@ -1,0 +1,73 @@
+# Desktop.js
+
+Desktop.js is a highly opinionated UI framework to develop small, fast desktop applications, written in JavaScript.
+It has a reactive syntax, is **very** easy to learn, a joy to write, and works with your existing tools.
+
+## Value Proposition
+
+Unlike Electron, it is about 10x smaller and you don't need to handle message passing between front- and backend.
+Unlike Tauri, it does not depend on platform specific quirks and you don't need to deal with rust.
+
+**How is this possible?**
+
+We translate your JSX into native draw calls, ensuring platform independent results.
+
+Also, to decrease bundle size, we don't rely on heavy runtimes like node, deno or bun but instead use QuickJS.
+This comes with its own list of pros and cons but as development progresses, we plan on getting more and more [WinterTC](https://min-common-api.proposal.wintertc.org/) compliant.
+
+Since there is a 90% chance that the app you have in mind is a CRUD app anyway, you can already give it a try.
+
+The plan is to start with exceptionally well filesystem support and a feature complete `fetch()` implementation.
+From there on we would like to focus on process interaction (spawning other programs, etc). If you have a function which is keeping you from using Desktop.js, let me know by opening an issue. If you have the ability to solve it, even better, as contributions are very welcome!
+
+## Documentation
+
+You can think of this framework as a proud child of React.js and SwiftUI.
+
+The UI has a component system with naming conventions closely matching web standards.
+
+Let's look at a very simple example:
+
+```js
+class MyComponent {
+  render() {
+    return <vStack $gap={10}>Hello World!</vStack>;
+  }
+}
+
+React.render(<MyComponent />);
+```
+
+We can see:
+
+- It tries to mimic the same naming convention as React.js's class components (e.g. `render`)
+- Built in components start with lower case letters
+- Custom components start with upper case letters
+- The main entry point is `React.render()`. Only call it once in your entire app.
+- The `<vStack />` borrows from SwiftUI, which puts all of its children from top to bottom
+- The `$gap` property (prop) is a style prop, applying 10 pixels of space between each of children.
+
+### Styling
+
+Probably, the biggest difference to what you are used to know is that you don't style using CSS.
+
+I've done some extensive research on all the different ways of styling a UI and came to the conclusion that each approach receives an equal amount of hate.
+So I've decided to again draw inspiration from SwiftUIs View Modifiers.
+For React folks: you style your components using props.
+
+Before you start screaming, here's a hot take: You've already done it before anyway.
+Tailwind, inline styles and the style prop is all the same. Having each style as a prop is not much different.
+
+As a convention, styles start with a dollar sign (`$`).
+This has two advantages:
+
+1. you can differentiate them more easily from the rest of your props.
+2. it can be used for an autocomplete trigger in your IDE. I don't have tool support yet though, feel free to start one though.
+
+### Built in Components
+
+#### `<group ...props/>`
+
+A container view which applies all of its props to each child individually. E.g. useful for styling list items.
+
+If the same property was already defined on the child, the property is **NOT** applied. As props closer to the element always take precedent.

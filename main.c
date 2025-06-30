@@ -49,7 +49,7 @@ int main()
     }
 
     Font fonts[1];
-    fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 48, 0, 400);
+    fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 144, 0, 400);
     SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
     Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
 
@@ -63,6 +63,14 @@ int main()
         ClearBackground(BLACK);
         Clay_Raylib_Render(renderCommands, fonts);
         EndDrawing();
+
+        if (true == JS_HasException(ctx))
+        {
+            JSValue exception = JS_GetException(ctx);
+            char *exStr = JS_ToCString(ctx, exception);
+            fprintf(stderr, "JS Exception: %s\n", exStr);
+            break;
+        }
     }
 
     engine_deinit(ctx);

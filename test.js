@@ -21,10 +21,11 @@ var MyComponent = /** @class */ (function () {
     // }
     MyComponent.prototype.render = function () {
         print("called render()");
+        var a = "variable";
         return React.createElement("h1", { id: "container", width: 120 },
             React.createElement("h2", { id: "nested" },
-                "Nested",
-                React.createElement("h3", { id: "super nested" }, 1234)),
+                "String",
+                React.createElement("h3", { id: "super nested" }, a)),
             React.createElement("h4", { id: "same level as nested" }));
     };
     return MyComponent;
@@ -57,7 +58,9 @@ var MyComponent = /** @class */ (function () {
 //     </h2>
 // </text>)
 print("Pre render...");
-React.render(React.createElement(MyComponent, { props: "prop rendered!" }));
+React.render(React.createElement("group", { "$hello": "aaaa", id: "parentDiv" },
+    React.createElement(MyComponent, { props: "prop rendered!" }),
+    React.createElement(MyComponent, null)));
 print("After render...");
 // setInterval(() => {
 //     print("Interval")
