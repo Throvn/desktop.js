@@ -9,16 +9,12 @@ var MyComponent = /** @class */ (function () {
         this.props = props;
         print("MyComponent constructor was called!");
     }
-    // anotherFunc() {
-    //     return true
-    // }
-    // style() {
-    //     return `
-    //         * {
-    //             background-color: black;
-    //         }
-    //     `
-    // }
+    MyComponent.prototype.anotherFunc = function () {
+        return true;
+    };
+    MyComponent.prototype.style = function () {
+        return "\n            * {\n                background-color: black;\n            }\n        ";
+    };
     MyComponent.prototype.render = function () {
         print("called render()");
         var a = "variable";
@@ -34,7 +30,7 @@ React.render(React.createElement("text", null,
     React.createElement("h1", null,
         "Heading 1",
         React.createElement("vStack", null,
-            React.createElement("header", null),
+            "Test..",
             React.createElement("footer", null))),
     React.createElement("h2", null,
         "Heading 2",
@@ -49,11 +45,26 @@ React.render(React.createElement("group", { "$backgroundColor": "#00af00f0" },
             React.createElement("text", null, "Cool String"),
             React.createElement("text", null, "Another String"),
             React.createElement("spacer", null),
-            "Yeah!"),
+            "Yeah!!!!!!!!!!"),
         React.createElement("spacer", null)),
     React.createElement("vStack", { "$backgroundColor": "green", "$hello": "aaaa", id: "parentDiv" },
         "This is a test!",
-        React.createElement("spacer", null))));
+        React.createElement("spacer", null),
+        "This is a test!",
+        React.createElement("spacer", null),
+        "This is a test!",
+        React.createElement("spacer", null),
+        "This is a test!",
+        React.createElement("spacer", null),
+        "This is a test!",
+        React.createElement("spacer", null),
+        "This is a test!",
+        React.createElement("spacer", null),
+        "This is a test!",
+        React.createElement("spacer", null),
+        "This is a test!",
+        React.createElement("spacer", null),
+        "This is a test!")));
 print("After render...");
 // setInterval(() => {
 //     print("Interval")

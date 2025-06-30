@@ -11,17 +11,17 @@ class MyComponent {
         print("MyComponent constructor was called!")
     }
 
-    // anotherFunc() {
-    //     return true
-    // }
+    anotherFunc() {
+        return true
+    }
 
-    // style() {
-    //     return `
-    //         * {
-    //             background-color: black;
-    //         }
-    //     `
-    // }
+    style() {
+        return `
+            * {
+                background-color: black;
+            }
+        `
+    }
 
     render() {
         print("called render()")
@@ -42,8 +42,7 @@ class MyComponent {
 React.render(<text>
     <h1>Heading 1
         <vStack>
-            <header>
-            </header>
+            Test..
             <footer>
             </footer>
         </vStack>
@@ -74,13 +73,28 @@ React.render(<group $backgroundColor="#00af00f0">
             <text>Cool String</text>
             <text>Another String</text>
             <spacer />
-            Yeah!
+            Yeah!!!!!!!!!!
         </group>
         <spacer />
     </hStack>
     <vStack $backgroundColor="green" $hello={"aaaa"} id="parentDiv">
         This is a test!
         <spacer />
+        This is a test!
+        <spacer />
+        This is a test!
+        <spacer />
+        This is a test!
+        <spacer />
+        This is a test!
+        <spacer />
+        This is a test!
+        <spacer />
+        This is a test!
+        <spacer />
+        This is a test!
+        <spacer />
+        This is a test!
     </vStack>
 </group>)
 print("After render...")

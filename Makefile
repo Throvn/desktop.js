@@ -1,10 +1,11 @@
 run: main
+	DYLD_LIBRARY_PATH=build \
 	./main
 
 DEBUGGING := -g
 
-main: source/main.c source/engine.c source/hashmap.c build/libgui.so lib/quickjs/libquickjs.a lib/raylib/raylib/libraylib.a
-	gcc $(DEBUGGING) -Wall $^ -o main -I../lib/quickjs -I../lib/raylib/raylib/include -I../lib/minnet-quickjs -framework IOKit -framework Cocoa
+main: source/main.c source/engine.c source/hashmap.c build/libgui.so build/libwatcher-c.so lib/quickjs/libquickjs.a lib/raylib/raylib/libraylib.a
+	gcc $(DEBUGGING) -Wall -rpath @executable_path/build $^ -o main -I../lib/quickjs -I../lib/raylib/raylib/include -I../lib/minnet-quickjs -framework IOKit -framework Cocoa
 
 lib/quickjs/libquickjs.a:
 	cd lib/quickjs/ && $(MAKE)
