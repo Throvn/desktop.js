@@ -13,4 +13,9 @@ int engine_init(JSRuntime **rt, JSContext **ctx);
 /// @param ctx Context which should be deallocated
 void engine_deinit(JSContext *ctx);
 
+/// @brief Checks if an exception was thrown and prints it formatted to stderr.
+/// @param ctx Context
+/// @return false (0) if no exception occured, true otherwise
+int engine_exception_handled(JSContext *ctx);
+
 #endif

@@ -1,6 +1,7 @@
 import * as React from "./build/libgui.so";
 console.log("JSX test started...");
-var test = React.createElement("div", null, "Test1");
+// const test = "hello";
+// ===============
 // class MyComponent extends React.Component {
 var MyComponent = /** @class */ (function () {
     function MyComponent(props) {
@@ -37,8 +38,12 @@ React.render(React.createElement("group", { "$backgroundColor": "#00af00f0" },
         React.createElement(MyComponent, { "$padding": { left: 12 } }),
         "This is a test!",
         React.createElement("spacer", null))));
-print("After render...");
-// setInterval(() => {
+setInterval(function () {
+    print("After render...");
+    //     print("Interval")
+    // }, 3000)
+    // print(test, JSON.stringify(new MyComponent().render()))
+});
 //     print("Interval")
 // }, 3000)
 // print(test, JSON.stringify(new MyComponent().render()))

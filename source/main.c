@@ -3,6 +3,7 @@
 #include "../lib/minnet-quickjs/minnet.h"
 #include "../lib/raylib/src/raylib.h"
 #include "engine.h"
+#include "terminal_colors.h"
 
 #include "../lib/clay/clay.h"
 #include "../lib/clay/renderers/raylib/clay_renderer_raylib.c"
@@ -18,11 +19,12 @@ void inputWatcher(struct wtr_watcher_event event, void *ctx)
     printf("Watcher event: %d %s\n", event.effect_type, event.path_name);
     char *rawJS = LoadFileText(scriptName);
     JSValue ret = JS_Eval(ctx, rawJS, strlen(rawJS), scriptName, JS_EVAL_TYPE_MODULE);
-    if (JS_IsException(ret))
+    if (engine_exception_handled(ctx))
     {
-        printf("FUCK\n");
+        JS_FreeValue(ctx, ret);
         exit(3);
     }
+    JS_FreeValue(ctx, ret);
 }
 
 int main()
@@ -31,21 +33,18 @@ int main()
 
     int windowWidth = 600;
     int windowHeight = 300;
-    gui_init(windowWidth, windowHeight);
+    Font *fonts = gui_init(windowWidth, windowHeight);
 
     char *rawJS = LoadFileText(scriptName);
     JSValue ret = JS_Eval(ctx, rawJS, strlen(rawJS), scriptName, JS_EVAL_TYPE_MODULE);
 
     void *watcher = wtr_watcher_open(".", inputWatcher, ctx);
 
-    Font fonts[1];
-    fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 200, 0, 400);
-    SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
-    Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
-
+    float scaleX = (float)GetRenderWidth() / (float)GetScreenWidth();
+    float scaleY = (float)GetRenderHeight() / (float)GetScreenHeight();
     while (!WindowShouldClose())
     {
-        Clay_SetLayoutDimensions((Clay_Dimensions){GetScreenWidth(), GetScreenHeight()});
+        Clay_SetLayoutDimensions((Clay_Dimensions){GetScreenWidth() * scaleX, GetScreenHeight() * scaleY});
 
         Clay_RenderCommandArray renderCommands = gui_create_render_tree();
 
@@ -54,7 +53,7 @@ int main()
         Clay_Raylib_Render(renderCommands, fonts);
         EndDrawing();
 
-        if (1 == JS_HasException(ctx))
+        if (engine_exception_handled(ctx))
         {
             JSValue exception = JS_GetException(ctx);
             char *exStr = JS_ToCString(ctx, exception);
@@ -64,7 +63,7 @@ int main()
     }
 
     engine_deinit(ctx);
-    gui_deinit();
+    gui_deinit(fonts);
 
     return 0;
 }

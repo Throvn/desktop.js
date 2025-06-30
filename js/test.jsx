@@ -1,8 +1,7 @@
 import * as React from "./build/libgui.so"
 console.log("JSX test started...")
-const test = <div>
-    Test1
-</div>
+// const test = "hello";
+// ===============
 
 // class MyComponent extends React.Component {
 class MyComponent {
@@ -44,7 +43,7 @@ React.render(<group $backgroundColor="#00af00f0">
             <spacer />
             Yeah!!!!!!!!!!
         </group>
-    </hStack >
+    </hStack>
     <vStack
         $backgroundColor="green"
         $padding={{ horizontal: 100 }}
@@ -57,9 +56,9 @@ React.render(<group $backgroundColor="#00af00f0">
         This is a test!
         <spacer />
     </vStack>
-</group >)
-print("After render...")
-// setInterval(() => {
+</group>)
+setInterval(() => {
+    print("After render...")
 //     print("Interval")
 // }, 3000)
 

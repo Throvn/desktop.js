@@ -209,9 +209,9 @@ void HandleClayErrors(Clay_ErrorData errorData)
     // TODO: Handle errors.
 }
 
-void gui_init(int width, int height)
+Font *gui_init(int width, int height)
 {
-    Clay_Raylib_Initialize(width, height, NULL, FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
+    Clay_Raylib_Initialize(width, height, NULL, FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
     ToggleBorderlessWindowed();
     ToggleBorderlessWindowed();
 
@@ -219,10 +219,18 @@ void gui_init(int width, int height)
     Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, malloc(totalMemorySize));
 
     Clay_Initialize(arena, (Clay_Dimensions){width, height}, (Clay_ErrorHandler){HandleClayErrors});
+
+    Font *fonts = malloc(sizeof(Font[1]));
+    fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 48, 0, 0);
+    SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
+    Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
+
+    return fonts;
 }
 
-void gui_deinit()
+void gui_deinit(Font *fonts)
 {
+    free(fonts);
     Clay_Raylib_Close();
 }
 

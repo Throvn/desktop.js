@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "../lib/quickjs/quickjs.h"
 #include "../lib/clay/clay.h"
+#include "../lib/raylib/src/raylib.h"
 
 #ifndef GUI_H
 #define GUI_H
@@ -27,7 +28,8 @@ struct DOMNode
 /// @brief Creates a Window of the desired size
 /// @param width window width in pixels
 /// @param height window height in pixels
-void gui_init(int width, int height);
+/// @return All loaded fonts
+Font *gui_init(int width, int height);
 
 /// @brief Frees some Clay resources
 void gui_deinit();

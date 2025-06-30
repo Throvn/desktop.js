@@ -128,7 +128,7 @@ void GUI_RenderString(struct DOMNode *node)
     })
     {
         CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
-                                  .fontSize = 12,
+                                  .fontSize = 24,
                                   .textColor = {255, 0, 0, 255},
                               }));
     }
