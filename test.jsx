@@ -67,11 +67,16 @@ class MyComponent {
 //     </h2>
 // </text>)
 print("Pre render...")
-React.render(<vStack $backgroundColor="gibberish" $hello={"aaaa"} id="parentDiv">
-    <spacer />
-    This is a test!
-    <spacer />
-</vStack>)
+React.render(<group>
+    <hStack>
+        Another String!
+        <spacer />
+    </hStack>
+    <vStack $backgroundColor="green" $hello={"aaaa"} id="parentDiv">
+        This is a test!
+        <spacer />
+    </vStack>
+</group>)
 print("After render...")
 // setInterval(() => {
 //     print("Interval")

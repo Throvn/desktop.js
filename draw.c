@@ -53,7 +53,7 @@ void GUI_RenderGroup(struct DOMNode *node)
 void GUI_RenderVStack(struct DOMNode *node)
 {
     JSValue jsBgColor = JS_GetPropertyStr(node->ctx, node->properties, "$backgroundColor");
-    Clay_Color color = {0, 255, 0, 255};
+    Clay_Color color = {0, 0, 0, 0};
     if (JS_IsString(jsBgColor))
     {
         char *bgColorStr = JS_ToCString(node->ctx, jsBgColor);
@@ -67,7 +67,6 @@ void GUI_RenderVStack(struct DOMNode *node)
             }
         }
     }
-    printf("%.0f %.0f %.0f %.0f\n", color.r, color.g, color.b, color.a);
 
     CLAY((Clay_ElementDeclaration){
         .backgroundColor = color,
@@ -77,7 +76,7 @@ void GUI_RenderVStack(struct DOMNode *node)
                 CLAY_ALIGN_X_CENTER,
                 CLAY_ALIGN_Y_CENTER,
             },
-            .sizing = {CLAY_SIZING_FIT(0), CLAY_SIZING_GROW(0)},
+            .sizing = {CLAY_SIZING_FIT(), CLAY_SIZING_GROW(0)},
         },
     })
     {
@@ -94,7 +93,7 @@ void GUI_RenderHStack(struct DOMNode *node)
                 CLAY_ALIGN_X_CENTER,
                 CLAY_ALIGN_Y_CENTER,
             },
-            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_FIT(0)},
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_FIT()},
         },
     })
     {

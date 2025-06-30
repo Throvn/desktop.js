@@ -240,6 +240,7 @@ Clay_RenderCommandArray gui_create_render_tree()
     CLAY((Clay_ElementDeclaration){
         .backgroundColor = {255, 255, 255, 255},
         .layout = {
+            .layoutDirection = CLAY_TOP_TO_BOTTOM,
             .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
             .childAlignment = {
                 CLAY_ALIGN_X_CENTER,

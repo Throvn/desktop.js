@@ -58,10 +58,13 @@ var MyComponent = /** @class */ (function () {
 //     </h2>
 // </text>)
 print("Pre render...");
-React.render(React.createElement("vStack", { "$backgroundColor": "gibberish", "$hello": "aaaa", id: "parentDiv" },
-    React.createElement("spacer", null),
-    "This is a test!",
-    React.createElement("spacer", null)));
+React.render(React.createElement("group", null,
+    React.createElement("hStack", null,
+        "Another String!",
+        React.createElement("spacer", null)),
+    React.createElement("vStack", { "$backgroundColor": "green", "$hello": "aaaa", id: "parentDiv" },
+        "This is a test!",
+        React.createElement("spacer", null))));
 print("After render...");
 // setInterval(() => {
 //     print("Interval")
