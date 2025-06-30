@@ -86,7 +86,7 @@ A container component which applies all of its props to each child individually.
 
 When you have the following code:
 
-```jsx
+```html
 <vStack>
   <group $backgroundColor="black">
     <text>First Text</text>
@@ -97,7 +97,7 @@ When you have the following code:
 
 You can think of it as:
 
-```jsx
+```html
 <vStack>
   <text $backgroundColor="black">First Text</text>
   <text $backgroundColor="black">Second Text</text>
@@ -107,7 +107,7 @@ You can think of it as:
 #### `<vStack>`
 
 This container component orders its child components **vertically** (from top to bottom).
-Each child is centered automatically. To change the position of children use [`<spacer />`s](#spacer).
+Each child is centered automatically. To change the position of children use [`<spacer />`s](#spacer-).
 
 ##### Style Props
 
@@ -116,7 +116,7 @@ Each child is centered automatically. To change the position of children use [`<
 #### `<hStack>`
 
 This container component orders its child components **horizontally** (from left to right).
-For more usage details & style props see [`<vStack>`](#style-props).
+For more usage details & style props see [`<vStack>`](#vstack).
 
 #### `<spacer />`
 
