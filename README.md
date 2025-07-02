@@ -68,9 +68,10 @@ This has two advantages:
 
 > **Note:** If you are here the first time, you might want to read the [Built in Components](#built-in-components) section first.
 
-| Property Name    | Property Type | Examples                         | Description                                                                         |
-| ---------------- | ------------- | -------------------------------- | ----------------------------------------------------------------------------------- |
-| $backgroundColor | `string`      | `#aabbcc`, `#00ff00ff`, `tomato` | Supported color types are: HTML Colors or hex colors with or without an alpha value |
+| Property Name    | Property Type                                                                                                         | Examples                                     | Description                                                                                                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| $backgroundColor | `string`                                                                                                              | `#aabbcc`, `#00ff00ff`, `tomato`             | Supported color types are: HTML Colors or hex colors with or without an alpha value                                                                                         |
+| $padding         | `integer` \| `{horizontal?: number; vertical?: number; left?: number; right?: number; top?: number; bottom?: number}` | `34`, `{vertical: 12}`, `{top: 6, left: 12}` | If passed a single number, padding applies to **all** sides, otherwise only what is specified. Numer is a 16bit integer. If this doesn't suffice, you are truly a maniac^^. |
 
 ### Built in Components
 
@@ -112,6 +113,7 @@ Each child is centered automatically. To change the position of children use [`<
 ##### Style Props
 
 - `$backgroundColor`
+- `$padding`
 
 #### `<hStack>`
 
@@ -127,8 +129,9 @@ This component doesn't take any props.
 
 #### `<text>`
 
-A component to style text.
+A component to style text. All of its children **NEED** to be strings, otherwise, _undefined_ will be printed on the screen.
 
 ##### Style Props
 
 - `$backgroundColor`
+- `$padding`

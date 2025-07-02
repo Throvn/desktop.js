@@ -14,14 +14,6 @@ class MyComponent {
         return true
     }
 
-    style() {
-        return `
-            * {
-                background-color: black;
-            }
-        `
-    }
-
     render() {
         print("called render()")
         let a = "variable how fucking cool is that?"
@@ -32,7 +24,7 @@ class MyComponent {
     }
 }
 
-React.render(<group $backgroundColor="#00af00f0">
+React.render(<group $backgroundColor="#000000f0">
     <hStack $padding={10}>
         <group
             $backgroundColor="#0000ff6f"
@@ -41,7 +33,7 @@ React.render(<group $backgroundColor="#00af00f0">
             <spacer />
             <text>Another String</text>
             <spacer />
-            Yeah!!!!!!!!!!
+            Go and hire me!
         </group>
     </hStack>
     <vStack
