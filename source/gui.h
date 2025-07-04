@@ -1,10 +1,11 @@
+
+#ifndef GUI_H
+#define GUI_H
+
 #include <stdlib.h>
 #include "../lib/quickjs/quickjs.h"
 #include "../lib/clay/clay.h"
 #include "../lib/raylib/src/raylib.h"
-
-#ifndef GUI_H
-#define GUI_H
 
 typedef struct DOMStyles
 {
@@ -35,5 +36,7 @@ Font *gui_init(int width, int height);
 void gui_deinit();
 
 Clay_RenderCommandArray gui_create_render_tree();
+
+JSModuleDef *JS_INIT_MODULE(JSContext *ctx, const char *module_name);
 
 #endif

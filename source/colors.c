@@ -2,157 +2,41 @@
 #include "../lib/quickjs/quickjs.h"
 #include <stdlib.h>
 
-enum ColorNames
+Clay_Color parseHexColor(char *hexCode)
 {
-    transparent,
-    aliceblue,
-    antiquewhite,
-    aqua,
-    aquamarine,
-    azure,
-    beige,
-    bisque,
-    black,
-    blanchedalmond,
-    blue,
-    blueviolet,
-    brown,
-    burlywood,
-    cadetblue,
-    chartreuse,
-    chocolate,
-    coral,
-    cornflowerblue,
-    cornsilk,
-    crimson,
-    cyan,
-    darkblue,
-    darkcyan,
-    darkgoldenrod,
-    darkgray,
-    darkgreen,
-    darkgrey,
-    darkkhaki,
-    darkmagenta,
-    darkolivegreen,
-    darkorange,
-    darkorchid,
-    darkred,
-    darksalmon,
-    darkseagreen,
-    darkslateblue,
-    darkslategray,
-    darkslategrey,
-    darkturquoise,
-    darkviolet,
-    deeppink,
-    deepskyblue,
-    dimgray,
-    dimgrey,
-    dodgerblue,
-    firebrick,
-    floralwhite,
-    forestgreen,
-    fuchsia,
-    gainsboro,
-    ghostwhite,
-    gold,
-    goldenrod,
-    gray,
-    green,
-    greenyellow,
-    grey,
-    honeydew,
-    hotpink,
-    indianred,
-    indigo,
-    ivory,
-    khaki,
-    lavender,
-    lavenderblush,
-    lawngreen,
-    lemonchiffon,
-    lightblue,
-    lightcoral,
-    lightcyan,
-    lightgoldenrodyellow,
-    lightgray,
-    lightgreen,
-    lightgrey,
-    lightpink,
-    lightsalmon,
-    lightseagreen,
-    lightskyblue,
-    lightslategray,
-    lightslategrey,
-    lightsteelblue,
-    lightyellow,
-    lime,
-    limegreen,
-    linen,
-    magenta,
-    maroon,
-    mediumaquamarine,
-    mediumblue,
-    mediumorchid,
-    mediumpurple,
-    mediumseagreen,
-    mediumslateblue,
-    mediumspringgreen,
-    mediumturquoise,
-    mediumvioletred,
-    midnightblue,
-    mintcream,
-    mistyrose,
-    moccasin,
-    navajowhite,
-    navy,
-    oldlace,
-    olive,
-    olivedrab,
-    orange,
-    orangered,
-    orchid,
-    palegoldenrod,
-    palegreen,
-    paleturquoise,
-    palevioletred,
-    papayawhip,
-    peachpuff,
-    peru,
-    pink,
-    plum,
-    powderblue,
-    purple,
-    red,
-    rosybrown,
-    royalblue,
-    saddlebrown,
-    salmon,
-    sandybrown,
-    seagreen,
-    seashell,
-    sienna,
-    silver,
-    skyblue,
-    slateblue,
-    slategray,
-    slategrey,
-    snow,
-    springgreen,
-    steelblue,
-    tan,
-    teal,
-    thistle,
-    tomato,
-    turquoise,
-    violet,
-    wheat,
-    white,
-    whitesmoke,
-    yellow,
-    yellowgreen,
-};
+    int length = strlen(hexCode);
+    if (length != 6 && length != 8)
+    {
+        fprintf(stderr, "[praseHexColor] parameter is not 6 or 8 characters long. Example: FFAABB(CC)");
+        exit(1);
+    }
+
+    Clay_Color color;
+    char buffer[2] = {0};
+
+    strncpy(buffer, hexCode, 2);
+    color.r = (float)strtol(buffer, NULL, 16);
+
+    strncpy(buffer, &hexCode[2], 2);
+    color.g = (float)strtol(buffer, NULL, 16);
+
+    strncpy(buffer, &hexCode[4], 2);
+    color.b = (float)strtol(buffer, NULL, 16);
+
+    // If parameter has also an alpha channel given
+    if (length == 8)
+    {
+        strncpy(buffer, &hexCode[6], 2);
+        color.a = (float)strtol(buffer, NULL, 16);
+    }
+    else
+    {
+        color.a = 255;
+    }
+
+    // printf("Generated HEX color: %.0f %.0f %.0f %.0f\n", color.r, color.g, color.b, color.a);
+    return color;
+}
 
 const char *COLOR_Names[] =
     {
@@ -458,39 +342,3 @@ const Clay_Color COLOR_Values[] = {
 };
 
 const int COLOR_Length = sizeof(COLOR_Values) / sizeof(COLOR_Values[0]);
-
-Clay_Color parseHexColor(char *hexCode)
-{
-    int length = strlen(hexCode);
-    if (length != 6 && length != 8)
-    {
-        fprintf(stderr, "[praseHexColor] parameter is not 6 or 8 characters long. Example: FFAABB(CC)");
-        exit(1);
-    }
-
-    Clay_Color color;
-    char buffer[2] = {0};
-
-    strncpy(buffer, hexCode, 2);
-    color.r = (float)strtol(buffer, NULL, 16);
-
-    strncpy(buffer, &hexCode[2], 2);
-    color.g = (float)strtol(buffer, NULL, 16);
-
-    strncpy(buffer, &hexCode[4], 2);
-    color.b = (float)strtol(buffer, NULL, 16);
-
-    // If parameter has also an alpha channel given
-    if (length == 8)
-    {
-        strncpy(buffer, &hexCode[6], 2);
-        color.a = (float)strtol(buffer, NULL, 16);
-    }
-    else
-    {
-        color.a = 255;
-    }
-
-    // printf("Generated HEX color: %.0f %.0f %.0f %.0f\n", color.r, color.g, color.b, color.a);
-    return color;
-}

@@ -6,9 +6,10 @@
 #include "terminal_colors.h"
 
 #include "../lib/clay/clay.h"
-#include "../lib/clay/renderers/raylib/clay_renderer_raylib.c"
 #include "gui.h"
 #include "../lib/watcher/watcher-c.h"
+extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
+JSModuleDef *js_init_module_gui(JSContext *ctx, const char *module_name);
 
 char *scriptName = "js/test.js";
 JSRuntime *rt;
@@ -34,6 +35,7 @@ int main()
     int windowWidth = 600;
     int windowHeight = 300;
     Font *fonts = gui_init(windowWidth, windowHeight);
+    js_init_module_gui(ctx, "GUI");
 
     char *rawJS = LoadFileText(scriptName);
     JSValue ret = JS_Eval(ctx, rawJS, strlen(rawJS), scriptName, JS_EVAL_TYPE_MODULE);

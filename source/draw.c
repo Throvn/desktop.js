@@ -16,7 +16,7 @@ void renderChildren(struct DOMNode *node)
 /// @param node
 void GUI_RenderGroup(struct DOMNode *node)
 {
-    int num_keys;
+    unsigned int num_keys;
     JSPropertyEnum *keys;
     int success = JS_GetOwnPropertyNames(node->ctx, &keys, &num_keys, node->properties, JS_GPN_STRING_MASK | JS_GPN_ENUM_ONLY);
     if (success != 0)

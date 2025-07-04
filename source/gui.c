@@ -168,7 +168,7 @@ static void initGuiClasses(JSContext *ctx)
 {
     JS_NewClassID(&js_element_class_id);
     JS_NewClass(JS_GetRuntime(ctx), js_element_class_id, &js_element_class);
-
+    printf("initGuiClasses\n");
     // TODO: Add Component class (similar to React.Component)
 }
 
@@ -236,10 +236,6 @@ void gui_deinit(Font *fonts)
 
 Clay_RenderCommandArray gui_create_render_tree()
 {
-    const Clay_Color COLOR_LIGHT = (Clay_Color){224, 215, 210, 255};
-    const Clay_Color COLOR_RED = (Clay_Color){168, 66, 28, 255};
-    const Clay_Color COLOR_ORANGE = (Clay_Color){225, 138, 50, 255};
-
     Clay_BeginLayout();
 
     if (rootElement == NULL)

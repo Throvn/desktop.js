@@ -1,5 +1,9 @@
-import * as React from "./build/libgui.so";
+import * as GUI from "GUI";
+console.log(GUI);
+// import * as React from "./build/libgui.so"
 console.log("JSX test started...");
+console.log("HELLO", globalThis);
+console.log("Bye");
 // const test = "hello";
 // ===============
 // class MyComponent extends React.Component {
@@ -14,33 +18,29 @@ var MyComponent = /** @class */ (function () {
     MyComponent.prototype.render = function () {
         print("called render()");
         var a = "variable how fucking cool is that?";
-        return React.createElement("text", { id: "container", width: 120 },
+        return GUI.createElement("text", { id: "container", width: 120 },
             "String",
             a);
     };
     return MyComponent;
 }());
-React.render(React.createElement("group", { "$backgroundColor": "#000000f0" },
-    React.createElement("hStack", { "$padding": 10 },
-        React.createElement("group", { "$backgroundColor": "#0000ff6f", "$padding": 10 },
-            React.createElement("text", { "$backgroundColor": "#00ff00" }, "About Me"),
-            React.createElement("spacer", null),
-            React.createElement("text", null, "Another String"),
-            React.createElement("spacer", null),
+GUI.render(GUI.createElement("group", { "$backgroundColor": "#000000f0" },
+    GUI.createElement("hStack", { "$padding": 10 },
+        GUI.createElement("group", { "$backgroundColor": "#0000ff6f", "$padding": 10 },
+            GUI.createElement("text", { "$backgroundColor": "#00ff00" }, "About Me"),
+            GUI.createElement("spacer", null),
+            GUI.createElement("text", null, "Another String"),
+            GUI.createElement("spacer", null),
             "Go and hire me!")),
-    React.createElement("vStack", { "$backgroundColor": "green", "$padding": { horizontal: 100 }, "$hello": "aaaa", id: "parentDiv" },
-        React.createElement("spacer", null),
+    GUI.createElement("vStack", { "$backgroundColor": "green", "$padding": { horizontal: 100 }, "$hello": "aaaa", id: "parentDiv" },
+        GUI.createElement("spacer", null),
         "This is a test!:::::::::::::::::::::::::::::::::::::::::::::::::::::::",
-        React.createElement("spacer", null),
-        React.createElement(MyComponent, { "$padding": { left: 12 } }),
+        GUI.createElement("spacer", null),
+        GUI.createElement(MyComponent, { "$padding": { left: 12 } }),
         "This is a test!",
-        React.createElement("spacer", null))));
+        GUI.createElement("spacer", null))));
 setInterval(function () {
     print("After render...");
-    //     print("Interval")
-    // }, 3000)
-    // print(test, JSON.stringify(new MyComponent().render()))
-});
-//     print("Interval")
-// }, 3000)
+    print("Interval");
+}, 3000);
 // print(test, JSON.stringify(new MyComponent().render()))
