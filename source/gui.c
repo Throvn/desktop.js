@@ -221,7 +221,7 @@ Font *gui_init(int width, int height)
     Clay_Initialize(arena, (Clay_Dimensions){width, height}, (Clay_ErrorHandler){HandleClayErrors});
 
     Font *fonts = malloc(sizeof(Font[1]));
-    fonts[0] = LoadFontEx("./lib/clay/examples/raylib-multi-context/resources/Roboto-Regular.ttf", 48, 0, 0);
+    fonts[0] = LoadFontEx("../assets/fonts/Roboto-Regular.ttf", 48, 0, 0);
     SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
     Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
 
