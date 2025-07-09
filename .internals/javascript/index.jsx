@@ -32,7 +32,7 @@ GUI.render(<group $backgroundColor="#000000f0">
         <group
             $backgroundColor="#0000ff6f"
             $padding={10}
-            $fontSize={50}
+            $fontSize={30}
             $color="tomato">
             <text $backgroundColor="#00ff00">About Me</text>
             <spacer />
@@ -45,6 +45,7 @@ GUI.render(<group $backgroundColor="#000000f0">
         $backgroundColor="green"
         $padding={{ horizontal: 100 }}
         $hello={"aaaa"}
+        $color="blue"
         id="parentDiv">
         <spacer />
         This is a test!

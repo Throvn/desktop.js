@@ -119,6 +119,15 @@ void GUI_RenderString(struct DOMNode *node)
     Clay_String clayString = {.chars = str, .length = strlen(str)};
 
     DOMStyles *styles = node->styles;
+
+    // When a plain JSX string is used directly, give it base styles.
+    if (styles == NULL)
+    {
+        styles = &(DOMStyles){
+            .color = {0, 0, 0, 255},
+            .fontSize = 12};
+    }
+
     CLAY((Clay_ElementDeclaration){
         .layout = {
             .sizing = {
@@ -129,15 +138,12 @@ void GUI_RenderString(struct DOMNode *node)
     })
     {
 
-        if (styles != NULL)
-        {
-            uint16_t fontSize = styles->fontSize > 0 ? styles->fontSize : 12;
-            int hasColor = 0 <= (styles->color.a + styles->color.b + styles->color.g + styles->color.r);
-            CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
-                                      .fontSize = fontSize,
-                                      .textColor = hasColor ? styles->color : (Clay_Color){0, 0, 0, 255},
-                                  }));
-        }
+        uint16_t fontSize = styles->fontSize > 0 ? styles->fontSize : 12;
+        int hasColor = 0 <= (styles->color.a + styles->color.b + styles->color.g + styles->color.r);
+        CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
+                                  .fontSize = fontSize,
+                                  .textColor = hasColor ? styles->color : (Clay_Color){0, 0, 0, 255},
+                              }));
     }
 }
 
