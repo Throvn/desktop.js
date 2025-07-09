@@ -101,14 +101,17 @@ DOMStyles *getAllStyles(struct DOMNode *node)
     // Get list of all properties of the current node
     int num_keys;
     JSPropertyEnum *keys;
+    DOMStyles *styles = calloc(1, sizeof(DOMStyles));
     int success = JS_GetOwnPropertyNames(node->ctx, &keys, &num_keys, node->properties, JS_GPN_STRING_MASK | JS_GPN_ENUM_ONLY);
     if (success != 0)
     {
         fprintf(stderr, "[Error] Could not get property names for %s %d\n", node->type, node->key);
-        exit(3);
+        return styles;
     }
 
-    DOMStyles *styles = calloc(1, sizeof(DOMStyles));
+    // Negative color means no color was set!
+    styles->color = (Clay_Color){-1, -1, -1, -1};
+
     for (int i = 0; i < num_keys; i++)
     {
         JSPropertyEnum key = keys[i];
@@ -126,6 +129,18 @@ DOMStyles *getAllStyles(struct DOMNode *node)
         else if (0 == strcmp(keyStr, "$padding"))
         {
             styles->padding = parsePadding(node->ctx, propValue);
+        }
+        else if (0 == strcmp(keyStr, "$color"))
+        {
+            char *str = JS_ToCString(node->ctx, propValue);
+            styles->color = parseColor(str);
+            JS_FreeCString(node->ctx, str);
+        }
+        else if (0 == strcmp(keyStr, "$fontSize"))
+        {
+            int32_t fontSize;
+            int status = JS_ToInt32(node->ctx, &fontSize, propValue);
+            styles->fontSize = (uint16_t)fontSize;
         }
     }
     JS_FreePropertyEnum(node->ctx, keys, num_keys);

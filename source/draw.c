@@ -118,6 +118,7 @@ void GUI_RenderString(struct DOMNode *node)
     char *str = JS_ToCString(node->ctx, jsString);
     Clay_String clayString = {.chars = str, .length = strlen(str)};
 
+    DOMStyles *styles = node->styles;
     CLAY((Clay_ElementDeclaration){
         .layout = {
             .sizing = {
@@ -127,10 +128,16 @@ void GUI_RenderString(struct DOMNode *node)
         },
     })
     {
-        CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
-                                  .fontSize = 24,
-                                  .textColor = {255, 0, 0, 255},
-                              }));
+
+        if (styles != NULL)
+        {
+            uint16_t fontSize = styles->fontSize > 0 ? styles->fontSize : 12;
+            int hasColor = 0 <= (styles->color.a + styles->color.b + styles->color.g + styles->color.r);
+            CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
+                                      .fontSize = fontSize,
+                                      .textColor = hasColor ? styles->color : (Clay_Color){0, 0, 0, 255},
+                                  }));
+        }
     }
 }
 
@@ -138,6 +145,13 @@ void GUI_RenderText(struct DOMNode *node)
 {
 
     DOMStyles *styles = node->styles;
+    for (int i = 0; i < node->num_descendants; i++)
+    {
+        if (0 == strcmp("string", node->descendants[i]->type))
+        {
+            node->descendants[i]->styles = node->styles;
+        }
+    }
     CLAY((Clay_ElementDeclaration){
         .backgroundColor = styles->backgroundColor,
         .layout = {

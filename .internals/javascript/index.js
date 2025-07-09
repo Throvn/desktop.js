@@ -26,10 +26,10 @@ var MyComponent = /** @class */ (function () {
 }());
 GUI.render(GUI.createElement("group", { "$backgroundColor": "#000000f0" },
     GUI.createElement("hStack", { "$padding": 10 },
-        GUI.createElement("group", { "$backgroundColor": "#0000ff6f", "$padding": 10 },
+        GUI.createElement("group", { "$backgroundColor": "#0000ff6f", "$padding": 10, "$fontSize": 50, "$color": "tomato" },
             GUI.createElement("text", { "$backgroundColor": "#00ff00" }, "About Me"),
             GUI.createElement("spacer", null),
-            GUI.createElement("text", null, "Another String"),
+            GUI.createElement("text", { "$fontSize": 20, "$color": "#ff00ff" }, "Another String"),
             GUI.createElement("spacer", null),
             "Go and hire me!")),
     GUI.createElement("vStack", { "$backgroundColor": "green", "$padding": { horizontal: 100 }, "$hello": "aaaa", id: "parentDiv" },

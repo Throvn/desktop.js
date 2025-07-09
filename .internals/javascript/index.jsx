@@ -31,10 +31,12 @@ GUI.render(<group $backgroundColor="#000000f0">
     <hStack $padding={10}>
         <group
             $backgroundColor="#0000ff6f"
-            $padding={10}>
+            $padding={10}
+            $fontSize={50}
+            $color="tomato">
             <text $backgroundColor="#00ff00">About Me</text>
             <spacer />
-            <text>Another String</text>
+            <text $fontSize={20} $color="#ff00ff">Another String</text>
             <spacer />
             Go and hire me!
         </group>
