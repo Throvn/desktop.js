@@ -140,9 +140,11 @@ void GUI_RenderString(struct DOMNode *node)
 
         uint16_t fontSize = styles->fontSize > 0 ? styles->fontSize : 12;
         int hasColor = 0 <= (styles->color.a + styles->color.b + styles->color.g + styles->color.r);
+        uint16_t letterSpacing = styles->letterSpacing;
         CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
                                   .fontSize = fontSize,
                                   .textColor = hasColor ? styles->color : (Clay_Color){0, 0, 0, 255},
+                                  .letterSpacing = letterSpacing,
                               }));
     }
 }

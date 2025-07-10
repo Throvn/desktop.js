@@ -70,10 +70,11 @@ This has two advantages:
 
 | Property Name    | Property Type                                                                                                         | Examples                                     | Description                                                                                                                                                                 |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| $backgroundColor | `string`                                                                                                              | `#aabbcc`, `#00ff00ff`, `tomato`             | Supported color types are: HTML Colors or hex colors with or without an alpha value                                                                                         |
+| $backgroundColor | `string`                                                                                                              | `#aabbcc`, `"#00ff00ff"`, `"tomato"`         | Supported color types are: HTML Colors or hex colors with or without an alpha value                                                                                         |
 | $padding         | `integer` \| `{horizontal?: number; vertical?: number; left?: number; right?: number; top?: number; bottom?: number}` | `34`, `{vertical: 12}`, `{top: 6, left: 12}` | If passed a single number, padding applies to **all** sides, otherwise only what is specified. Numer is a 16bit integer. If this doesn't suffice, you are truly a maniac^^. |
-| $fontSize        | `integer`                                                                                                             | `0` \| `100` \| `12`                         | Font size is generally thought of as `x pixels tall`. Default is 12 (pixels tall).                                                                                          |
-| $color           | `string`                                                                                                              | `#aabbcc`, `#00ff00ff`, `tomato`             | Applied to `<text>`. Supported color types are: HTML Colors or hex colors with or without an alpha value                                                                    |
+| $fontSize        | `unsigned integer`                                                                                                    | `0` \| `100` \| `12`                         | Font size is generally thought of as `x pixels tall`. Default is 12 (pixels tall).                                                                                          |
+| $color           | `string`                                                                                                              | `#aabbcc`, `"#00ff00ff"`, `"tomato"`         | Applied to `<text>`. Supported color types are: HTML Colors or hex colors with or without an alpha value.                                                                   |
+| $letterSpacing   | `unsigned integer`                                                                                                    | `0` \| `1234`                                | Results in **horizontal** whitespace between the individual characters.                                                                                                     |
 
 ### Built in Components
 
@@ -140,3 +141,4 @@ The default font size is 12px tall and the default color is black.
 - `$padding`
 - `$color`
 - `$fontSize`
+- `$letterSpacing`

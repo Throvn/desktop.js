@@ -13,6 +13,7 @@ typedef struct DOMStyles
     Clay_Padding padding;
     Clay_Color color;
     uint16_t fontSize;
+    uint16_t letterSpacing;
 } DOMStyles;
 
 struct DOMNode

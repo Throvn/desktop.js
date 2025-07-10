@@ -142,6 +142,17 @@ DOMStyles *getAllStyles(struct DOMNode *node)
             int status = JS_ToInt32(node->ctx, &fontSize, propValue);
             styles->fontSize = (uint16_t)fontSize;
         }
+        else if (0 == strcmp(keyStr, "$letterSpacing"))
+        {
+            int32_t letterSpacing;
+            int status = JS_ToInt32(node->ctx, &letterSpacing, propValue);
+            // Don't allow negative values.
+            if (letterSpacing < 0)
+            {
+                letterSpacing = 1;
+            }
+            styles->letterSpacing = (uint16_t)letterSpacing;
+        }
     }
     JS_FreePropertyEnum(node->ctx, keys, num_keys);
 

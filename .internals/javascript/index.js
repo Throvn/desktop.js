@@ -18,7 +18,7 @@ var MyComponent = /** @class */ (function () {
     MyComponent.prototype.render = function () {
         print("called render()");
         var a = "variable how fucking cool is that?";
-        return GUI.createElement("text", { id: "container", width: 120 },
+        return GUI.createElement("text", { id: "container", width: 120, "$letterSpacing": 10 },
             "String",
             a);
     };

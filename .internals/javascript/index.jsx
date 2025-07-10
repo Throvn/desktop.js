@@ -21,7 +21,7 @@ class MyComponent {
     render() {
         print("called render()")
         let a = "variable how fucking cool is that?"
-        return <text id="container" width={120}>
+        return <text id="container" width={120} $letterSpacing={10}>
             String
             {a}
         </text>;
