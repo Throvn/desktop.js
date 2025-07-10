@@ -1,5 +1,5 @@
 import * as GUI from "GUI";
-console.log(GUI);
+import * as os from "os";
 // import * as React from "./build/libgui.so"
 console.log("JSX test started...");
 console.log("HELLO", globalThis);
@@ -24,6 +24,23 @@ var MyComponent = /** @class */ (function () {
     };
     return MyComponent;
 }());
+print(os);
+os.setTimeout(function () {
+    print("After render...");
+    print("Interval");
+}, 5000);
+os.setTimeout(function () {
+    print("Exiting JS...");
+}, 3000);
+var i = 0;
+function changeColor() {
+    i++;
+    var colors = ["tomato", "red", "blue", "green", "yellow", "brown", "grey"];
+    GUI.render(GUI.createElement("text", { "$backgroundColor": colors[(i + 2) % colors.length], "$color": colors[i % colors.length] }, "Rendered after Timeout!"));
+    os.setTimeout(changeColor, 100);
+}
+os.setTimeout(changeColor, 3000);
+// print(test, JSON.stringify(new MyComponent().render()))
 GUI.render(GUI.createElement("group", { "$backgroundColor": "#000000f0" },
     GUI.createElement("hStack", { "$padding": 10 },
         GUI.createElement("group", { "$backgroundColor": "#0000ff6f", "$padding": 10, "$fontSize": 30, "$color": "tomato" },
@@ -39,8 +56,3 @@ GUI.render(GUI.createElement("group", { "$backgroundColor": "#000000f0" },
         GUI.createElement(MyComponent, { "$padding": { left: 12 } }),
         "This is a test!",
         GUI.createElement("spacer", null))));
-setInterval(function () {
-    print("After render...");
-    print("Interval");
-}, 3000);
-// print(test, JSON.stringify(new MyComponent().render()))

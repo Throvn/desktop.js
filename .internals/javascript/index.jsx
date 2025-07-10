@@ -1,5 +1,5 @@
 import * as GUI from "GUI"
-console.log(GUI)
+import * as os from "os"
 // import * as React from "./build/libgui.so"
 console.log("JSX test started...")
 console.log("HELLO", globalThis)
@@ -27,6 +27,28 @@ class MyComponent {
         </text>;
     }
 }
+
+print(os)
+os.setTimeout(() => {
+    print("After render...")
+    print("Interval")
+}, 5000)
+os.setTimeout(() => {
+    print("Exiting JS...")
+
+}, 3000)
+
+let i = 0;
+function changeColor() {
+    i++;
+    const colors = ["tomato", "red", "blue", "green", "yellow", "brown", "grey"];
+    GUI.render(<text $backgroundColor={colors[(i + 2) % colors.length]} $color={colors[i % colors.length]}>Rendered after Timeout!</text>)
+    os.setTimeout(changeColor, 100)
+}
+os.setTimeout(changeColor, 3000)
+
+
+// print(test, JSON.stringify(new MyComponent().render()))
 GUI.render(<group $backgroundColor="#000000f0">
     <hStack $padding={10}>
         <group
@@ -55,9 +77,3 @@ GUI.render(<group $backgroundColor="#000000f0">
         <spacer />
     </vStack>
 </group>)
-setInterval(() => {
-    print("After render...")
-    print("Interval")
-}, 3000)
-
-// print(test, JSON.stringify(new MyComponent().render()))

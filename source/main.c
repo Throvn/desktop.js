@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "../lib/quickjs/quickjs.h"
+#include "../lib/quickjs/quickjs-libc.h"
 #include "../lib/minnet-quickjs/minnet.h"
 #include "../lib/raylib/src/raylib.h"
 #include "engine.h"
@@ -83,6 +84,7 @@ CliArgs args_init(int argc, char *argv[])
     return args;
 }
 
+extern int js_os_poll(JSContext *ctx);
 int main(int argc, char *argv[])
 {
     printf("djs v0.1.0\n");
@@ -130,6 +132,8 @@ int main(int argc, char *argv[])
         ClearBackground(BLACK);
         Clay_Raylib_Render(renderCommands, fonts);
         EndDrawing();
+
+        js_os_poll(ctx);
 
         if (engine_exception_handled(ctx))
         {

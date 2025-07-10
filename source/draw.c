@@ -45,7 +45,6 @@ void GUI_RenderGroup(struct DOMNode *node)
             {
                 JSValue groupPropValue = JS_GetProperty(node->ctx, node->properties, key.atom);
                 success = JS_SetProperty(desc->ctx, desc->properties, key.atom, groupPropValue);
-                printf("Property success: %d\n", success);
                 if (success != 1)
                 {
                     printf("[Warning] could not set property in group to %s\n", keyStr);
