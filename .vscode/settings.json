@@ -15,5 +15,6 @@
     "styles.h": "c",
     "colors.h": "c",
     "dmon_extra.h": "c"
-  }
+  },
+  "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }
