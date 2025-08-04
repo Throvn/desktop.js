@@ -39,12 +39,14 @@ function changeColor() {
     GUI.render(GUI.createElement("text", { "$backgroundColor": colors[(i + 2) % colors.length], "$color": colors[i % colors.length] }, "Rendered after Timeout!"));
     os.setTimeout(changeColor, 100);
 }
-os.setTimeout(changeColor, 3000);
+// os.setTimeout(changeColor, 30000)
 // print(test, JSON.stringify(new MyComponent().render()))
 GUI.render(GUI.createElement("group", { "$backgroundColor": "#000000f0" },
     GUI.createElement("hStack", { "$padding": 10 },
         GUI.createElement("group", { "$backgroundColor": "#0000ff6f", "$padding": 10, "$fontSize": 30, "$color": "tomato" },
-            GUI.createElement("text", { "$backgroundColor": "#00ff00" }, "About Me"),
+            GUI.createElement("text", { "$backgroundColor": "#00ff00", onMouseOver: function (event) {
+                    print("Called mouse over: ", event);
+                } }, "About Me"),
             GUI.createElement("spacer", null),
             GUI.createElement("text", { "$fontSize": 20, "$color": "#ff00ff" }, "Another String"),
             GUI.createElement("spacer", null),

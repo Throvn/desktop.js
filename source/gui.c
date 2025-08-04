@@ -43,7 +43,7 @@ static struct DOMNode *createStringNode(JSContext *ctx, JSValue string)
     struct DOMNode *node = calloc(1, sizeof(struct DOMNode));
     node->ctx = ctx;
     node->type = "string";
-    node->key = rand();
+    node->key = CLAY_IDI("", rand());
     node->properties = prop;
 
     return node;
@@ -132,7 +132,7 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
     JS_SetPropertyStr(ctx, ret, "props", JS_DupValue(ctx, props));
 
     domNode->type = strdup(componentName);
-    domNode->key = key;
+    domNode->key = CLAY_IDI("", key);
     domNode->num_descendants = num_descendants;
     domNode->descendants = descendants;
 

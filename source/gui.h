@@ -19,7 +19,7 @@ typedef struct DOMStyles
 struct DOMNode
 {
     char *type;
-    int key;
+    Clay_ElementId key;
     size_t num_descendants;
     struct DOMNode **descendants;
 

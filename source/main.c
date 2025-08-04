@@ -125,6 +125,9 @@ int main(int argc, char *argv[])
     while (!WindowShouldClose())
     {
         Clay_SetLayoutDimensions((Clay_Dimensions){GetScreenWidth() * scaleX, GetScreenHeight() * scaleY});
+        int isMouseDown = IsMouseButtonDown(0);
+        Vector2 mousePosition = GetMousePosition();
+        Clay_SetPointerState((Clay_Vector2){mousePosition.x, mousePosition.y}, isMouseDown);
 
         Clay_RenderCommandArray renderCommands = gui_create_render_tree();
 

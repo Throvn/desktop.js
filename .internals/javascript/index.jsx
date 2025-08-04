@@ -45,7 +45,7 @@ function changeColor() {
     GUI.render(<text $backgroundColor={colors[(i + 2) % colors.length]} $color={colors[i % colors.length]}>Rendered after Timeout!</text>)
     os.setTimeout(changeColor, 100)
 }
-os.setTimeout(changeColor, 3000)
+// os.setTimeout(changeColor, 30000)
 
 
 // print(test, JSON.stringify(new MyComponent().render()))
@@ -56,7 +56,9 @@ GUI.render(<group $backgroundColor="#000000f0">
             $padding={10}
             $fontSize={30}
             $color="tomato">
-            <text $backgroundColor="#00ff00">About Me</text>
+            <text $backgroundColor="#00ff00" onMouseOver={(event) => {
+                print("Called mouse over: ", event)
+            }}>About Me</text>
             <spacer />
             <text $fontSize={20} $color="#ff00ff">Another String</text>
             <spacer />

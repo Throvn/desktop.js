@@ -84,6 +84,7 @@ void GUI_RenderStack(struct DOMNode *node, char direction)
 
     DOMStyles *styles = node->styles;
     CLAY((Clay_ElementDeclaration){
+        .id = node->key,
         .backgroundColor = styles->backgroundColor,
         .layout = {
             .layoutDirection = dir,
@@ -160,6 +161,7 @@ void GUI_RenderText(struct DOMNode *node)
         }
     }
     CLAY((Clay_ElementDeclaration){
+        .id = node->key,
         .backgroundColor = styles->backgroundColor,
         .layout = {
             .padding = styles->padding,
@@ -172,12 +174,49 @@ void GUI_RenderText(struct DOMNode *node)
     }
 }
 
+int fireMouseEvents(struct DOMNode *node)
+{
+    if (!Clay_PointerOver(node->key))
+    {
+        return 0;
+    }
+
+    JSValue mouseOverValue = JS_GetPropertyStr(node->ctx, node->properties, "onMouseOver");
+    if (!JS_IsFunction(node->ctx, mouseOverValue))
+    {
+        return 0;
+    }
+
+    JSValue mouseEvent = JS_NewObject(node->ctx);
+
+    // Add altKey property
+    int isAltKeyPressed = IsKeyPressed(KEY_LEFT_ALT | KEY_RIGHT_ALT);
+    JSValue isAltKeyPressedJSValue = JS_NewBool(node->ctx, isAltKeyPressed);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "altKey", isAltKeyPressedJSValue);
+
+    // Add coordinates
+    Vector2 screenMousePosition = GetMousePosition();
+    JSValue xScreenCoordinate = JS_NewInt32(node->ctx, screenMousePosition.x);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "screenX", xScreenCoordinate);
+    JSValue yScreenCoordinate = JS_NewInt32(node->ctx, screenMousePosition.y);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "screenY", yScreenCoordinate);
+
+    JS_Call(node->ctx, mouseOverValue, mouseOverValue, 1, &mouseEvent);
+
+    JS_FreeValue(node->ctx, xScreenCoordinate);
+    JS_FreeValue(node->ctx, mouseEvent);
+
+    return 1;
+}
+
 int renderElement(struct DOMNode *node)
 {
     if (node == NULL)
     {
         return 1;
     }
+
+    fireMouseEvents(node);
 
     char *type = node->type;
 
