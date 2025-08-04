@@ -190,7 +190,7 @@ int fireMouseEvents(struct DOMNode *node)
     JSValue mouseEvent = JS_NewObject(node->ctx);
 
     // Add altKey property
-    int isAltKeyPressed = IsKeyPressed(KEY_LEFT_ALT | KEY_RIGHT_ALT);
+    int isAltKeyPressed = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
     JSValue isAltKeyPressedJSValue = JS_NewBool(node->ctx, isAltKeyPressed);
     JS_SetPropertyStr(node->ctx, mouseEvent, "altKey", isAltKeyPressedJSValue);
 
