@@ -129,6 +129,7 @@ void GUI_RenderString(struct DOMNode *node)
     }
 
     CLAY((Clay_ElementDeclaration){
+        .id = node->key,
         .layout = {
             .sizing = {
                 CLAY_SIZING_FIT(),

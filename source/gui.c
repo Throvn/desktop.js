@@ -262,25 +262,22 @@ Clay_RenderCommandArray gui_create_render_tree()
     return renderCommands;
 }
 
-int fireMouseEvents(struct DOMNode *node)
+JSValue createMouseEvent(struct DOMNode *node)
 {
-    if (!Clay_PointerOver(node->key))
-    {
-        return 0;
-    }
-
-    JSValue mouseOverValue = JS_GetPropertyStr(node->ctx, node->properties, "onMouseOver");
-    if (!JS_IsFunction(node->ctx, mouseOverValue))
-    {
-        return 0;
-    }
-
     JSValue mouseEvent = JS_NewObject(node->ctx);
 
     // Add altKey property
     int isAltKeyPressed = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
     JSValue isAltKeyPressedJSValue = JS_NewBool(node->ctx, isAltKeyPressed);
     JS_SetPropertyStr(node->ctx, mouseEvent, "altKey", isAltKeyPressedJSValue);
+
+    int isShiftKeyPressed = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+    JSValue isShiftKeyPressedJSValue = JS_NewBool(node->ctx, isShiftKeyPressed);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "shiftKey", isShiftKeyPressedJSValue);
+
+    int isCtrlKeyPressed = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
+    JSValue isCtrlKeyPressedJSValue = JS_NewBool(node->ctx, isCtrlKeyPressed);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "ctrlKey", isCtrlKeyPressedJSValue);
 
     // Add coordinates
     Vector2 screenMousePosition = GetMousePosition();
@@ -289,12 +286,68 @@ int fireMouseEvents(struct DOMNode *node)
     JSValue yScreenCoordinate = JS_NewInt32(node->ctx, screenMousePosition.y);
     JS_SetPropertyStr(node->ctx, mouseEvent, "screenY", yScreenCoordinate);
 
-    JS_Call(node->ctx, mouseOverValue, mouseOverValue, 1, &mouseEvent);
+    return mouseEvent;
+}
 
-    JS_FreeValue(node->ctx, xScreenCoordinate);
+int fireMouseOver(struct DOMNode *node)
+{
+    Vector2 delta = GetMouseDelta();
+    if (0 == delta.x + delta.y)
+        return 0;
+
+    JSValue mouseOverValue = JS_GetPropertyStr(node->ctx, node->properties, "onMouseOver");
+    if (!JS_IsFunction(node->ctx, mouseOverValue))
+    {
+        return 0;
+    }
+
+    JSValue mouseEvent = createMouseEvent(node);
+    JS_Call(node->ctx, mouseOverValue, mouseOverValue, 1, &mouseEvent);
     JS_FreeValue(node->ctx, mouseEvent);
 
     return 1;
+}
+
+int fireMouseDown(struct DOMNode *node)
+{
+    static bool wasButtonPressed = false;
+    bool isButtonPressed = IsMouseButtonDown(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_MIDDLE);
+
+    // Check that a change in pressed occurred.
+    if (isButtonPressed == wasButtonPressed)
+        return 0;
+
+    wasButtonPressed = isButtonPressed;
+
+    // Check that the node is listening for this event.
+    JSValue mouseDownValue = JS_GetPropertyStr(node->ctx, node->properties, "onMouseDown");
+    if (!JS_IsFunction(node->ctx, mouseDownValue))
+    {
+        return 0;
+    }
+
+    printf("Was button pressed: %i \n", wasButtonPressed);
+
+    JSValue mouseEvent = createMouseEvent(node);
+
+    // Add which button was pressed
+    int button = IsMouseButtonDown(MOUSE_BUTTON_MIDDLE) ? 1 : (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) ? 2 : 0);
+    JSValue buttonValue = JS_NewInt32(node->ctx, button);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "button", buttonValue);
+
+    JS_Call(node->ctx, mouseDownValue, mouseDownValue, 1, &mouseEvent);
+    JS_FreeValue(node->ctx, mouseEvent);
+
+    return 1;
+}
+
+int fireMouseEvents(struct DOMNode *node)
+{
+    if (!Clay_PointerOver(node->key))
+        return 0;
+
+    fireMouseDown(node);
+    fireMouseOver(node);
 }
 
 struct DOMNode *findNodeByKey(struct DOMNode *root, Clay_ElementId key)
