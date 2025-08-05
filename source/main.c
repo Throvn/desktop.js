@@ -136,6 +136,7 @@ int main(int argc, char *argv[])
         Clay_Raylib_Render(renderCommands, fonts);
         EndDrawing();
 
+        gui_fire_events();
         js_os_poll(ctx);
 
         if (engine_exception_handled(ctx))

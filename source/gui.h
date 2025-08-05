@@ -42,4 +42,7 @@ Clay_RenderCommandArray gui_create_render_tree();
 
 JSModuleDef *JS_INIT_MODULE(JSContext *ctx, const char *module_name);
 
+/// @brief Calls all js events. E.g. onMouseOver for each element where the mouse is over.
+void gui_fire_events();
+
 #endif

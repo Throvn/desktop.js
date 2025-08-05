@@ -261,3 +261,74 @@ Clay_RenderCommandArray gui_create_render_tree()
     Clay_RenderCommandArray renderCommands = Clay_EndLayout();
     return renderCommands;
 }
+
+int fireMouseEvents(struct DOMNode *node)
+{
+    if (!Clay_PointerOver(node->key))
+    {
+        return 0;
+    }
+
+    JSValue mouseOverValue = JS_GetPropertyStr(node->ctx, node->properties, "onMouseOver");
+    if (!JS_IsFunction(node->ctx, mouseOverValue))
+    {
+        return 0;
+    }
+
+    JSValue mouseEvent = JS_NewObject(node->ctx);
+
+    // Add altKey property
+    int isAltKeyPressed = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
+    JSValue isAltKeyPressedJSValue = JS_NewBool(node->ctx, isAltKeyPressed);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "altKey", isAltKeyPressedJSValue);
+
+    // Add coordinates
+    Vector2 screenMousePosition = GetMousePosition();
+    JSValue xScreenCoordinate = JS_NewInt32(node->ctx, screenMousePosition.x);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "screenX", xScreenCoordinate);
+    JSValue yScreenCoordinate = JS_NewInt32(node->ctx, screenMousePosition.y);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "screenY", yScreenCoordinate);
+
+    JS_Call(node->ctx, mouseOverValue, mouseOverValue, 1, &mouseEvent);
+
+    JS_FreeValue(node->ctx, xScreenCoordinate);
+    JS_FreeValue(node->ctx, mouseEvent);
+
+    return 1;
+}
+
+struct DOMNode *findNodeByKey(struct DOMNode *root, Clay_ElementId key)
+{
+    if (root->key.id == key.id)
+    {
+        return root;
+    }
+
+    for (int i = 0; i < root->num_descendants; i++)
+    {
+        struct DOMNode *node = findNodeByKey(root->descendants[i], key);
+        if (node != NULL)
+            return node;
+    }
+
+    return NULL;
+}
+
+void gui_fire_events()
+{
+    if (rootElement == NULL)
+        return;
+
+    Clay_ElementIdArray ids = Clay_GetPointerOverIds();
+    if (ids.length < 1)
+        return;
+
+    for (int i = 0; i < ids.length; i++)
+    {
+        struct DOMNode *node = findNodeByKey(rootElement, ids.internalArray[i]);
+        if (node == NULL)
+            continue;
+
+        fireMouseEvents(node);
+    }
+}
