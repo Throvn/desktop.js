@@ -35,7 +35,7 @@ class MyComponent {
   }
 }
 
-React.render(<MyComponent />);
+GUI.render(<MyComponent />);
 ```
 
 We can see:
@@ -43,7 +43,7 @@ We can see:
 - It tries to mimic the same naming convention as React.js's class components (e.g. `render`)
 - Built in components start with lower case letters
 - Custom components start with upper case letters
-- The main entry point is `React.render()`. Only call it once in your entire app.
+- The main entry point is `GUI.render()`. Only call it once in your entire app.
 - The `<vStack />` borrows from SwiftUI, which puts all of its children from top to bottom
 - The `$gap` property (prop) is a style prop, applying 10 pixels of space between each of children.
 
