@@ -48,23 +48,75 @@ static struct DOMNode *createStringNode(JSContext *ctx, JSValue string)
 
     return node;
 }
-
-static JSValue createChildren(JSContext *ctx, int argc, JSValue argv[], struct DOMNode ***descendants)
+static JSValue createChildren(JSContext *ctx, int argc, JSValue argv[], struct DOMNode ***descendants_out)
 {
-    // Append Children to the tree.
     JSValue children = JS_NewArray(ctx);
-    *descendants = calloc(argc, sizeof(struct DOMNode *));
+
+    // Allocate a temporary buffer (we will realloc later)
+    int capacity = argc;
+    struct DOMNode **descendants = malloc(capacity * sizeof(struct DOMNode *));
+    int count = 0;
+    int childIndex = 0;
+
     for (int i = 0; i < argc; i++)
     {
-        // Assume descendant is another component
-        (*descendants)[i] = JS_GetOpaque(argv[i], js_element_class_id);
-        // If descendant is not another component assume it's a string
-        if ((*descendants)[i] == NULL)
-            (*descendants)[i] = createStringNode(ctx, argv[i]);
+        JSValue current = argv[i];
 
-        JS_SetPropertyUint32(ctx, children, i, JS_DupValue(ctx, argv[i]));
-    };
+        if (JS_IsArray(ctx, current))
+        {
+            JSValue lenValue = JS_GetPropertyStr(ctx, current, "length");
+            int arrLen = 0;
+            JS_ToInt32(ctx, &arrLen, lenValue);
+            JS_FreeValue(ctx, lenValue);
 
+            JSValue *arrContents = malloc(arrLen * sizeof(JSValue));
+            for (int j = 0; j < arrLen; j++)
+                arrContents[j] = JS_GetPropertyUint32(ctx, current, j);
+
+            struct DOMNode **nestedDescendants = NULL;
+            JSValue nestedChildren = createChildren(ctx, arrLen, arrContents, &nestedDescendants);
+
+            // Flatten returned JSValue array
+            for (int j = 0; j < arrLen; j++)
+            {
+                JSValue val = JS_GetPropertyUint32(ctx, nestedChildren, j);
+                JS_SetPropertyUint32(ctx, children, childIndex++, val);
+                JS_FreeValue(ctx, val); // cleanup temporary reference
+            }
+
+            // Merge nested descendants
+            for (int j = 0; j < arrLen; j++)
+            {
+                if (count >= capacity)
+                {
+                    capacity *= 2;
+                    descendants = realloc(descendants, capacity * sizeof(struct DOMNode *));
+                }
+                descendants[count++] = nestedDescendants[j];
+            }
+
+            free(arrContents);
+            free(nestedDescendants);
+            JS_FreeValue(ctx, nestedChildren);
+        }
+        else
+        {
+            struct DOMNode *node = JS_GetOpaque(current, js_element_class_id);
+            if (!node)
+                node = createStringNode(ctx, current);
+
+            if (count >= capacity)
+            {
+                capacity *= 2;
+                descendants = realloc(descendants, capacity * sizeof(struct DOMNode *));
+            }
+
+            descendants[count++] = node;
+            JS_SetPropertyUint32(ctx, children, childIndex++, JS_DupValue(ctx, current));
+        }
+    }
+
+    *descendants_out = descendants;
     return children;
 }
 
@@ -89,6 +141,7 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
     int num_descendants = argc - 2;
     struct DOMNode **descendants;
     struct JSValue children;
+
     if (JS_IsFunction(ctx, componentView))
     {
         // Call constructor of custom component
@@ -133,7 +186,11 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
 
     domNode->type = strdup(componentName);
     domNode->key = CLAY_IDI("", key);
-    domNode->num_descendants = num_descendants;
+
+    // Get the length of the flattened children:
+    JSValue new_num_descendants = JS_GetPropertyStr(ctx, children, "length");
+    JS_ToInt32(ctx, &domNode->num_descendants, new_num_descendants);
+
     domNode->descendants = descendants;
 
     domNode->ctx = ctx;
@@ -352,6 +409,9 @@ int fireMouseEvents(struct DOMNode *node)
 
 struct DOMNode *findNodeByKey(struct DOMNode *root, Clay_ElementId key)
 {
+    if (root == NULL)
+        return NULL;
+
     if (root->key.id == key.id)
     {
         return root;

@@ -28,60 +28,18 @@ class MyComponent {
     }
 }
 
-print(os)
-os.setTimeout(() => {
-    print("After render...")
-    print("Interval")
-}, 5000)
-os.setTimeout(() => {
-    print("Exiting JS...")
-
-}, 3000)
-
-let i = 0;
-function changeColor() {
-    i++;
-    const colors = ["tomato", "red", "blue", "green", "yellow", "brown", "grey"];
-    GUI.render(<text $backgroundColor={colors[(i + 2) % colors.length]} $color={colors[i % colors.length]}>Rendered after Timeout!</text>)
-    os.setTimeout(changeColor, 100)
-}
 // os.setTimeout(changeColor, 30000)
-
+const field = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+print(field)
+// const grid = field.map((v, i) => (<vStack $backgroundColor="red">A{i + j}</vStack>))
+// print(grid)
 
 // print(test, JSON.stringify(new MyComponent().render()))
-GUI.render(<group $backgroundColor="#000000f0">
-    <hStack $padding={10}>
-        <group
-            $backgroundColor="#0000ff6f"
-            $padding={10}
-            $fontSize={30}
-            onMouseOver={(event) => {
-                print("Called mouse over: ", event)
-            }}
-            $color="tomato">
-            <text
-                onMouseDown={(event) => {
-                    print("Called mouse down: ", event)
-                }}
-                $backgroundColor="#00ff00"
-            >About Me</text>
-            <spacer />
-            <text $fontSize={20} $color="#ff00ff">Another String</text>
-            <spacer />
-            Go and hire me!
-        </group>
-    </hStack>
-    <vStack
-        $backgroundColor="green"
-        $padding={{ horizontal: 100 }}
-        $hello={"aaaa"}
-        $color="blue"
-        id="parentDiv">
-        <spacer />
-        This is a test!
-        <spacer />
-        <MyComponent $padding={{ left: 12 }} />
-        This is a test!
-        <spacer />
-    </vStack>
-</group>)
+GUI.render((<vStack>
+    Hello
+
+    Bye
+
+    What
+    {field.map((v, i) => <text>Hello {"" + i + v}</text>)}
+</vStack>))
