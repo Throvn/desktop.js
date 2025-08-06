@@ -30,9 +30,8 @@ class MyComponent {
 
 // os.setTimeout(changeColor, 30000)
 const field = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-print(field)
-// const grid = field.map((v, i) => (<vStack $backgroundColor="red">A{i + j}</vStack>))
-// print(grid)
+const grid = field.map((v, i) => <hStack>{field.map((v, j) => (<vStack $backgroundColor="red">A {i + j}</vStack>))}</hStack>)
+print(grid)
 
 // print(test, JSON.stringify(new MyComponent().render()))
 GUI.render((<vStack>
@@ -41,5 +40,5 @@ GUI.render((<vStack>
     Bye
 
     What
-    {field.map((v, i) => <text>Hello {"" + i + v}</text>)}
+    {grid}
 </vStack>))

@@ -25,12 +25,11 @@ var MyComponent = /** @class */ (function () {
 }());
 // os.setTimeout(changeColor, 30000)
 var field = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-print(field);
-// const grid = field.map((v, i) => (<vStack $backgroundColor="red">A{i + j}</vStack>))
-// print(grid)
+var grid = field.map(function (v, i) { return GUI.createElement("hStack", null, field.map(function (v, j) { return (GUI.createElement("vStack", { "$backgroundColor": "red" },
+    "A ",
+    i + j)); })); });
+print(grid);
 // print(test, JSON.stringify(new MyComponent().render()))
 GUI.render((GUI.createElement("vStack", null,
     "Hello Bye What",
-    field.map(function (v, i) { return GUI.createElement("text", null,
-        "Hello ",
-        "" + i + v); }))));
+    grid)));

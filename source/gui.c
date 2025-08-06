@@ -33,7 +33,7 @@ static JSValue render(JSContext *ctx, JSValue this_func, int argc, JSValueConst 
 
 static struct DOMNode *createStringNode(JSContext *ctx, JSValue string)
 {
-    if (false == JS_IsString(string))
+    if (false == JS_IsString(string) && false == JS_IsNumber(string))
         return NULL;
 
     // Store the value of the string in the properties object.
