@@ -154,8 +154,8 @@ It tries to mimic the [MouseDown JS event](https://developer.mozilla.org/en-US/d
 
 ```jsx
 <text
-  onMouseOver={(event) => {
-    console.log("Mouse Over Event Called!");
+  onMouseDown={(event) => {
+    console.log("Mouse DOWN Event Called!");
   }}
 ></text>
 ```
@@ -179,7 +179,7 @@ It is called once per frame and tries to mimic the [MouseOver JS event](https://
 ```jsx
 <text
   onMouseOver={(event) => {
-    console.log("Mouse Over Event Called!");
+    console.log("Mouse OVER Event Called!");
   }}
 ></text>
 ```
