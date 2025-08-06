@@ -282,9 +282,9 @@ JSValue createMouseEvent(struct DOMNode *node)
     // Add coordinates
     Vector2 screenMousePosition = GetMousePosition();
     JSValue xScreenCoordinate = JS_NewInt32(node->ctx, screenMousePosition.x);
-    JS_SetPropertyStr(node->ctx, mouseEvent, "screenX", xScreenCoordinate);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "layerX", xScreenCoordinate);
     JSValue yScreenCoordinate = JS_NewInt32(node->ctx, screenMousePosition.y);
-    JS_SetPropertyStr(node->ctx, mouseEvent, "screenY", yScreenCoordinate);
+    JS_SetPropertyStr(node->ctx, mouseEvent, "layerY", yScreenCoordinate);
 
     return mouseEvent;
 }
@@ -312,21 +312,21 @@ int fireMouseDown(struct DOMNode *node)
 {
     static bool wasButtonPressed = false;
     bool isButtonPressed = IsMouseButtonDown(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_MIDDLE);
-
-    // Check that a change in pressed occurred.
-    if (isButtonPressed == wasButtonPressed)
+    if (wasButtonPressed == isButtonPressed)
         return 0;
 
     wasButtonPressed = isButtonPressed;
 
+    if (!isButtonPressed)
+        return 0;
+
     // Check that the node is listening for this event.
     JSValue mouseDownValue = JS_GetPropertyStr(node->ctx, node->properties, "onMouseDown");
+    printf("This is not a mouseDownValue %s\n", node->type);
     if (!JS_IsFunction(node->ctx, mouseDownValue))
-    {
         return 0;
-    }
 
-    printf("Was button pressed: %i \n", wasButtonPressed);
+    printf("Was button pressed: %i \n", isButtonPressed);
 
     JSValue mouseEvent = createMouseEvent(node);
 
@@ -376,7 +376,8 @@ void gui_fire_events()
     if (ids.length < 1)
         return;
 
-    for (int i = 0; i < ids.length; i++)
+    // Start from smallest node first (most nested element, gets mouse events first)
+    for (int i = ids.length; 0 <= i; i--)
     {
         struct DOMNode *node = findNodeByKey(rootElement, ids.internalArray[i]);
         if (node == NULL)

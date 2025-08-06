@@ -55,14 +55,14 @@ GUI.render(<group $backgroundColor="#000000f0">
             $backgroundColor="#0000ff6f"
             $padding={10}
             $fontSize={30}
-            onMouseDown={(event) => {
-                print("Called mouse down: ", event)
-            }}
             onMouseOver={(event) => {
                 print("Called mouse over: ", event)
             }}
             $color="tomato">
             <text
+                onMouseDown={(event) => {
+                    print("Called mouse down: ", event)
+                }}
                 $backgroundColor="#00ff00"
             >About Me</text>
             <spacer />
