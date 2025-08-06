@@ -45,4 +45,6 @@ JSModuleDef *JS_INIT_MODULE(JSContext *ctx, const char *module_name);
 /// @brief Calls all js events. E.g. onMouseOver or onMouseDown for each element where the mouse is over.
 void gui_fire_events();
 
+JSValue createChildren(JSContext *ctx, int argc, JSValue argv[], struct DOMNode ***descendants_out);
+
 #endif

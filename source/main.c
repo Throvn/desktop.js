@@ -129,14 +129,14 @@ int main(int argc, char *argv[])
         Vector2 mousePosition = GetMousePosition();
         Clay_SetPointerState((Clay_Vector2){mousePosition.x, mousePosition.y}, isMouseDown);
 
-        Clay_RenderCommandArray renderCommands = gui_create_render_tree();
+        gui_fire_events();
+        Clay_RenderCommandArray renderCommands = gui_create_render_tree(ctx);
 
         BeginDrawing();
         ClearBackground(BLACK);
         Clay_Raylib_Render(renderCommands, fonts);
         EndDrawing();
 
-        gui_fire_events();
         js_os_poll(ctx);
 
         if (engine_exception_handled(ctx))

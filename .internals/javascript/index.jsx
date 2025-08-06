@@ -9,6 +9,7 @@ console.log("Bye")
 
 // class MyComponent extends React.Component {
 class MyComponent {
+    layerX = -1;
     constructor(props) {
         this.props = props
         print("MyComponent constructor was called!")
@@ -18,22 +19,49 @@ class MyComponent {
         return true
     }
 
+    handleMouseMove = (event) => {
+        print(event);
+        this.layerX = event.layerX;
+    }
+
     render() {
-        print("called render()")
-        let a = "variable how fucking cool is that?"
-        return <text id="container" width={120} $letterSpacing={10}>
-            String
-            {a}
-        </text>;
+        // print("called render()")
+        return (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
+            <text
+                id="container"
+                width={120}
+                $letterSpacing={1}
+                $padding={20}
+                $backgroundColor="red">
+                ... {this.layerX}
+            </text>
+        </vStack>);
     }
 }
 
+class Player {
+    direction = {
+        x: 1,
+        y: 1,
+    }
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    move() {
+        this.x += this.direction.x;
+        this.y += this.direction.y;
+    }
+}
+
+const player = new Player(0, 0);
+
 // os.setTimeout(changeColor, 30000)
 const field = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const grid = field.map((v, i) => <hStack>{field.map((v, j) => (<vStack $backgroundColor="red">A {i + j}</vStack>))}</hStack>)
+let grid = field.map((v, i) => <hStack>{field.map((v, j) => (<text $lineHeight={120} $padding={8} $backgroundColor={i === player.x && j === player.y ? "red" : "black"}> A </text>))}</hStack>)
 print(grid)
 
-// print(test, JSON.stringify(new MyComponent().render()))
 GUI.render((<vStack>
     Hello
 
@@ -42,3 +70,19 @@ GUI.render((<vStack>
     What
     {grid}
 </vStack>))
+
+const gameLoop = () => {
+    player.move();
+    grid = field.map((v, i) => <hStack>{field.map((v, j) => (<text $lineHeight={120} $padding={8} $backgroundColor={i === player.x && j === player.y ? "red" : "black"}> A </text>))}</hStack>)
+    print("Moved");
+
+    os.setTimeout(gameLoop, 500);
+}
+
+// gameLoop()
+let evt = { layerX: -1 }
+GUI.render(
+    <MyComponent />
+)
+
+// print(test, JSON.stringify(new MyComponent().render()))

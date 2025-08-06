@@ -114,6 +114,9 @@ void GUI_RenderSpacer(struct DOMNode *node)
 
 void GUI_RenderString(struct DOMNode *node)
 {
+    if (node == NULL)
+        return;
+
     JSValue jsString = JS_GetPropertyStr(node->ctx, node->properties, "value");
     char *str = JS_ToCString(node->ctx, jsString);
     Clay_String clayString = {.chars = str, .length = strlen(str)};
@@ -156,6 +159,9 @@ void GUI_RenderText(struct DOMNode *node)
     DOMStyles *styles = node->styles;
     for (int i = 0; i < node->num_descendants; i++)
     {
+        if (node->descendants[i] == NULL)
+            continue;
+
         if (0 == strcmp("string", node->descendants[i]->type))
         {
             node->descendants[i]->styles = node->styles;
@@ -207,6 +213,22 @@ int renderElement(struct DOMNode *node)
     else if (0 == strcmp(type, "text"))
     {
         GUI_RenderText(node);
+    }
+    else if (0 == strncmp(type, "function", 8))
+    {
+        JSValue props = node->properties;
+        JSValue instance = JS_GetPropertyStr(node->ctx, props, "instance");
+
+        JSValue jsRenderFunction = JS_GetPropertyStr(node->ctx, instance, "render");
+        JSValue jsRenderReturn = JS_Call(node->ctx, jsRenderFunction, instance, 0, NULL);
+        JSValue elements[] = {jsRenderReturn};
+        struct DOMNode **descendants;
+        JSValue children = createChildren(node->ctx, 1, elements, &descendants);
+        node->descendants = descendants;
+
+        JS_SetPropertyStr(node->ctx, node->properties, "children", children);
+
+        renderChildren(node);
     }
     else
     {

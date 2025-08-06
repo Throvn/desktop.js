@@ -15,19 +15,20 @@
 
 static JSClassID js_element_class_id;
 
-static struct DOMNode *rootElement = NULL;
+static struct DOMNode *rootNode = NULL;
 
 static JSValue render(JSContext *ctx, JSValue this_func, int argc, JSValueConst argv[])
 {
     fprintf(stdout, "Starting render...\n");
 
-    struct DOMNode *potentialElement = JS_GetOpaque(argv[0], js_element_class_id);
-    if (potentialElement == NULL)
+    struct DOMNode *potentialNode = JS_GetOpaque(argv[0], js_element_class_id);
+    if (potentialNode == NULL)
     {
         fprintf(stderr, "[render] Could not find DOMNode from JS render value");
         exit(1);
     }
-    rootElement = potentialElement;
+
+    rootNode = potentialNode;
     return JS_TRUE;
 }
 
@@ -48,7 +49,8 @@ static struct DOMNode *createStringNode(JSContext *ctx, JSValue string)
 
     return node;
 }
-static JSValue createChildren(JSContext *ctx, int argc, JSValue argv[], struct DOMNode ***descendants_out)
+
+JSValue createChildren(JSContext *ctx, int argc, JSValue argv[], struct DOMNode ***descendants_out)
 {
     JSValue children = JS_NewArray(ctx);
 
@@ -131,7 +133,7 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
 {
     JSValueConst componentView = argv[0];
     char *componentName = JS_ToCString(ctx, componentView);
-    fprintf(stdout, "Wants to create a new %s\n", componentName);
+    // fprintf(stdout, "Wants to create a new %s\n", componentName);
 
     // Unique id to recognize this component.
     int key = rand();
@@ -147,6 +149,9 @@ static JSValue createElement(JSContext *ctx, JSValue this_val, int argc, JSValue
         // Call constructor of custom component
         JSValue propArray[] = {props};
         JSValue instance = JS_CallConstructor(ctx, componentView, 1, propArray);
+
+        // Add the instance to properties, so we can call the render functions repeatedly later on.
+        JS_SetPropertyStr(ctx, props, "instance", instance);
 
         // TODO: Register component and its functions and stuff.
 
@@ -291,11 +296,11 @@ void gui_deinit(Font *fonts)
     Clay_Raylib_Close();
 }
 
-Clay_RenderCommandArray gui_create_render_tree()
+Clay_RenderCommandArray gui_create_render_tree(JSContext *ctx)
 {
     Clay_BeginLayout();
 
-    if (rootElement == NULL)
+    if (rootNode == NULL)
     {
         return Clay_EndLayout();
     }
@@ -312,7 +317,10 @@ Clay_RenderCommandArray gui_create_render_tree()
         },
     })
     {
-        renderElement(rootElement);
+        if (rootNode != NULL)
+        {
+            renderElement(rootNode);
+        }
     }
 
     Clay_RenderCommandArray renderCommands = Clay_EndLayout();
@@ -429,7 +437,7 @@ struct DOMNode *findNodeByKey(struct DOMNode *root, Clay_ElementId key)
 
 void gui_fire_events()
 {
-    if (rootElement == NULL)
+    if (rootNode == NULL)
         return;
 
     Clay_ElementIdArray ids = Clay_GetPointerOverIds();
@@ -439,7 +447,7 @@ void gui_fire_events()
     // Start from smallest node first (most nested element, gets mouse events first)
     for (int i = ids.length; 0 <= i; i--)
     {
-        struct DOMNode *node = findNodeByKey(rootElement, ids.internalArray[i]);
+        struct DOMNode *node = findNodeByKey(rootNode, ids.internalArray[i]);
         if (node == NULL)
             continue;
 
