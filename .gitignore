@@ -1,3 +1,4 @@
 *.dSYM/
 .zig-cache
 .DS_Store
+.zig-cache
