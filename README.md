@@ -142,3 +142,53 @@ The default font size is 12px tall and the default color is black.
 - `$color`
 - `$fontSize`
 - `$letterSpacing`
+
+### Built in Event Listeners
+
+#### `onMouseDown`
+
+The mouse down event is called once a mouse button was pressed.
+It tries to mimic the [MouseDown JS event](https://developer.mozilla.org/en-US/docs/Web/API/Element/mousedown_event).
+
+##### Example
+
+```jsx
+<text
+  onMouseOver={(event) => {
+    console.log("Mouse Over Event Called!");
+  }}
+></text>
+```
+
+##### Event Props
+
+- `layerX` x position in pixels relative to the window.
+- `layerY` y position in pixels relative to the window.
+
+- `altKey` boolean indicating if the **alt key** was pressed.
+- `ctrlKey` boolean indicating if the **control key** was pressed.
+- `shiftKey` boolean indicating if the **shift key** was pressed.
+
+#### `onMouseOver`
+
+The mouse over event is called everytime the mouse moves on top of the element.
+It is called once per frame and tries to mimic the [MouseOver JS event](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event).
+
+##### Example
+
+```jsx
+<text
+  onMouseOver={(event) => {
+    console.log("Mouse Over Event Called!");
+  }}
+></text>
+```
+
+##### Event Props
+
+- `layerX` x position in pixels relative to the window.
+- `layerY` y position in pixels relative to the window.
+
+- `altKey` boolean indicating if the **alt key** was pressed.
+- `ctrlKey` boolean indicating if the **control key** was pressed.
+- `shiftKey` boolean indicating if the **shift key** was pressed.
