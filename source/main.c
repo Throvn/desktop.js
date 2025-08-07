@@ -27,16 +27,15 @@ int main(int argc, char **argv)
     TJSRuntime *qrt = TJS_NewRuntime();
     if (!qrt)
     {
-        CloseWindow();
         return 1;
     }
 
     pthread_t js_thread;
     pthread_create(&js_thread, NULL, js_start, qrt);
 
+    SetTraceLogLevel(LOG_ERROR);
     InitWindow(600, 300, "Test Window");
 
-    JSContext *ctx = TJS_GetJSContext(qrt);
     while (!WindowShouldClose())
     {
         BeginDrawing();

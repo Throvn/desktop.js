@@ -1,6 +1,6 @@
 run: main
 	DYLD_LIBRARY_PATH=build \
-	./djs-aarch64-macos run ./.internals/javascript/easy.js
+	./djs-aarch64-macos run ./.internals/javascript/index.js
 
 DEBUGGING := -g
 

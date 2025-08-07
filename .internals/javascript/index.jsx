@@ -1,18 +1,13 @@
 import * as GUI from "GUI"
-import * as os from "os"
-// import * as React from "./build/libgui.so"
 console.log("JSX test started...")
 console.log("HELLO", globalThis)
 console.log("Bye")
-// const test = "hello";
-// ===============
 
-// class MyComponent extends React.Component {
 class MyComponent {
     layerX = -1;
     constructor(props) {
         this.props = props
-        print("MyComponent constructor was called!")
+        console.log("MyComponent constructor was called!")
     }
 
     anotherFunc() {
@@ -20,12 +15,12 @@ class MyComponent {
     }
 
     handleMouseMove = (event) => {
-        print(event);
+        console.log(event);
         this.layerX = event.layerX;
     }
 
     render() {
-        // print("called render()")
+        // console.log("called render()")
         return (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
             <text
                 id="container"
@@ -57,32 +52,29 @@ class Player {
 
 const player = new Player(0, 0);
 
-// os.setTimeout(changeColor, 30000)
 const field = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 let grid = field.map((v, i) => <hStack>{field.map((v, j) => (<text $lineHeight={120} $padding={8} $backgroundColor={i === player.x && j === player.y ? "red" : "black"}> A </text>))}</hStack>)
-print(grid)
+console.log(grid)
 
-GUI.render((<vStack>
-    Hello
+// GUI.render((<vStack>
+//     Hello
 
-    Bye
+//     Bye
 
-    What
-    {grid}
-</vStack>))
+//     What
+//     {grid}
+// </vStack>))
 
 const gameLoop = () => {
     player.move();
     grid = field.map((v, i) => <hStack>{field.map((v, j) => (<text $lineHeight={120} $padding={8} $backgroundColor={i === player.x && j === player.y ? "red" : "black"}> A </text>))}</hStack>)
-    print("Moved");
+    console.log("Moved");
 
     os.setTimeout(gameLoop, 500);
 }
 
-// gameLoop()
-let evt = { layerX: -1 }
-GUI.render(
-    <MyComponent />
+console.log(
+    <MyComponent>
+        This is another test
+    </MyComponent>
 )
-
-// print(test, JSON.stringify(new MyComponent().render()))
