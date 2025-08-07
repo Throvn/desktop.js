@@ -1,160 +1,47 @@
+#include <pthread.h>
 #include <stdlib.h>
-#include "../lib/quickjs/quickjs.h"
-#include "../lib/quickjs/quickjs-libc.h"
-#include "../lib/minnet-quickjs/minnet.h"
 #include "../lib/raylib/src/raylib.h"
-#include "engine.h"
-#include "terminal_colors.h"
+#include "../lib/txiki.js/src/tjs.h"
 
 #include "../lib/clay/clay.h"
-#include "gui.h"
-
-#define DMON_IMPL
-#include "../lib/dmon/dmon.h"
-
-#if DMON_OS_LINUX
-#include "../lib/dmon/dmon_extra.h"
-#endif
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 JSModuleDef *js_init_module_gui(JSContext *ctx, const char *module_name);
 
-JSRuntime *rt;
-JSContext *ctx;
-
-static void watch_callback(dmon_watch_id watch_id, dmon_action action, const char *rootdir,
-                           const char *filepath, const char *oldfilepath, void *scriptPath)
+void *js_start(void *qrt)
 {
-    (void)(watch_id);
-
-    switch (action)
-    {
-    case DMON_ACTION_CREATE:
-        printf("CREATE: [%s]%s\n", rootdir, filepath);
-        break;
-    case DMON_ACTION_DELETE:
-        printf("DELETE: [%s]%s\n", rootdir, filepath);
-        break;
-    case DMON_ACTION_MODIFY:
-        printf("MODIFY: [%s]%s\n", rootdir, filepath);
-        break;
-    case DMON_ACTION_MOVE:
-        printf("MOVE: [%s]%s -> [%s]%s\n", rootdir, oldfilepath, rootdir, filepath);
-        break;
-    }
-
-    char *rawJS = LoadFileText(scriptPath);
-    JSValue ret = JS_Eval(ctx, rawJS, strlen(rawJS), scriptPath, JS_EVAL_TYPE_MODULE);
-    free(rawJS);
-    if (engine_exception_handled(ctx))
-    {
-        JS_FreeValue(ctx, ret);
-        exit(3);
-    }
-    JS_FreeValue(ctx, ret);
+    TJS_Run(qrt);
 }
 
-typedef struct
+int main(int argc, char **argv)
 {
-    char *program;
-    int isRun;
-    int isWatch;
-    int isHelp;
-    char *path;
-} CliArgs;
 
-CliArgs args_init(int argc, char *argv[])
-{
-    CliArgs args = {0};
-    if (argc <= 0)
-        return args;
+    TJS_Initialize(argc, argv);
 
-    args.program = argv[0];
-    if (argc > 1)
+    TJSRuntime *qrt = TJS_NewRuntime();
+    if (!qrt)
     {
-        args.isRun = 0 == strcmp(argv[1], "run");
-        args.isWatch = 0 == strcmp(argv[1], "watch");
-        args.isHelp = 0 == strcmp(argv[1], "help");
-    }
-    if (argc > 2)
-    {
-        char *path = realpath(argv[2], NULL);
-        args.path = path;
-    }
-    return args;
-}
-
-extern int js_os_poll(JSContext *ctx);
-int main(int argc, char *argv[])
-{
-    printf("djs v0.1.0\n");
-    CliArgs args = args_init(argc, argv);
-
-    if (args.path == NULL)
-    {
-        printf("Note: djs run <path> | Runs in prod. mode\n");
-        printf("Note: djs watch <path> | Runs live reload mode\n");
-        printf("Note: The path parameter is the project root path\n");
+        CloseWindow();
         return 1;
     }
 
-    engine_init(&rt, &ctx);
+    pthread_t js_thread;
+    pthread_create(&js_thread, NULL, js_start, qrt);
 
-    int windowWidth = 600;
-    int windowHeight = 300;
-    Font *fonts = gui_init(windowWidth, windowHeight);
-    js_init_module_gui(ctx, "GUI");
+    InitWindow(600, 300, "Test Window");
 
-    char *scriptPath = args.path;
-
-    char *totalPath = malloc(strlen(scriptPath) + strlen("/.internals/javascript/index.js"));
-    strcpy(totalPath, scriptPath);
-    strcat(totalPath, "/.internals/javascript/index.js");
-
-    char *rawJS = LoadFileText(totalPath);
-    JSValue ret = JS_Eval(ctx, rawJS, strlen(rawJS), totalPath, JS_EVAL_TYPE_MODULE);
-
-    if (args.isWatch)
-    {
-        dmon_init();
-        dmon_watch(scriptPath, watch_callback, 0, totalPath);
-    }
-
-    float scaleX = (float)GetRenderWidth() / (float)GetScreenWidth();
-    float scaleY = (float)GetRenderHeight() / (float)GetScreenHeight();
+    JSContext *ctx = TJS_GetJSContext(qrt);
     while (!WindowShouldClose())
     {
-        Clay_SetLayoutDimensions((Clay_Dimensions){GetScreenWidth() * scaleX, GetScreenHeight() * scaleY});
-        int isMouseDown = IsMouseButtonDown(0);
-        Vector2 mousePosition = GetMousePosition();
-        Clay_SetPointerState((Clay_Vector2){mousePosition.x, mousePosition.y}, isMouseDown);
-
-        gui_fire_events();
-        Clay_RenderCommandArray renderCommands = gui_create_render_tree(ctx);
-
         BeginDrawing();
-        ClearBackground(BLACK);
-        Clay_Raylib_Render(renderCommands, fonts);
+        ClearBackground(RAYWHITE);
+        DrawText("Congrats! You created your first window!", 190, 100, 20, LIGHTGRAY);
         EndDrawing();
-
-        js_os_poll(ctx);
-
-        if (engine_exception_handled(ctx))
-        {
-            JSValue exception = JS_GetException(ctx);
-            char *exStr = JS_ToCString(ctx, exception);
-            fprintf(stderr, "JS Exception: %s\n", exStr);
-            break;
-        }
     }
 
-    if (args.isWatch)
-    {
-        dmon_deinit();
-        free(totalPath);
-    }
-    engine_deinit(ctx);
-    gui_deinit(fonts);
+    pthread_cancel(js_thread);
+
+    TJS_FreeRuntime(qrt);
 
     return 0;
 }
