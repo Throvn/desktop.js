@@ -14,7 +14,8 @@
     "hashmap.h": "c",
     "styles.h": "c",
     "colors.h": "c",
-    "dmon_extra.h": "c"
+    "dmon_extra.h": "c",
+    "js.h": "c"
   },
   "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }

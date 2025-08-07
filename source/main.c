@@ -4,12 +4,18 @@
 #include "../lib/txiki.js/src/tjs.h"
 
 #include "../lib/clay/clay.h"
+#include "gui/js.h"
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 JSModuleDef *js_init_module_gui(JSContext *ctx, const char *module_name);
 
 void *js_start(void *qrt)
 {
+    // Load GUI import.
+    JSContext *ctx = TJS_GetJSContext(qrt);
+    GUI_js_init_module(ctx);
+
+    // Blocking.
     TJS_Run(qrt);
 }
 
@@ -41,6 +47,7 @@ int main(int argc, char **argv)
 
     pthread_cancel(js_thread);
 
+    CloseWindow();
     TJS_FreeRuntime(qrt);
 
     return 0;
