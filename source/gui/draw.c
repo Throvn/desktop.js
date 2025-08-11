@@ -145,7 +145,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     int key;
     JS_ToInt64(ctx, &key, keyValue);
 
-    Clay_Padding padding = GUI_GetPadding(ctx, element);
+    Clay_Padding padding = STYLES_GetPadding(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .id = key,
         .layout = {
@@ -178,10 +178,8 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     JSValue children = GUI_GetChildren(ctx, element);
     int length = GUI_GetLength(ctx, children);
 
-    // TODO: apply text styles to each child.
-
     int key = GUI_GetKey(ctx, element);
-    Clay_Padding padding = GUI_GetPadding(ctx, element);
+    Clay_Padding padding = STYLES_GetPadding(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .id = key,
         // .backgroundColor = styles->backgroundColor,

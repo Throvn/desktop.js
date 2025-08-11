@@ -1,6 +1,6 @@
 #include "styles.h"
 
-Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
+static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
 {
     Clay_Padding padding = {0};
     if (JS_IsNumber(propValue))
@@ -71,7 +71,7 @@ Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     return padding;
 }
 
-Clay_Padding GUI_GetPadding(JSContext *ctx, JSValue element)
+Clay_Padding STYLES_GetPadding(JSContext *ctx, JSValue element)
 {
 
     JSValue props = JS_GetPropertyStr(ctx, element, "props");

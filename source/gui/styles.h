@@ -4,6 +4,6 @@
 #include "../../lib/clay/clay.h"
 #include "../../lib/txiki.js/src/tjs.h"
 
-Clay_Padding GUI_GetPadding(JSContext *ctx, JSValue element);
+Clay_Padding STYLES_GetPadding(JSContext *ctx, JSValue element);
 
 #endif
