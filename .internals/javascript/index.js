@@ -17,11 +17,12 @@ var MyComponent = /** @class */ (function () {
         return true;
     };
     MyComponent.prototype.render = function () {
-        // console.log("called render()")
-        return (GUI.createElement("vStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
-            GUI.createElement("text", { id: "container", width: 120, "$letterSpacing": 1, "$padding": 20, "$backgroundColor": "red" },
-                "... ",
-                this.layerX)));
+        var val = (GUI.createElement("vStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
+            "MyComponent",
+            GUI.createElement("spacer", null),
+            GUI.createElement("text", null, "Test")));
+        console.log("VAL: ", val);
+        return val;
     };
     return MyComponent;
 }());
@@ -56,4 +57,4 @@ var gameLoop = function () {
     console.log("Moved");
     os.setTimeout(gameLoop, 500);
 };
-console.log(GUI.createElement(MyComponent, null, "This is another test"));
+GUI.render(GUI.createElement(MyComponent, null, "This is another test"));

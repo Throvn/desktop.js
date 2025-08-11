@@ -7,6 +7,7 @@
 
 #include "../lib/clay/renderers/raylib/clay_renderer_raylib.c"
 #include "gui/js.h"
+#include "gui/draw.h"
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 
@@ -62,28 +63,9 @@ int main(int argc, char **argv)
         Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
 
         Font font = GetFontDefault();
-        printf("Default font: texture.id=%u baseSize=%d glyphCount=%d\n",
-               font.texture.id, font.baseSize, font.glyphCount);
-        ClearBackground(WHITE);
-        Clay_BeginLayout();
+        ClearBackground(BLACK);
 
-        CLAY((Clay_ElementDeclaration){
-            .layout = {
-                .sizing = {
-                    CLAY_SIZING_GROW(),
-                    CLAY_SIZING_GROW(),
-                },
-            },
-        })
-        {
-            CLAY_TEXT(CLAY_STRING("This is a clay test"), CLAY_TEXT_CONFIG((Clay_TextElementConfig){
-                                                              .fontSize = 24,
-                                                              .textColor = (Clay_Color){0, 0, 0, 255},
-                                                              .letterSpacing = 5,
-                                                          }));
-        }
-
-        Clay_RenderCommandArray rc = Clay_EndLayout();
+        Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
         Clay_Raylib_Render(rc, &font);
         EndDrawing();
     }

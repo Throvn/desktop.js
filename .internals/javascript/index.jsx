@@ -20,17 +20,13 @@ class MyComponent {
     }
 
     render() {
-        // console.log("called render()")
-        return (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
-            <text
-                id="container"
-                width={120}
-                $letterSpacing={1}
-                $padding={20}
-                $backgroundColor="red">
-                ... {this.layerX}
-            </text>
+        const val = (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
+            MyComponent
+            <spacer />
+            <text>Test</text>
         </vStack>);
+        console.log("VAL: ", val);
+        return val;
     }
 }
 
@@ -73,8 +69,9 @@ const gameLoop = () => {
     os.setTimeout(gameLoop, 500);
 }
 
-console.log(
+GUI.render(
     <MyComponent>
         This is another test
     </MyComponent>
 )
+

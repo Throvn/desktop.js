@@ -10,6 +10,7 @@ static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
     if (argc != 1)
     {
         JS_ThrowTypeError(ctx, "GUI.render() only takes one JSX element");
+        return JS_UNDEFINED;
     }
     if (!JS_IsObject(argv[0]))
     {
@@ -67,7 +68,6 @@ static JSValue GUI_CreateCustomElement(JSContext *ctx, int argc, JSValueConst *a
     return element;
 }
 
-// GUI.createElement()
 static JSValue GUI_js_create_element(JSContext *ctx, JSValueConst this_val,
                                      int argc, JSValueConst *argv)
 {
@@ -77,7 +77,6 @@ static JSValue GUI_js_create_element(JSContext *ctx, JSValueConst this_val,
         return JS_UNDEFINED;
     }
 
-    printf("[GUI] createElement() called\n");
     if (JS_IsString(argv[0]))
     {
         return GUI_CreateBuiltInElement(ctx, argc, argv);
@@ -85,6 +84,10 @@ static JSValue GUI_js_create_element(JSContext *ctx, JSValueConst this_val,
     else if (JS_IsFunction(ctx, argv[0]))
     {
         return GUI_CreateCustomElement(ctx, argc, argv);
+    }
+    else
+    {
+        printf("[GUI] createElement()s first parameter has an unknown type\n");
     }
     return JS_UNDEFINED;
 }

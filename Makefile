@@ -8,7 +8,7 @@ debug: main
 	DYLD_LIBRARY_PATH=build \
 	lldb djs-aarch64-macos
 
-main: source/gui/js.c source/main.c lib/raylib/raylib/libraylib.a lib/txiki.js/build/deps/quickjs/libqjs.a lib/txiki.js/build/deps/wasm3/source/libm3.a lib/txiki.js/build/deps/libuv/libuv.a lib/txiki.js/build/deps/sqlite3/libsqlite3.a lib/txiki.js/build/deps/mimalloc/libmimalloc.a lib/txiki.js/build/libtjs.a
+main: source/gui/js.c source/gui/draw.c source/main.c lib/raylib/raylib/libraylib.a lib/txiki.js/build/deps/quickjs/libqjs.a lib/txiki.js/build/deps/wasm3/source/libm3.a lib/txiki.js/build/deps/libuv/libuv.a lib/txiki.js/build/deps/sqlite3/libsqlite3.a lib/txiki.js/build/deps/mimalloc/libmimalloc.a lib/txiki.js/build/libtjs.a
 	zig cc $(DEBUGGING) -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos -Ilib/raylib/raylib/include -Ilib/quickjs -Ilib/txiki.js/src -lffi -lcurl -lpthread -framework IOKit -framework Cocoa
 
 minified: source/main.c source/engine.c source/gui.c source/draw.c source/colors.c source/styles.c lib/quickjs/libquickjs.a lib/raylib/raylib/libraylib.a
