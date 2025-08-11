@@ -141,11 +141,9 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
         return;
     }
 
-    JSValue keyValue = JS_GetPropertyStr(ctx, element, "key");
-    int key;
-    JS_ToInt64(ctx, &key, keyValue);
-
+    int key = GUI_GetKey(ctx, element);
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
+    Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .id = key,
         .layout = {
@@ -154,7 +152,9 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
                 CLAY_ALIGN_X_CENTER,
                 CLAY_ALIGN_Y_CENTER,
             },
-            .padding = padding},
+            .padding = padding,
+        },
+        .backgroundColor = backgroundColor,
     })
     {
         renderChildren(ctx, element);
@@ -180,9 +180,10 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
 
     int key = GUI_GetKey(ctx, element);
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
+    Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .id = key,
-        // .backgroundColor = styles->backgroundColor,
+        .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,
         }})

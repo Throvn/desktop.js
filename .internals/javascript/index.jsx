@@ -24,9 +24,9 @@ class MyComponent {
         const val = (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
             MyComponent
             <spacer />
-            <text>Test</text>
-            <vStack $padding={this.layerX % 50}>
-                {this.layerX}
+            <text $backgroundColor="red">Test</text>
+            <vStack $padding={50}>
+                Test {this.layerX}
             </vStack>
         </vStack>);
         console.log("VAL: ", val);

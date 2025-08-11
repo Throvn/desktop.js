@@ -1,3 +1,4 @@
+#include "colors.h"
 #include "styles.h"
 
 static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
@@ -14,7 +15,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
 
     if (!JS_IsObject(propValue))
     {
-        fprintf(stderr, "[Warning] Padding property given but not as an object. Ignoring.");
+        fprintf(stderr, "[Warning] Padding property given but not as an object. Ignoring.\n");
         return padding;
     }
 
@@ -82,4 +83,46 @@ Clay_Padding STYLES_GetPadding(JSContext *ctx, JSValue element)
     }
     JSValue paddingValue = JS_GetPropertyStr(ctx, props, "$padding");
     return parsePadding(ctx, paddingValue);
+}
+
+Clay_Color parseColor(char *colorStr)
+{
+    if ('#' == colorStr[0])
+    {
+        return parseHexColor(&colorStr[1]);
+    }
+
+    Clay_Color color = {0, 0, 0, 0};
+    for (int i = 0; i < COLOR_Length; i++)
+    {
+        Clay_Color c = COLOR_Values[i];
+        if (0 == strcmp(colorStr, COLOR_Names[i]))
+        {
+            color = COLOR_Values[i];
+            break;
+        }
+    }
+
+    return color;
+}
+
+Clay_Color STYLES_GetBackgroundColor(JSContext *ctx, JSValue element)
+{
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    if (!JS_IsObject(props))
+    {
+        return (Clay_Color){0, 0, 0, 0};
+    }
+
+    JSValue colorValue = JS_GetPropertyStr(ctx, props, "$backgroundColor");
+    if (!JS_IsString(colorValue))
+    {
+        return (Clay_Color){0, 0, 0, 0};
+    }
+
+    char *colorStr = JS_ToCString(ctx, colorValue);
+    Clay_Color color = parseColor(colorStr);
+    JS_FreeCString(ctx, colorStr);
+
+    return color;
 }
