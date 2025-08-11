@@ -24,6 +24,7 @@ class MyComponent {
             MyComponent
             <spacer />
             <text>Test</text>
+            {1}
         </vStack>);
         console.log("VAL: ", val);
         return val;

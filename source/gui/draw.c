@@ -56,6 +56,7 @@ bool GUI_IsElement(JSContext *ctx, JSValue element)
     return true;
 }
 
+/// @brief Gives back the value of the length property of the passed element.
 int GUI_GetLength(JSContext *ctx, JSValue element)
 {
     if (!JS_IsObject(element))
@@ -152,10 +153,11 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 
 void GUI_RenderString(JSContext *ctx, JSValue element)
 {
+
     char *string = JS_ToCString(ctx, element);
     Clay_String clayString = {.chars = string, .length = strlen(string)};
     CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
-                              .fontSize = 48,
+                              .fontSize = 12,
                               .textColor = (Clay_Color){0, 0, 0, 255},
                               .letterSpacing = 5,
                           }));
@@ -188,7 +190,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
         return;
 
     // Handle plain strings.
-    if (JS_IsString(element))
+    if (JS_IsString(element) || JS_IsNumber(element))
     {
         GUI_RenderString(ctx, element);
         return;
