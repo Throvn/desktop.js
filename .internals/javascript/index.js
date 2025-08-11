@@ -17,11 +17,12 @@ var MyComponent = /** @class */ (function () {
         return true;
     };
     MyComponent.prototype.render = function () {
+        this.layerX++;
         var val = (GUI.createElement("vStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
             "MyComponent",
             GUI.createElement("spacer", null),
-            GUI.createElement("text", null, "Test"),
-            1));
+            GUI.createElement("text", { "$padding": 50 }, "Test"),
+            this.layerX));
         console.log("VAL: ", val);
         return val;
     };

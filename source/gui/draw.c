@@ -1,5 +1,6 @@
 #include "stdlib.h"
 #include "draw.h"
+#include "styles.h"
 
 /// @brief Defined in js.c
 extern JSValue rootValue;
@@ -75,6 +76,14 @@ int GUI_GetLength(JSContext *ctx, JSValue element)
     JS_ToInt32(ctx, &length, lengthValue);
 
     return length;
+}
+
+int GUI_GetKey(JSContext *ctx, JSValue element)
+{
+    JSValue keyValue = JS_GetPropertyStr(ctx, element, "key");
+    int key;
+    JS_ToInt32(ctx, &key, keyValue);
+    return key;
 }
 
 JSValue GUI_GetChildren(JSContext *ctx, JSValue element)
@@ -170,7 +179,17 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
 
     // TODO: apply text styles to each child.
 
-    renderChildren(ctx, element);
+    int key = GUI_GetKey(ctx, element);
+    Clay_Padding padding = GUI_GetPadding(ctx, element);
+    CLAY((Clay_ElementDeclaration){
+        .id = key,
+        // .backgroundColor = styles->backgroundColor,
+        .layout = {
+            .padding = padding,
+        }})
+    {
+        renderChildren(ctx, element);
+    }
 }
 
 void GUI_RenderSpacer()

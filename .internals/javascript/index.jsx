@@ -20,11 +20,12 @@ class MyComponent {
     }
 
     render() {
+        this.layerX++;
         const val = (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
             MyComponent
             <spacer />
-            <text>Test</text>
-            {1}
+            <text $padding={50}>Test</text>
+            {this.layerX}
         </vStack>);
         console.log("VAL: ", val);
         return val;
