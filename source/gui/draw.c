@@ -145,6 +145,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     int key;
     JS_ToInt64(ctx, &key, keyValue);
 
+    Clay_Padding padding = GUI_GetPadding(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .id = key,
         .layout = {
@@ -153,7 +154,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
                 CLAY_ALIGN_X_CENTER,
                 CLAY_ALIGN_Y_CENTER,
             },
-        },
+            .padding = padding},
     })
     {
         renderChildren(ctx, element);
