@@ -28,6 +28,7 @@ class MyComponent {
             <vStack $padding={50}>
                 Test {this.layerX}
             </vStack>
+            {"Cool"}
         </vStack>);
         console.log("VAL: ", val);
         return val;

@@ -24,7 +24,8 @@ var MyComponent = /** @class */ (function () {
             GUI.createElement("text", { "$backgroundColor": "red" }, "Test"),
             GUI.createElement("vStack", { "$padding": 50 },
                 "Test ",
-                this.layerX)));
+                this.layerX),
+            "Cool"));
         console.log("VAL: ", val);
         return val;
     };

@@ -106,18 +106,18 @@ Clay_Color parseColor(char *colorStr)
     return color;
 }
 
-Clay_Color STYLES_GetBackgroundColor(JSContext *ctx, JSValue element)
+static Clay_Color getColorFromProperty(JSContext *ctx, JSValue element, char *propName)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (!JS_IsObject(props))
     {
-        return (Clay_Color){0, 0, 0, 0};
+        return (Clay_Color){0};
     }
 
-    JSValue colorValue = JS_GetPropertyStr(ctx, props, "$backgroundColor");
+    JSValue colorValue = JS_GetPropertyStr(ctx, props, propName);
     if (!JS_IsString(colorValue))
     {
-        return (Clay_Color){0, 0, 0, 0};
+        return (Clay_Color){0};
     }
 
     char *colorStr = JS_ToCString(ctx, colorValue);
@@ -125,4 +125,14 @@ Clay_Color STYLES_GetBackgroundColor(JSContext *ctx, JSValue element)
     JS_FreeCString(ctx, colorStr);
 
     return color;
+}
+
+Clay_Color STYLES_GetBackgroundColor(JSContext *ctx, JSValue element)
+{
+    return getColorFromProperty(ctx, element, "$backgroundColor");
+}
+
+Clay_Color STYLES_GetColor(JSContext *ctx, JSValue element)
+{
+    return getColorFromProperty(ctx, element, "$color");
 }

@@ -164,12 +164,21 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 void GUI_RenderString(JSContext *ctx, JSValue element)
 {
 
-    char *string = JS_ToCString(ctx, element);
+    JSValue stringElement = GUI_GetChildren(ctx, element);
+
+    char *string = JS_ToCString(ctx, stringElement);
     Clay_String clayString = {.chars = string, .length = strlen(string)};
+
+    Clay_Color color = STYLES_GetColor(ctx, element);
+    if (color.a + color.b + color.g + color.r <= 0)
+    {
+        color = (Clay_Color){0, 0, 0, 255};
+    }
+
     CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
                               .fontSize = 12,
-                              .textColor = (Clay_Color){0, 0, 0, 255},
                               .letterSpacing = 5,
+                              .textColor = color,
                           }));
 }
 
@@ -186,9 +195,14 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
         .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,
-        }})
+        },
+    })
     {
-        renderChildren(ctx, element);
+        for (int i = 0; i < length; i++)
+        {
+            JSValue child = JS_GetPropertyUint32(ctx, children, i);
+            GUI_RenderString(ctx, child);
+        }
     }
 }
 
@@ -207,13 +221,6 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
 {
     if (JS_IsUninitialized(element))
         return;
-
-    // Handle plain strings.
-    if (JS_IsString(element) || JS_IsNumber(element))
-    {
-        GUI_RenderString(ctx, element);
-        return;
-    }
 
     JSValue typeValue = JS_GetPropertyStr(ctx, element, "type");
     if (!JS_IsString(typeValue))
@@ -245,6 +252,10 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
     else if (0 == strcmp(type, "text"))
     {
         GUI_RenderText(ctx, element);
+    }
+    else if (0 == strcmp(type, "string"))
+    {
+        GUI_RenderString(ctx, element);
     }
     else
     {

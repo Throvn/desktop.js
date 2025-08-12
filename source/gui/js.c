@@ -24,6 +24,22 @@ static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue GUI_ToStringElement(JSContext *ctx, JSValue string)
+{
+    if (!JS_IsString(string))
+    {
+        exit(6);
+    }
+
+    JSValue element = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, element, "type", JS_NewString(ctx, "string"));
+    JS_SetPropertyStr(ctx, element, "key", JS_NewInt32(ctx, rand()));
+    JSValue props = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, element, "props", props);
+    JS_SetPropertyStr(ctx, props, "children", string);
+    return element;
+}
+
 static JSValue GUI_CreateBuiltInElement(JSContext *ctx, int argc, JSValueConst *argv)
 {
     JSValue element = JS_NewObject(ctx);
@@ -36,7 +52,12 @@ static JSValue GUI_CreateBuiltInElement(JSContext *ctx, int argc, JSValueConst *
     JSValue children = JS_NewArray(ctx);
     for (int i = 0; i < argc - 2; i++)
     {
-        JS_SetPropertyUint32(ctx, children, i, JS_DupValue(ctx, argv[2 + i]));
+        JSValue child = JS_DupValue(ctx, argv[2 + i]);
+        if (JS_IsString(argv[2 + i]))
+        {
+            child = GUI_ToStringElement(ctx, child);
+        }
+        JS_SetPropertyUint32(ctx, children, i, child);
     }
 
     JS_SetPropertyStr(ctx, props, "children", children);
@@ -57,7 +78,12 @@ static JSValue GUI_CreateCustomElement(JSContext *ctx, int argc, JSValueConst *a
     JSValue children = JS_NewArray(ctx);
     for (int i = 0; i < argc - 2; i++)
     {
-        JS_SetPropertyUint32(ctx, children, i, JS_DupValue(ctx, argv[2 + i]));
+        JSValue child = JS_DupValue(ctx, argv[2 + i]);
+        if (JS_IsString(argv[2 + i]))
+        {
+            child = GUI_ToStringElement(ctx, argv[2 + i]);
+        }
+        JS_SetPropertyUint32(ctx, children, i, child);
     }
 
     JS_SetPropertyStr(ctx, props, "children", children);
