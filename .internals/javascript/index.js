@@ -19,15 +19,16 @@ var MyComponent = /** @class */ (function () {
     MyComponent.prototype.render = function () {
         this.layerX++;
         var val = (GUI.createElement("vStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
-            "MyComponent",
-            GUI.createElement("spacer", null),
-            GUI.createElement("text", { "$backgroundColor": "red", "$color": "blue", "$fontSize": 48, "$letterSpacing": 40 },
-                "Test ",
-                "Blue"),
-            GUI.createElement("vStack", { "$padding": 50 },
-                "Test ",
-                "" + this.layerX),
-            "Cool"));
+            GUI.createElement("group", { "$backgroundColor": "purple" },
+                GUI.createElement("text", null, "MyComponent"),
+                GUI.createElement("spacer", null),
+                GUI.createElement("text", { "$backgroundColor": "red", "$color": "blue", "$fontSize": 48, "$letterSpacing": 40 },
+                    "Test ",
+                    "Blue"),
+                GUI.createElement("vStack", { "$padding": 50 },
+                    "Test ",
+                    "" + this.layerX),
+                "Cool")));
         console.log("VAL: ", val);
         return val;
     };

@@ -22,13 +22,17 @@ class MyComponent {
     render() {
         this.layerX++;
         const val = (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
-            MyComponent
-            <spacer />
-            <text $backgroundColor="red" $color="blue" $fontSize={48} $letterSpacing={40}>Test {"Blue"}</text>
-            <vStack $padding={50}>
-                Test {"" + this.layerX}
-            </vStack>
-            {"Cool"}
+            <group $backgroundColor="purple">
+                <text>
+                    MyComponent
+                </text>
+                <spacer />
+                <text $backgroundColor="red" $color="blue" $fontSize={48} $letterSpacing={40}>Test {"Blue"}</text>
+                <vStack $padding={50}>
+                    Test {"" + this.layerX}
+                </vStack>
+                {"Cool"}
+            </group>
         </vStack>);
         console.log("VAL: ", val);
         return val;

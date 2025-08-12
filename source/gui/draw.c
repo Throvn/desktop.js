@@ -86,8 +86,18 @@ int GUI_GetKey(JSContext *ctx, JSValue element)
     return key;
 }
 
+/// @brief Gets the children JS Object, if it exists, otherwise JS_UNDEFINED. Does not check if an actual element was given.
+/// @param ctx
+/// @param element
+/// @return JS Object or JS_UNDEFINED
 JSValue GUI_GetChildren(JSContext *ctx, JSValue element)
 {
+    if (!JS_IsObject)
+    {
+        fprintf(stderr, "[GUI_GetChildren] Element is not an object");
+        exit(3);
+        return JS_UNDEFINED;
+    }
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (JS_IsUndefined(props))
         return JS_UNDEFINED;
@@ -253,6 +263,58 @@ void GUI_RenderSpacer()
     }
 }
 
+/// @brief Handles rendering of the <group> component.
+/// @note The group component only appends its props to children, so nothing is rendered.
+/// @param node
+void GUI_RenderGroup(JSContext *ctx, JSValue element)
+{
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    JSValue children = JS_GetPropertyStr(ctx, props, "children");
+    int num_children = GUI_GetLength(ctx, children);
+
+    unsigned int num_keys;
+    JSPropertyEnum *keys;
+    int success = JS_GetOwnPropertyNames(ctx, &keys, &num_keys, props, JS_GPN_STRING_MASK | JS_GPN_ENUM_ONLY);
+    if (success != 0)
+    {
+        fprintf(stderr, "[Error] Could not get property names\n");
+        return;
+    }
+
+    // Apply all JSX properties to each descendant
+    for (int j = 0; j < num_children; j++)
+    {
+        JSValue child = JS_GetPropertyUint32(ctx, children, j);
+        JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
+
+        // Get all JSX properties
+        for (int i = 0; i < num_keys; i++)
+        {
+            JSPropertyEnum key = keys[i];
+            JSValue keyValue = JS_AtomToValue(ctx, key.atom);
+            char *keyStr = JS_ToCString(ctx, keyValue);
+
+            // Never copy children
+            if (0 == strcmp(keyStr, "children"))
+                continue;
+
+            // Only add property if child prop doesn't already have it.
+            if (JS_HasProperty(ctx, childProps, key.atom))
+                continue;
+
+            JSValue groupPropValue = JS_GetPropertyStr(ctx, props, keyStr);
+            success = JS_SetPropertyStr(ctx, childProps, keyStr, groupPropValue);
+            if (success != 1)
+            {
+                printf("[Warning] could not set property in group to %s\n", keyStr);
+            }
+        }
+    }
+    JS_FreePropertyEnum(ctx, keys, num_keys);
+
+    renderChildren(ctx, element);
+}
+
 void GUI_RenderValue(JSContext *ctx, JSValue element)
 {
     if (JS_IsUninitialized(element))
@@ -292,6 +354,10 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
     else if (0 == strcmp(type, "string"))
     {
         GUI_RenderString(ctx, element);
+    }
+    else if (0 == strcmp(type, "group"))
+    {
+        GUI_RenderGroup(ctx, element);
     }
     else
     {
