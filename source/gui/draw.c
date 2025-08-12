@@ -182,22 +182,38 @@ void GUI_RenderString(JSContext *ctx, JSValue element)
                           }));
 }
 
-void GUI_RenderText(JSContext *ctx, JSValue element)
+/// @brief Takes the prop from the passed element and applies it to all of its children (if the prop is not already set on these children)
+/// @param ctx
+/// @param element Parent element from which the prop should be copied
+/// @param prop Name of the prop
+void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    JSValue colorProp = JS_GetPropertyStr(ctx, props, "$color");
-    if (!JS_IsUndefined(colorProp))
+    JSValue givenProp = JS_GetPropertyStr(ctx, props, prop);
+    if (!JS_IsUndefined(givenProp))
     {
         JSValue children = GUI_GetChildren(ctx, element);
         int length = GUI_GetLength(ctx, children);
 
+        // Apply prop to all children
         for (int i = 0; i < length; i++)
         {
             JSValue child = JS_GetPropertyUint32(ctx, children, i);
             JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
-            JS_SetPropertyStr(ctx, childProps, "$color", colorProp);
+
+            // Never overwrite a prop on the child
+            JSValue childProp = JS_GetPropertyStr(ctx, childProps, prop);
+            if (JS_IsUndefined(childProp))
+            {
+                JS_SetPropertyStr(ctx, childProps, prop, givenProp);
+            }
         }
     }
+}
+
+void GUI_RenderText(JSContext *ctx, JSValue element)
+{
+    GUI_ApplyPropToChild(ctx, element, "$color");
 
     int key = GUI_GetKey(ctx, element);
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
