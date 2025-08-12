@@ -28,7 +28,7 @@ var MyComponent = /** @class */ (function () {
                     "Test ",
                     "" + this.layerX),
                 "Cool")));
-        console.log("VAL: ", val);
+        // console.log("VAL: ", val);
         return val;
     };
     return MyComponent;
@@ -64,4 +64,6 @@ var gameLoop = function () {
     console.log("Moved");
     os.setTimeout(gameLoop, 500);
 };
-GUI.render(GUI.createElement(MyComponent, null, "This is another test"));
+GUI.render(GUI.createElement("hStack", { onMouseOver: function (event) { console.log(event); } },
+    "Another test",
+    GUI.createElement(MyComponent, null, "This is another test")));

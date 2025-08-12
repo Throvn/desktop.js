@@ -33,7 +33,7 @@ class MyComponent {
                 {"Cool"}
             </group>
         </vStack>);
-        console.log("VAL: ", val);
+        // console.log("VAL: ", val);
         return val;
     }
 }
@@ -78,8 +78,11 @@ const gameLoop = () => {
 }
 
 GUI.render(
-    <MyComponent>
-        This is another test
-    </MyComponent>
+    <hStack onMouseOver={(event) => { console.log(event) }}>
+        Another test
+        <MyComponent>
+            This is another test
+        </MyComponent>
+    </hStack>
 )
 

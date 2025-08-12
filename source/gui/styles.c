@@ -15,7 +15,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
 
     if (!JS_IsObject(propValue))
     {
-        fprintf(stderr, "[Warning] Padding property given but not as an object. Ignoring.\n");
+        // fprintf(stderr, "[Warning] Padding property given but not as an object. Ignoring.\n");
         return padding;
     }
 

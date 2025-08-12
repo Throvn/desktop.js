@@ -8,6 +8,7 @@
 #include "../lib/clay/renderers/raylib/clay_renderer_raylib.c"
 #include "gui/js.h"
 #include "gui/draw.h"
+#include "events/mouse.h"
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 
@@ -61,10 +62,11 @@ int main(int argc, char **argv)
     while (!WindowShouldClose())
     {
         Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
+        Clay_SetPointerState((Clay_Vector2){GetMouseX(), GetMouseY()}, IsMouseButtonDown(MOUSE_BUTTON_LEFT));
+        EVENTS_Invoke(qrt);
 
-        Font font = GetFontDefault();
+        BeginDrawing();
         ClearBackground(BLACK);
-
         Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
         Clay_Raylib_Render(rc, &font);
         EndDrawing();
