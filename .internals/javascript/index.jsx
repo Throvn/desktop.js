@@ -24,9 +24,9 @@ class MyComponent {
         const val = (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
             MyComponent
             <spacer />
-            <text $backgroundColor="red">Test</text>
+            <text $backgroundColor="red" $color="blue">Test {"Blue"}</text>
             <vStack $padding={50}>
-                Test {this.layerX}
+                Test {"" + this.layerX}
             </vStack>
             {"Cool"}
         </vStack>);

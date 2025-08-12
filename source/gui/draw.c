@@ -184,8 +184,20 @@ void GUI_RenderString(JSContext *ctx, JSValue element)
 
 void GUI_RenderText(JSContext *ctx, JSValue element)
 {
-    JSValue children = GUI_GetChildren(ctx, element);
-    int length = GUI_GetLength(ctx, children);
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    JSValue colorProp = JS_GetPropertyStr(ctx, props, "$color");
+    if (!JS_IsUndefined(colorProp))
+    {
+        JSValue children = GUI_GetChildren(ctx, element);
+        int length = GUI_GetLength(ctx, children);
+
+        for (int i = 0; i < length; i++)
+        {
+            JSValue child = JS_GetPropertyUint32(ctx, children, i);
+            JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
+            JS_SetPropertyStr(ctx, childProps, "$color", colorProp);
+        }
+    }
 
     int key = GUI_GetKey(ctx, element);
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
@@ -198,11 +210,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
         },
     })
     {
-        for (int i = 0; i < length; i++)
-        {
-            JSValue child = JS_GetPropertyUint32(ctx, children, i);
-            GUI_RenderString(ctx, child);
-        }
+        renderChildren(ctx, element);
     }
 }
 

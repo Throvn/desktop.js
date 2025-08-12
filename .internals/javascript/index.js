@@ -21,10 +21,12 @@ var MyComponent = /** @class */ (function () {
         var val = (GUI.createElement("vStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
             "MyComponent",
             GUI.createElement("spacer", null),
-            GUI.createElement("text", { "$backgroundColor": "red" }, "Test"),
+            GUI.createElement("text", { "$backgroundColor": "red", "$color": "blue" },
+                "Test ",
+                "Blue"),
             GUI.createElement("vStack", { "$padding": 50 },
                 "Test ",
-                this.layerX),
+                "" + this.layerX),
             "Cool"));
         console.log("VAL: ", val);
         return val;
