@@ -180,11 +180,15 @@ void GUI_RenderString(JSContext *ctx, JSValue element)
     if (fontSize < 0)
         fontSize = 12;
 
+    int letterSpacing = STYLES_GetLetterSpacing(ctx, element);
+    if (letterSpacing < 0)
+        letterSpacing = 1;
+
     CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
                               .fontSize = 12,
-                              .letterSpacing = 5,
                               .textColor = color,
                               .fontSize = fontSize,
+                              .letterSpacing = letterSpacing,
                           }));
 }
 
@@ -221,6 +225,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
 {
     GUI_ApplyPropToChild(ctx, element, "$color");
     GUI_ApplyPropToChild(ctx, element, "$fontSize");
+    GUI_ApplyPropToChild(ctx, element, "$letterSpacing");
 
     int key = GUI_GetKey(ctx, element);
     Clay_Padding padding = STYLES_GetPadding(ctx, element);

@@ -137,17 +137,28 @@ Clay_Color STYLES_GetColor(JSContext *ctx, JSValue element)
     return getColorFromProperty(ctx, element, "$color");
 }
 
-int STYLES_GetFontSize(JSContext *ctx, JSValue element)
+int STYLES_GetPropValueAsInt32(JSContext *ctx, JSValue element, char *prop)
 {
+
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (JS_IsUndefined(props))
         return -1;
 
-    JSValue fontSizeValue = JS_GetPropertyStr(ctx, props, "$fontSize");
-    if (!JS_IsNumber(fontSizeValue))
+    JSValue propValue = JS_GetPropertyStr(ctx, props, prop);
+    if (!JS_IsNumber(propValue))
         return -1;
 
     int fontSize;
-    JS_ToInt32(ctx, &fontSize, fontSizeValue);
+    JS_ToInt32(ctx, &fontSize, propValue);
     return fontSize;
+}
+
+int STYLES_GetFontSize(JSContext *ctx, JSValue element)
+{
+    return STYLES_GetPropValueAsInt32(ctx, element, "$fontSize");
+}
+
+int STYLES_GetLetterSpacing(JSContext *ctx, JSValue element)
+{
+    return STYLES_GetPropValueAsInt32(ctx, element, "$letterSpacing");
 }
