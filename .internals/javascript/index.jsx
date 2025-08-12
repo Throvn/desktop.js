@@ -20,7 +20,6 @@ class MyComponent {
     }
 
     render() {
-        this.layerX++;
         const val = (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
             <group $backgroundColor="purple">
                 <text>

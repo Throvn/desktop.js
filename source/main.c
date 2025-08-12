@@ -71,6 +71,7 @@ int main(int argc, char **argv)
     }
 
     pthread_cancel(js_thread);
+    pthread_join(js_thread, NULL);
 
     CloseWindow();
     TJS_FreeRuntime(qrt);

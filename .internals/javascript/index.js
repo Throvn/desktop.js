@@ -17,7 +17,6 @@ var MyComponent = /** @class */ (function () {
         return true;
     };
     MyComponent.prototype.render = function () {
-        this.layerX++;
         var val = (GUI.createElement("vStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
             GUI.createElement("group", { "$backgroundColor": "purple" },
                 GUI.createElement("text", null, "MyComponent"),
