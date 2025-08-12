@@ -308,16 +308,16 @@ Clay_RenderCommandArray GUI_RenderCommands(TJSRuntime *qrt)
     Clay_BeginLayout();
 
     CLAY((Clay_ElementDeclaration){
+        .backgroundColor = {255, 255, 255, 255},
         .layout = {
-            .sizing = {
-                CLAY_SIZING_GROW(),
-                CLAY_SIZING_GROW(),
-            },
+            .layoutDirection = CLAY_TOP_TO_BOTTOM,
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
             .childAlignment = {
-                .x = CLAY_ALIGN_X_CENTER,
-                .y = CLAY_ALIGN_Y_CENTER,
-            }},
-        .backgroundColor = (Clay_Color){255, 255, 255, 255}})
+                CLAY_ALIGN_X_CENTER,
+                CLAY_ALIGN_Y_CENTER,
+            },
+        },
+    })
     {
         GUI_RenderValue(ctx, rootValue);
     }
