@@ -136,3 +136,18 @@ Clay_Color STYLES_GetColor(JSContext *ctx, JSValue element)
 {
     return getColorFromProperty(ctx, element, "$color");
 }
+
+int STYLES_GetFontSize(JSContext *ctx, JSValue element)
+{
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    if (JS_IsUndefined(props))
+        return -1;
+
+    JSValue fontSizeValue = JS_GetPropertyStr(ctx, props, "$fontSize");
+    if (!JS_IsNumber(fontSizeValue))
+        return -1;
+
+    int fontSize;
+    JS_ToInt32(ctx, &fontSize, fontSizeValue);
+    return fontSize;
+}

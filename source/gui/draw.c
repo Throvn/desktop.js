@@ -175,10 +175,16 @@ void GUI_RenderString(JSContext *ctx, JSValue element)
         color = (Clay_Color){0, 0, 0, 255};
     }
 
+    // Set custom font size if set, otherwise default to 12.
+    int fontSize = STYLES_GetFontSize(ctx, element);
+    if (fontSize < 0)
+        fontSize = 12;
+
     CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
                               .fontSize = 12,
                               .letterSpacing = 5,
                               .textColor = color,
+                              .fontSize = fontSize,
                           }));
 }
 
@@ -214,6 +220,7 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
 void GUI_RenderText(JSContext *ctx, JSValue element)
 {
     GUI_ApplyPropToChild(ctx, element, "$color");
+    GUI_ApplyPropToChild(ctx, element, "$fontSize");
 
     int key = GUI_GetKey(ctx, element);
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
