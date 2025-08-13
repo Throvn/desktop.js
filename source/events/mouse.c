@@ -1,4 +1,5 @@
 #include "mouse.h"
+#include <stdlib.h>
 
 extern JSValue rootValue;
 
@@ -66,25 +67,26 @@ void EVENTS_InvokeMouseOver(JSContext *ctx, JSValue element)
     JS_Call(ctx, mouseOverValue, mouseOverValue, 1, &mouseEvent);
 }
 
-void EVENTS_Invoke(TJSRuntime *qrt)
+void EVENT_OnMouseOver(Clay_ElementId elementId, Clay_PointerData pointerInfo, intptr_t userData)
 {
-    if (JS_IsUninitialized(rootValue))
+    EventProps *eventProps = (EventProps *)userData;
+    JSValue mouseOverFunc = JS_GetPropertyStr(eventProps->ctx, eventProps->props, "onMouseOver");
+    if (!JS_IsFunction(eventProps->ctx, mouseOverFunc))
         return;
 
-    Clay_ElementIdArray ids = Clay_GetPointerOverIds();
-    if (ids.length < 1)
-        return;
+    JSValue event = createMouseEvent(eventProps->ctx);
 
-    JSContext *ctx = TJS_GetJSContext(qrt);
+    JS_Call(eventProps->ctx, mouseOverFunc, mouseOverFunc, 1, &event);
 
-    // Start from smallest node first (most nested element, gets mouse events first)
-    for (int i = ids.length - 1; 0 <= i; i--)
-    {
-        JSValue element = findValueById(ctx, rootValue, ids.internalArray[i].id);
+    free(eventProps);
+}
 
-        if (JS_IsUndefined(element))
-            continue;
+void EVENT_HandleMouseEvents(JSContext *ctx, JSValue element)
+{
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    EventProps *eventProps = calloc(1, sizeof(EventProps));
+    eventProps->ctx = ctx;
+    eventProps->props = props;
 
-        EVENTS_InvokeMouseOver(ctx, element);
-    }
+    Clay_OnHover(EVENT_OnMouseOver, (intptr_t)eventProps);
 }

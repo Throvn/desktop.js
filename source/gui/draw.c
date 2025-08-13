@@ -1,3 +1,4 @@
+#include "../events/mouse.h"
 #include "stdlib.h"
 #include "draw.h"
 #include "styles.h"
@@ -125,6 +126,12 @@ void GUI_RenderCustom(JSContext *ctx, JSValue element)
 {
     JSValue instance = JS_GetPropertyStr(ctx, element, "instance");
     JSValue render = JS_GetPropertyStr(ctx, instance, "render");
+    if (JS_IsUndefined(render))
+    {
+        fprintf(stderr, "[GUI_RenderCustom] FATAL: Custom elements need a render() function.\n");
+        exit(4);
+        return;
+    }
     JSValue ret = JS_Call(ctx, render, instance, 0, NULL);
 
     GUI_RenderValue(ctx, ret);
@@ -152,10 +159,10 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     }
 
     int key = GUI_GetKey(ctx, element);
+
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
-        .id = key,
         .layout = {
             .layoutDirection = dir,
             .childAlignment = {
@@ -167,6 +174,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
         .backgroundColor = backgroundColor,
     })
     {
+        EVENT_HandleMouseEvents(ctx, element);
         renderChildren(ctx, element);
     }
 }
@@ -194,12 +202,18 @@ void GUI_RenderString(JSContext *ctx, JSValue element)
     if (letterSpacing < 0)
         letterSpacing = 1;
 
-    CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
-                              .fontSize = 12,
-                              .textColor = color,
-                              .fontSize = fontSize,
-                              .letterSpacing = letterSpacing,
-                          }));
+    Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
+    CLAY((Clay_ElementDeclaration){
+        .backgroundColor = backgroundColor,
+    })
+    {
+        CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
+                                  .fontSize = 12,
+                                  .textColor = color,
+                                  .fontSize = fontSize,
+                                  .letterSpacing = letterSpacing,
+                              }));
+    }
 }
 
 /// @brief Takes the prop from the passed element and applies it to all of its children (if the prop is not already set on these children)
@@ -241,7 +255,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
-        .id = key,
+        // .id = CLAY_IDI("", key),
         .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,

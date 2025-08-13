@@ -6,6 +6,12 @@
 #include "../gui/draw.h"
 #include "../../lib/raylib/src/raylib.h"
 
-void EVENTS_Invoke(TJSRuntime *qrt);
+typedef struct EventProps
+{
+    JSContext *ctx;
+    JSValue props;
+} EventProps;
+
+void EVENT_HandleMouseEvents(JSContext *ctx, JSValue element);
 
 #endif

@@ -59,11 +59,11 @@ int main(int argc, char **argv)
     Font font = GetFontDefault();
     Clay_SetMeasureTextFunction(Raylib_MeasureText, &font);
 
+    Clay_SetDebugModeEnabled(true);
     while (!WindowShouldClose())
     {
         Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
         Clay_SetPointerState((Clay_Vector2){GetMouseX(), GetMouseY()}, IsMouseButtonDown(MOUSE_BUTTON_LEFT));
-        EVENTS_Invoke(qrt);
 
         BeginDrawing();
         ClearBackground(BLACK);
