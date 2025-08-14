@@ -129,13 +129,14 @@ void GUI_RenderCustom(JSContext *ctx, JSValue element)
     if (!JS_IsFunction(ctx, render))
     {
         fprintf(stderr, "[GUI_RenderCustom] FATAL: Custom elements need a render() function.\n");
+        fprintf(stderr, "[GUI_RenderCustom] FATAL: However, render() function is: %s\n", JS_ToCString(ctx, render));
         exit(4);
         return;
     }
     JSValue argv[] = {JS_UNDEFINED};
     JSValue ret = JS_Call(ctx, render, instance, 0, argv);
 
-    // GUI_RenderValue(ctx, JS_DupValue(ctx, ret));
+    GUI_RenderValue(ctx, JS_DupValue(ctx, ret));
 }
 
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
@@ -146,11 +147,11 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     switch (direction)
     {
     case 'v':
-        sizing = (Clay_Sizing){CLAY_SIZING_FIT(), CLAY_SIZING_GROW()};
+        sizing = (Clay_Sizing){CLAY_SIZING_GROW(), CLAY_SIZING_GROW()};
         dir = CLAY_TOP_TO_BOTTOM;
         break;
     case 'h':
-        sizing = (Clay_Sizing){CLAY_SIZING_GROW(), CLAY_SIZING_FIT()};
+        sizing = (Clay_Sizing){CLAY_SIZING_GROW(), CLAY_SIZING_GROW()};
         dir = CLAY_LEFT_TO_RIGHT;
         break;
     default:
@@ -267,7 +268,7 @@ void GUI_RenderSpacer()
 {
     CLAY((Clay_ElementDeclaration){
         .layout = {
-            .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_GROW()},
+            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
         },
     })
     {

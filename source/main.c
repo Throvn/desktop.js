@@ -70,8 +70,6 @@ int main(int argc, char **argv)
     Font font = GetFontDefault();
     Clay_SetMeasureTextFunction(Raylib_MeasureText, &font);
 
-    Clay_SetDebugModeEnabled(true);
-
     TJS_RunWithIdleCallback(qrt, idleCallback);
 
     return 0;

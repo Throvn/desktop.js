@@ -90,6 +90,12 @@ static JSValue GUI_CreateCustomElement(JSContext *ctx, int argc, JSValueConst *a
 
     JSValue instanceArgv[1] = {JS_DupValue(ctx, props)};
     JSValue instance = JS_CallConstructor(ctx, argv[0], 1, instanceArgv);
+    if (JS_IsException(instance))
+    {
+        fprintf(stderr, "[GUI] Instantiation of custom element failed. Constructor threw.\n");
+        exit(5);
+        return JS_UNDEFINED;
+    }
     JS_SetPropertyStr(ctx, element, "instance", JS_DupValue(ctx, instance));
 
     return element;

@@ -1,69 +1,123 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 import * as GUI from "GUI";
-console.log("JSX test started...");
-console.log("HELLO", globalThis);
-console.log("Bye");
-var MyComponent = /** @class */ (function () {
-    function MyComponent(props) {
-        var _this = this;
-        this.layerX = -1;
-        this.handleMouseMove = function (event) {
-            console.log(event);
-            _this.layerX = event.layerX;
-        };
-        this.props = props;
-        console.log("MyComponent constructor was called!");
-    }
-    MyComponent.prototype.anotherFunc = function () {
-        return true;
-    };
-    MyComponent.prototype.render = function () {
-        var val = (GUI.createElement("vStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
-            GUI.createElement("group", { "$backgroundColor": "purple" },
-                GUI.createElement("text", null, "MyComponent"),
-                GUI.createElement("spacer", null),
-                GUI.createElement("text", { "$backgroundColor": "red", "$color": "blue", "$fontSize": 48, "$letterSpacing": 40 },
-                    "Test ",
-                    "Blue"),
-                GUI.createElement("vStack", { "$padding": 50 },
-                    "Test ",
-                    "" + this.layerX),
-                "Cool")));
-        // console.log("VAL: ", val);
-        return val;
-    };
-    return MyComponent;
-}());
+var SIZE = 10;
+var CELL_SIZE = 128; // Approx lineHeight + padding
+var TICK_INTERVAL = 250; // ms per snake move
+var MOUSE_THRESHOLD = 5; // pixels needed to trigger direction change
 var Player = /** @class */ (function () {
     function Player(x, y) {
-        this.direction = {
-            x: 1,
-            y: 1
-        };
-        this.x = x;
-        this.y = y;
+        this.direction = { x: 1, y: 0 };
+        this.body = [];
+        this.body = [{ x: x, y: y }];
     }
     Player.prototype.move = function () {
-        this.x += this.direction.x;
-        this.y += this.direction.y;
+        var head = {
+            x: (this.body[0].x + this.direction.x + SIZE) % SIZE,
+            y: (this.body[0].y + this.direction.y + SIZE) % SIZE
+        };
+        this.body.unshift(head);
+        this.body.pop();
+    };
+    Player.prototype.grow = function () {
+        var tail = this.body[this.body.length - 1];
+        this.body.push(__assign({}, tail));
     };
     return Player;
 }());
-var player = new Player(0, 0);
-var field = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-var grid = field.map(function (v, i) { return GUI.createElement("hStack", null, field.map(function (v, j) { return (GUI.createElement("text", { "$lineHeight": 120, "$padding": 8, "$backgroundColor": i === player.x && j === player.y ? "red" : "black" }, " A ")); })); });
-console.log(grid);
-// GUI.render((<vStack>
-//     Hello
-//     Bye
-//     What
-//     {grid}
-// </vStack>))
-var gameLoop = function () {
-    player.move();
-    grid = field.map(function (v, i) { return GUI.createElement("hStack", null, field.map(function (v, j) { return (GUI.createElement("text", { "$lineHeight": 120, "$padding": 8, "$backgroundColor": i === player.x && j === player.y ? "red" : "black" }, " A ")); })); });
-    console.log("Moved");
-    os.setTimeout(gameLoop, 500);
-};
-GUI.render(GUI.createElement("hStack", { onMouseOver: function (event) { console.log(event); } },
-    "Another test",
-    GUI.createElement(MyComponent, null, "This is another test")));
+var GameBoard = /** @class */ (function () {
+    function GameBoard(props) {
+        var _this = this;
+        this.food = { x: 5, y: 5 };
+        this.lastMousePos = { x: 0, y: 0 };
+        this.tick = 0;
+        this.lastUpdate = 0;
+        this.handleMouseMove = function (event) {
+            var mouseX = event.layerX;
+            var mouseY = event.layerY;
+            var dx = mouseX - _this.lastMousePos.x;
+            var dy = mouseY - _this.lastMousePos.y;
+            // Only update if movement exceeds threshold
+            if (Math.abs(dx) >= MOUSE_THRESHOLD || Math.abs(dy) >= MOUSE_THRESHOLD) {
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    _this.player.direction = { x: dx > 0 ? 1 : -1, y: 0 };
+                }
+                else if (dy !== 0) {
+                    _this.player.direction = { x: 0, y: dy > 0 ? 1 : -1 };
+                }
+                _this.lastMousePos = { x: mouseX, y: mouseY };
+            }
+        };
+        this.props = props;
+        this.player = new Player(0, 0);
+    }
+    GameBoard.prototype.spawnFood = function () {
+        var pos;
+        do {
+            pos = { x: Math.floor(Math.random() * SIZE), y: Math.floor(Math.random() * SIZE) };
+        } while (this.player.body.some(function (s) { return s.x === pos.x && s.y === pos.y; }));
+        this.food = pos;
+    };
+    GameBoard.prototype.isEating = function () {
+        var head = this.player.body[0];
+        return head.x === this.food.x && head.y === this.food.y;
+    };
+    GameBoard.prototype.render = function () {
+        var now = Date.now();
+        if (now - this.lastUpdate >= TICK_INTERVAL) {
+            this.lastUpdate = now;
+            this.tick++;
+            // Move snake
+            this.player.move();
+            // Self collision check
+            var head_1 = this.player.body[0];
+            if (this.player.body.slice(1).some(function (s) { return s.x === head_1.x && s.y === head_1.y; })) {
+                console.log("Game Over");
+                this.player = new Player(0, 0);
+            }
+            // Eat food
+            if (this.isEating()) {
+                this.player.grow();
+                this.spawnFood();
+            }
+        }
+        // Draw grid
+        var grid = [];
+        var _loop_1 = function (i) {
+            var row = [];
+            var _loop_2 = function (j) {
+                var isSnake = this_1.player.body.some(function (s) { return s.x === j && s.y === i; });
+                var isFood = this_1.food.x === j && this_1.food.y === i;
+                row.push(GUI.createElement("text", { "$lineHeight": 120, "$padding": 8, "$backgroundColor": isSnake ? "red" : isFood ? "green" : "black" }, " "));
+            };
+            for (var j = 0; j < SIZE; j++) {
+                _loop_2(j);
+            }
+            grid.push(GUI.createElement("hStack", null, row));
+        };
+        var this_1 = this;
+        for (var i = 0; i < SIZE; i++) {
+            _loop_1(i);
+        }
+        return (GUI.createElement("hStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
+            GUI.createElement("spacer", null),
+            GUI.createElement("vStack", { "$backgroundColor": "blue" },
+                GUI.createElement("spacer", null),
+                GUI.createElement("vStack", null,
+                    "" + this.tick,
+                    grid),
+                GUI.createElement("spacer", null)),
+            GUI.createElement("spacer", null)));
+    };
+    return GameBoard;
+}());
+GUI.render(GUI.createElement(GameBoard, null));

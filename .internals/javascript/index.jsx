@@ -1,87 +1,132 @@
 import * as GUI from "GUI"
-console.log("JSX test started...")
-console.log("HELLO", globalThis)
-console.log("Bye")
 
-class MyComponent {
-    layerX = -1;
-    constructor(props) {
-        this.props = props
-        console.log("MyComponent constructor was called!")
-    }
-
-    anotherFunc() {
-        return true
-    }
-
-    handleMouseMove = (event) => {
-        console.log(event);
-        this.layerX = event.layerX;
-    }
-
-    render() {
-        const val = (<vStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
-            <group $backgroundColor="purple">
-                <text>
-                    MyComponent
-                </text>
-                <spacer />
-                <text $backgroundColor="red" $color="blue" $fontSize={48} $letterSpacing={40}>Test {"Blue"}</text>
-                <vStack $padding={50}>
-                    Test {"" + this.layerX}
-                </vStack>
-                {"Cool"}
-            </group>
-        </vStack>);
-        // console.log("VAL: ", val);
-        return val;
-    }
-}
+const SIZE = 10;
+const CELL_SIZE = 128; // Approx lineHeight + padding
+const TICK_INTERVAL = 250; // ms per snake move
+const MOUSE_THRESHOLD = 5; // pixels needed to trigger direction change
 
 class Player {
-    direction = {
-        x: 1,
-        y: 1,
-    }
+    direction = { x: 1, y: 0 };
+    body = [];
     constructor(x, y) {
-        this.x = x;
-        this.y = y;
+        this.body = [{ x, y }];
     }
 
     move() {
-        this.x += this.direction.x;
-        this.y += this.direction.y;
+        const head = {
+            x: (this.body[0].x + this.direction.x + SIZE) % SIZE,
+            y: (this.body[0].y + this.direction.y + SIZE) % SIZE
+        };
+        this.body.unshift(head);
+        this.body.pop();
+    }
+
+    grow() {
+        const tail = this.body[this.body.length - 1];
+        this.body.push({ ...tail });
     }
 }
 
-const player = new Player(0, 0);
+class GameBoard {
+    food = { x: 5, y: 5 };
+    lastMousePos = { x: 0, y: 0 };
+    tick = 0;
+    lastUpdate = 0;
 
-const field = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-let grid = field.map((v, i) => <hStack>{field.map((v, j) => (<text $lineHeight={120} $padding={8} $backgroundColor={i === player.x && j === player.y ? "red" : "black"}> A </text>))}</hStack>)
-console.log(grid)
+    constructor(props) {
+        this.props = props;
+        this.player = new Player(0, 0);
+    }
 
-// GUI.render((<vStack>
-//     Hello
+    handleMouseMove = (event) => {
+        const mouseX = event.layerX;
+        const mouseY = event.layerY;
 
-//     Bye
+        const dx = mouseX - this.lastMousePos.x;
+        const dy = mouseY - this.lastMousePos.y;
 
-//     What
-//     {grid}
-// </vStack>))
+        // Only update if movement exceeds threshold
+        if (Math.abs(dx) >= MOUSE_THRESHOLD || Math.abs(dy) >= MOUSE_THRESHOLD) {
+            if (Math.abs(dx) > Math.abs(dy)) {
+                this.player.direction = { x: dx > 0 ? 1 : -1, y: 0 };
+            } else if (dy !== 0) {
+                this.player.direction = { x: 0, y: dy > 0 ? 1 : -1 };
+            }
+            this.lastMousePos = { x: mouseX, y: mouseY };
+        }
+    }
 
-const gameLoop = () => {
-    player.move();
-    grid = field.map((v, i) => <hStack>{field.map((v, j) => (<text $lineHeight={120} $padding={8} $backgroundColor={i === player.x && j === player.y ? "red" : "black"}> A </text>))}</hStack>)
-    console.log("Moved");
+    spawnFood() {
+        let pos;
+        do {
+            pos = { x: Math.floor(Math.random() * SIZE), y: Math.floor(Math.random() * SIZE) };
+        } while (this.player.body.some(s => s.x === pos.x && s.y === pos.y));
+        this.food = pos;
+    }
 
-    os.setTimeout(gameLoop, 500);
+    isEating() {
+        const head = this.player.body[0];
+        return head.x === this.food.x && head.y === this.food.y;
+    }
+
+    render() {
+        const now = Date.now();
+        if (now - this.lastUpdate >= TICK_INTERVAL) {
+            this.lastUpdate = now;
+            this.tick++;
+
+            // Move snake
+            this.player.move();
+
+            // Self collision check
+            const head = this.player.body[0];
+            if (this.player.body.slice(1).some(s => s.x === head.x && s.y === head.y)) {
+                console.log("Game Over");
+                this.player = new Player(0, 0);
+            }
+
+            // Eat food
+            if (this.isEating()) {
+                this.player.grow();
+                this.spawnFood();
+            }
+        }
+
+        // Draw grid
+        const grid = [];
+        for (let i = 0; i < SIZE; i++) {
+            const row = [];
+            for (let j = 0; j < SIZE; j++) {
+                const isSnake = this.player.body.some(s => s.x === j && s.y === i);
+                const isFood = this.food.x === j && this.food.y === i;
+                row.push(
+                    <text
+                        $lineHeight={120}
+                        $padding={8}
+                        $backgroundColor={isSnake ? "red" : isFood ? "green" : "black"}
+                    >
+                        {" "}
+                    </text>
+                );
+            }
+            grid.push(<hStack>{row}</hStack>);
+        }
+
+        return (
+            <hStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
+                <spacer />
+                <vStack $backgroundColor="blue">
+                    <spacer />
+                    <vStack>
+                        {"" + this.tick}
+                        {grid}
+                    </vStack>
+                    <spacer />
+                </vStack>
+                <spacer />
+            </hStack>
+        );
+    }
 }
 
-GUI.render(
-    <hStack onMouseOver={(event) => { console.log(event) }}>
-        Another test
-        <MyComponent>
-            This is another test
-        </MyComponent>
-    </hStack>
-)
+GUI.render(<GameBoard />)
