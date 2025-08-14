@@ -93,7 +93,7 @@ int GUI_GetKey(JSContext *ctx, JSValue element)
 /// @return JS Object or JS_UNDEFINED
 JSValue GUI_GetChildren(JSContext *ctx, JSValue element)
 {
-    if (!JS_IsObject)
+    if (!JS_IsObject(element))
     {
         fprintf(stderr, "[GUI_GetChildren] Element is not an object");
         exit(3);
@@ -126,15 +126,16 @@ void GUI_RenderCustom(JSContext *ctx, JSValue element)
 {
     JSValue instance = JS_GetPropertyStr(ctx, element, "instance");
     JSValue render = JS_GetPropertyStr(ctx, instance, "render");
-    if (JS_IsUndefined(render))
+    if (!JS_IsFunction(ctx, render))
     {
         fprintf(stderr, "[GUI_RenderCustom] FATAL: Custom elements need a render() function.\n");
         exit(4);
         return;
     }
-    JSValue ret = JS_Call(ctx, render, instance, 0, NULL);
+    JSValue argv[] = {JS_UNDEFINED};
+    JSValue ret = JS_Call(ctx, render, instance, 0, argv);
 
-    GUI_RenderValue(ctx, ret);
+    // GUI_RenderValue(ctx, JS_DupValue(ctx, ret));
 }
 
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
@@ -158,8 +159,6 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
         return;
     }
 
-    int key = GUI_GetKey(ctx, element);
-
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
@@ -170,6 +169,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
                 CLAY_ALIGN_Y_CENTER,
             },
             .padding = padding,
+            .sizing = sizing,
         },
         .backgroundColor = backgroundColor,
     })
@@ -184,7 +184,7 @@ void GUI_RenderString(JSContext *ctx, JSValue element)
 
     JSValue stringElement = GUI_GetChildren(ctx, element);
 
-    char *string = JS_ToCString(ctx, stringElement);
+    const char *string = JS_ToCString(ctx, stringElement);
     Clay_String clayString = {.chars = string, .length = strlen(string)};
 
     Clay_Color color = STYLES_GetColor(ctx, element);
@@ -208,7 +208,6 @@ void GUI_RenderString(JSContext *ctx, JSValue element)
     })
     {
         CLAY_TEXT(clayString, CLAY_TEXT_CONFIG((Clay_TextElementConfig){
-                                  .fontSize = 12,
                                   .textColor = color,
                                   .fontSize = fontSize,
                                   .letterSpacing = letterSpacing,
@@ -251,11 +250,9 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     GUI_ApplyPropToChild(ctx, element, "$fontSize");
     GUI_ApplyPropToChild(ctx, element, "$letterSpacing");
 
-    int key = GUI_GetKey(ctx, element);
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
-        // .id = CLAY_IDI("", key),
         .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,
@@ -306,7 +303,7 @@ void GUI_RenderGroup(JSContext *ctx, JSValue element)
         {
             JSPropertyEnum key = keys[i];
             JSValue keyValue = JS_AtomToValue(ctx, key.atom);
-            char *keyStr = JS_ToCString(ctx, keyValue);
+            const char *keyStr = JS_ToCString(ctx, keyValue);
 
             // Never copy children
             if (0 == strcmp(keyStr, "children"))
@@ -329,20 +326,39 @@ void GUI_RenderGroup(JSContext *ctx, JSValue element)
     renderChildren(ctx, element);
 }
 
+void GUI_RenderArray(JSContext *ctx, JSValue element)
+{
+    int length = GUI_GetLength(ctx, element);
+    for (int i = 0; i < length; i++)
+    {
+        JSValue child = JS_GetPropertyUint32(ctx, element, i);
+        GUI_RenderValue(ctx, child);
+    }
+}
+
 void GUI_RenderValue(JSContext *ctx, JSValue element)
 {
-    if (JS_IsUninitialized(element))
+    if (JS_IsUninitialized(element) || JS_IsUndefined(element))
         return;
 
     JSValue typeValue = JS_GetPropertyStr(ctx, element, "type");
     if (!JS_IsString(typeValue))
     {
+
+        // Check if it could be an array.
+        // JS_IsArray, somehow returns false, even if it is an array.
+        int length = GUI_GetLength(ctx, element);
+        if (JS_IsObject(element) && length > 0)
+        {
+            GUI_RenderArray(ctx, element);
+            return;
+        }
+
         fprintf(stderr, "[GUI_RenderValue] FATAL: element type is not a string\n");
         exit(2);
         return;
     }
-
-    char *type = JS_ToCString(ctx, typeValue);
+    const char *type = JS_ToCString(ctx, typeValue);
     // printf("[GUI_RenderValue] Type is: %s\n", type);
 
     if (0 == strcmp(type, "custom"))
@@ -351,7 +367,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
     }
     else if (0 == strcmp(type, "spacer"))
     {
-        GUI_RenderSpacer(ctx, element);
+        GUI_RenderSpacer();
     }
     else if (0 == strcmp(type, "hStack"))
     {

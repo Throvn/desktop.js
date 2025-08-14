@@ -40,7 +40,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     JSValue placeLeft = JS_GetPropertyStr(ctx, propValue, "left");
     if (JS_IsNumber(placeLeft))
     {
-        int value = 0;
+        uint32_t value = 0;
         JS_ToUint32(ctx, &value, placeLeft);
         padding.left = value;
     }
@@ -48,7 +48,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     JSValue placeRight = JS_GetPropertyStr(ctx, propValue, "right");
     if (JS_IsNumber(placeRight))
     {
-        int value = 0;
+        uint32_t value = 0;
         JS_ToUint32(ctx, &value, placeRight);
         padding.right = value;
     }
@@ -56,7 +56,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     JSValue placeTop = JS_GetPropertyStr(ctx, propValue, "top");
     if (JS_IsNumber(placeTop))
     {
-        int value = 0;
+        uint32_t value = 0;
         JS_ToUint32(ctx, &value, placeTop);
         padding.top = value;
     }
@@ -64,7 +64,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
     JSValue placeBottom = JS_GetPropertyStr(ctx, propValue, "bottom");
     if (JS_IsNumber(placeBottom))
     {
-        int value = 0;
+        uint32_t value = 0;
         JS_ToUint32(ctx, &value, placeBottom);
         padding.bottom = value;
     }
@@ -85,7 +85,7 @@ Clay_Padding STYLES_GetPadding(JSContext *ctx, JSValue element)
     return parsePadding(ctx, paddingValue);
 }
 
-Clay_Color parseColor(char *colorStr)
+Clay_Color parseColor(const char *colorStr)
 {
     if ('#' == colorStr[0])
     {
@@ -95,7 +95,6 @@ Clay_Color parseColor(char *colorStr)
     Clay_Color color = {0, 0, 0, 0};
     for (int i = 0; i < COLOR_Length; i++)
     {
-        Clay_Color c = COLOR_Values[i];
         if (0 == strcmp(colorStr, COLOR_Names[i]))
         {
             color = COLOR_Values[i];
@@ -120,7 +119,7 @@ static Clay_Color getColorFromProperty(JSContext *ctx, JSValue element, char *pr
         return (Clay_Color){0};
     }
 
-    char *colorStr = JS_ToCString(ctx, colorValue);
+    const char *colorStr = JS_ToCString(ctx, colorValue);
     Clay_Color color = parseColor(colorStr);
     JS_FreeCString(ctx, colorStr);
 

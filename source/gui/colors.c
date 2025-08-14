@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Clay_Color parseHexColor(char *hexCode)
+Clay_Color parseHexColor(const char *hexCode)
 {
     int length = strlen(hexCode);
     if (length != 6 && length != 8)

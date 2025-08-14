@@ -12,15 +12,25 @@
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 
-void *js_start(void *qrt)
+void idleCallback(uv_idle_t *handle)
 {
-    // Load GUI import.
-    JSContext *ctx = TJS_GetJSContext(qrt);
-    GUI_js_init_module(ctx);
+    TJSRuntime *qrt = handle->data;
 
-    // Blocking.
-    TJS_Run(qrt);
-    return NULL;
+    if (WindowShouldClose())
+    {
+        CloseWindow();
+        TJS_FreeRuntime(qrt);
+        return;
+    }
+    Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
+    Clay_SetPointerState((Clay_Vector2){GetMouseX(), GetMouseY()}, IsMouseButtonDown(MOUSE_BUTTON_LEFT));
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+    Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
+    Font font = GetFontDefault();
+    Clay_Raylib_Render(rc, &font);
+    EndDrawing();
 }
 
 void HandleClayErrors(Clay_ErrorData errorData)
@@ -32,7 +42,7 @@ void HandleClayErrors(Clay_ErrorData errorData)
 
 int main(int argc, char **argv)
 {
-
+    // Init JS runtime
     TJS_Initialize(argc, argv);
 
     TJSRuntime *qrt = TJS_NewRuntime();
@@ -41,8 +51,9 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    pthread_t js_thread;
-    pthread_create(&js_thread, NULL, js_start, qrt);
+    // Load GUI import.
+    JSContext *ctx = TJS_GetJSContext(qrt);
+    GUI_js_init_module(ctx);
 
     SetTraceLogLevel(LOG_ERROR);
     InitWindow(600, 300, "Test Window");
@@ -60,23 +71,8 @@ int main(int argc, char **argv)
     Clay_SetMeasureTextFunction(Raylib_MeasureText, &font);
 
     Clay_SetDebugModeEnabled(true);
-    while (!WindowShouldClose())
-    {
-        Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
-        Clay_SetPointerState((Clay_Vector2){GetMouseX(), GetMouseY()}, IsMouseButtonDown(MOUSE_BUTTON_LEFT));
 
-        BeginDrawing();
-        ClearBackground(BLACK);
-        Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
-        Clay_Raylib_Render(rc, &font);
-        EndDrawing();
-    }
-
-    pthread_cancel(js_thread);
-    pthread_join(js_thread, NULL);
-
-    CloseWindow();
-    TJS_FreeRuntime(qrt);
+    TJS_RunWithIdleCallback(qrt, idleCallback);
 
     return 0;
 }

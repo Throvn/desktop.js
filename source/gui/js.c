@@ -88,8 +88,9 @@ static JSValue GUI_CreateCustomElement(JSContext *ctx, int argc, JSValueConst *a
 
     JS_SetPropertyStr(ctx, props, "children", children);
 
-    JSValue instance = JS_CallConstructor(ctx, argv[0], 0, NULL);
-    JS_SetPropertyStr(ctx, element, "instance", instance);
+    JSValue instanceArgv[1] = {JS_DupValue(ctx, props)};
+    JSValue instance = JS_CallConstructor(ctx, argv[0], 1, instanceArgv);
+    JS_SetPropertyStr(ctx, element, "instance", JS_DupValue(ctx, instance));
 
     return element;
 }
