@@ -41,6 +41,22 @@ var GameBoard = /** @class */ (function () {
         this.lastMousePos = { x: 0, y: 0 };
         this.tick = 0;
         this.lastUpdate = 0;
+        this.gameLoop = function () {
+            _this.tick++;
+            // Move snake
+            _this.player.move();
+            // Self collision check
+            var head = _this.player.body[0];
+            if (_this.player.body.slice(1).some(function (s) { return s.x === head.x && s.y === head.y; })) {
+                console.log("Game Over");
+                _this.player = new Player(0, 0);
+            }
+            // Eat food
+            if (_this.isEating()) {
+                _this.player.grow();
+                _this.spawnFood();
+            }
+        };
         this.handleMouseMove = function (event) {
             var mouseX = event.layerX;
             var mouseY = event.layerY;
@@ -59,6 +75,7 @@ var GameBoard = /** @class */ (function () {
         };
         this.props = props;
         this.player = new Player(0, 0);
+        setInterval(this.gameLoop, 500);
     }
     GameBoard.prototype.spawnFood = function () {
         var pos;
@@ -72,24 +89,6 @@ var GameBoard = /** @class */ (function () {
         return head.x === this.food.x && head.y === this.food.y;
     };
     GameBoard.prototype.render = function () {
-        var now = Date.now();
-        if (now - this.lastUpdate >= TICK_INTERVAL) {
-            this.lastUpdate = now;
-            this.tick++;
-            // Move snake
-            this.player.move();
-            // Self collision check
-            var head_1 = this.player.body[0];
-            if (this.player.body.slice(1).some(function (s) { return s.x === head_1.x && s.y === head_1.y; })) {
-                console.log("Game Over");
-                this.player = new Player(0, 0);
-            }
-            // Eat food
-            if (this.isEating()) {
-                this.player.grow();
-                this.spawnFood();
-            }
-        }
         // Draw grid
         var grid = [];
         var _loop_1 = function (i) {

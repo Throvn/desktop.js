@@ -1,8 +1,6 @@
 import * as GUI from "GUI"
 
 const SIZE = 10;
-const CELL_SIZE = 128; // Approx lineHeight + padding
-const TICK_INTERVAL = 250; // ms per snake move
 const MOUSE_THRESHOLD = 5; // pixels needed to trigger direction change
 
 class Player {
@@ -36,6 +34,28 @@ class GameBoard {
     constructor(props) {
         this.props = props;
         this.player = new Player(0, 0);
+
+        setInterval(this.gameLoop, 500);
+    }
+
+    gameLoop = () => {
+        this.tick++;
+
+        // Move snake
+        this.player.move();
+
+        // Self collision check
+        const head = this.player.body[0];
+        if (this.player.body.slice(1).some(s => s.x === head.x && s.y === head.y)) {
+            console.log("Game Over");
+            this.player = new Player(0, 0);
+        }
+
+        // Eat food
+        if (this.isEating()) {
+            this.player.grow();
+            this.spawnFood();
+        }
     }
 
     handleMouseMove = (event) => {
@@ -70,28 +90,6 @@ class GameBoard {
     }
 
     render() {
-        const now = Date.now();
-        if (now - this.lastUpdate >= TICK_INTERVAL) {
-            this.lastUpdate = now;
-            this.tick++;
-
-            // Move snake
-            this.player.move();
-
-            // Self collision check
-            const head = this.player.body[0];
-            if (this.player.body.slice(1).some(s => s.x === head.x && s.y === head.y)) {
-                console.log("Game Over");
-                this.player = new Player(0, 0);
-            }
-
-            // Eat food
-            if (this.isEating()) {
-                this.player.grow();
-                this.spawnFood();
-            }
-        }
-
         // Draw grid
         const grid = [];
         for (let i = 0; i < SIZE; i++) {

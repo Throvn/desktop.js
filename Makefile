@@ -2,8 +2,6 @@ run: main
 	DYLD_LIBRARY_PATH=build \
 	./djs-aarch64-macos run ./.internals/javascript/index.js
 
-DEBUGGING := -g
-
 debug: main
 	DYLD_LIBRARY_PATH=build \
 	# lldb djs-aarch64-macos
@@ -25,7 +23,11 @@ LIBRARY_FILES = lib/txiki.js/build/deps/quickjs/libqjs.a \
 				lib/raylib/raylib/libraylib.a
 
 main: $(LIBRARY_FILES) $(SOURCE_FILES)
-	clang $(DEBUGGING) -fsanitize=address -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos -Ilib/raylib/raylib/include -Ilib/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
+	clang -g -fsanitize=address -O0 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos -Ilib/raylib/raylib/include -Ilib/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
+
+leaks: $(SOURCE_FILES)
+	clang --analyze -Xclang -analyzer-output=html -g -fsanitize=address -Wall $^ -Ilib/raylib/raylib/include -Ilib/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include
+
 
 minified: $(LIBRARY_FILES) $(SOURCE_FILES)
 	zig cc -O4 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
