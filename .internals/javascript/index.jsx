@@ -115,8 +115,8 @@ class GameBoard {
                 <spacer />
                 <vStack $backgroundColor="blue">
                     <spacer />
+                    {"" + this.tick}
                     <vStack>
-                        {"" + this.tick}
                         {grid}
                     </vStack>
                     <spacer />

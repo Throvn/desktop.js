@@ -75,6 +75,7 @@ This has two advantages:
 | $fontSize        | `unsigned integer`                                                                                                    | `0` \| `100` \| `12`                         | Font size is generally thought of as `x pixels tall`. Default is 12 (pixels tall).                                                                                          |
 | $color           | `string`                                                                                                              | `#aabbcc`, `"#00ff00ff"`, `"tomato"`         | Applied to `<text>`. Supported color types are: HTML Colors or hex colors with or without an alpha value.                                                                   |
 | $letterSpacing   | `unsigned integer`                                                                                                    | `0` \| `1234`                                | Results in **horizontal** whitespace between the individual characters.                                                                                                     |
+| $gap             | `unsigned integer`                                                                                                    | `0` \| `8`                                   | Adds x `px` of spacing between the child elements of a stack.                                                                                                               |
 
 ### Built in Components
 
@@ -117,6 +118,7 @@ Each child is centered automatically. To change the position of children use [`<
 
 - `$backgroundColor`
 - `$padding`
+- `$gap`
 
 #### `<hStack>`
 

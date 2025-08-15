@@ -161,3 +161,21 @@ int STYLES_GetLetterSpacing(JSContext *ctx, JSValue element)
 {
     return STYLES_GetPropValueAsInt32(ctx, element, "$letterSpacing");
 }
+
+uint16_t STYLES_GetGap(JSContext *ctx, JSValue element)
+{
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    if (!JS_IsObject(props))
+        return 0;
+
+    JSValue gapValue = JS_GetPropertyStr(ctx, props, "$gap");
+    if (!JS_IsNumber(gapValue))
+        return 0;
+
+    uint16_t gap;
+    int failed = JS_ToUint32(ctx, &gap, gapValue);
+    if (failed)
+        return 0;
+
+    return gap;
+}

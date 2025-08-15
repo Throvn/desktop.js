@@ -11,8 +11,6 @@ var __assign = (this && this.__assign) || function () {
 };
 import * as GUI from "GUI";
 var SIZE = 10;
-var CELL_SIZE = 128; // Approx lineHeight + padding
-var TICK_INTERVAL = 250; // ms per snake move
 var MOUSE_THRESHOLD = 5; // pixels needed to trigger direction change
 var Player = /** @class */ (function () {
     function Player(x, y) {
@@ -111,9 +109,8 @@ var GameBoard = /** @class */ (function () {
             GUI.createElement("spacer", null),
             GUI.createElement("vStack", { "$backgroundColor": "blue" },
                 GUI.createElement("spacer", null),
-                GUI.createElement("vStack", null,
-                    "" + this.tick,
-                    grid),
+                "" + this.tick,
+                GUI.createElement("vStack", null, grid),
                 GUI.createElement("spacer", null)),
             GUI.createElement("spacer", null)));
     };

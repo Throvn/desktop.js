@@ -162,6 +162,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
+    uint16_t childGap = STYLES_GetGap(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .layout = {
             .layoutDirection = dir,
@@ -171,6 +172,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
             },
             .padding = padding,
             .sizing = sizing,
+            .childGap = childGap,
         },
         .backgroundColor = backgroundColor,
     })
