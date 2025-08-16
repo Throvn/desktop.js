@@ -163,6 +163,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     uint16_t childGap = STYLES_GetGap(ctx, element);
+    Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .layout = {
             .layoutDirection = dir,
@@ -175,6 +176,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
             .childGap = childGap,
         },
         .backgroundColor = backgroundColor,
+        .cornerRadius = cornerRadius,
     })
     {
         EVENT_HandleMouseEvents(ctx, element);
@@ -255,11 +257,13 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
 
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
+    Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,
         },
+        .cornerRadius = cornerRadius,
     })
     {
         renderChildren(ctx, element);
@@ -272,6 +276,7 @@ void GUI_RenderSpacer()
         .layout = {
             .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
         },
+        .clip = CLAY_CLIP_TO_ATTACHED_PARENT,
     })
     {
     }
@@ -416,6 +421,7 @@ Clay_RenderCommandArray GUI_RenderCommands(TJSRuntime *qrt)
                 CLAY_ALIGN_Y_CENTER,
             },
         },
+        .clip = CLAY_CLIP_TO_ATTACHED_PARENT,
     })
     {
         GUI_RenderValue(ctx, rootValue);

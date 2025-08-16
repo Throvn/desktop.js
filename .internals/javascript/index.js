@@ -94,23 +94,31 @@ var GameBoard = /** @class */ (function () {
             var _loop_2 = function (j) {
                 var isSnake = this_1.player.body.some(function (s) { return s.x === j && s.y === i; });
                 var isFood = this_1.food.x === j && this_1.food.y === i;
-                row.push(GUI.createElement("text", { "$lineHeight": 120, "$padding": 8, "$backgroundColor": isSnake ? "red" : isFood ? "green" : "black" }, " "));
+                row.push(GUI.createElement("text", { "$lineHeight": 120, "$padding": 8, "$backgroundColor": isSnake ? "red" : isFood ? "green" : "black", "$borderRadius": {
+                        bottomLeft: 20
+                    } }, " "));
             };
             for (var j = 0; j < SIZE; j++) {
                 _loop_2(j);
             }
-            grid.push(GUI.createElement("hStack", null, row));
+            grid.push(GUI.createElement("hStack", { "$borderRadius": 20 }, row));
         };
         var this_1 = this;
         for (var i = 0; i < SIZE; i++) {
             _loop_1(i);
         }
-        return (GUI.createElement("hStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove },
+        return (GUI.createElement("hStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove, "$borderRadius": {
+                top: 50
+            } },
             GUI.createElement("spacer", null),
-            GUI.createElement("vStack", { "$backgroundColor": "blue" },
+            GUI.createElement("vStack", { "$backgroundColor": "blue", "$padding": 8, "$borderRadius": {
+                    // top: 16,
+                    bottomLeft: 8,
+                    bottomRight: 32
+                } },
                 GUI.createElement("spacer", null),
                 "" + this.tick,
-                GUI.createElement("vStack", null, grid),
+                GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid),
                 GUI.createElement("spacer", null)),
             GUI.createElement("spacer", null)));
     };

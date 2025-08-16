@@ -179,3 +179,104 @@ uint16_t STYLES_GetGap(JSContext *ctx, JSValue element)
 
     return gap;
 }
+
+static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
+{
+    Clay_CornerRadius cornerRadius = {0};
+    if (JS_IsNumber(propValue))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, propValue);
+        cornerRadius = CLAY_CORNER_RADIUS((float)value);
+
+        return cornerRadius;
+    }
+
+    if (!JS_IsObject(propValue))
+    {
+        // fprintf(stderr, "[Warning] Padding property given but not as an object. Ignoring.\n");
+        return cornerRadius;
+    }
+
+    JSValue placeTop = JS_GetPropertyStr(ctx, propValue, "top");
+    if (JS_IsNumber(placeTop))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, placeTop);
+        cornerRadius.topLeft = (float)value;
+        cornerRadius.topRight = (float)value;
+    }
+
+    JSValue placeBottom = JS_GetPropertyStr(ctx, propValue, "bottom");
+    if (JS_IsNumber(placeBottom))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, placeBottom);
+        cornerRadius.bottomLeft = (float)value;
+        cornerRadius.bottomRight = (float)value;
+    }
+
+    JSValue placeLeft = JS_GetPropertyStr(ctx, propValue, "left");
+    if (JS_IsNumber(placeLeft))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, placeLeft);
+        cornerRadius.topLeft = (float)value;
+        cornerRadius.bottomLeft = (float)value;
+    }
+
+    JSValue placeRight = JS_GetPropertyStr(ctx, propValue, "right");
+    if (JS_IsNumber(placeRight))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, placeRight);
+        cornerRadius.topRight = (float)value;
+        cornerRadius.bottomRight = (float)value;
+    }
+
+    JSValue placeTopLeft = JS_GetPropertyStr(ctx, propValue, "topLeft");
+    if (JS_IsNumber(placeTopLeft))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, placeTopLeft);
+        cornerRadius.topLeft = (float)value;
+    }
+
+    JSValue placeTopRight = JS_GetPropertyStr(ctx, propValue, "topRight");
+    if (JS_IsNumber(placeTopRight))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, placeTopRight);
+        cornerRadius.topRight = (float)value;
+    }
+
+    JSValue placeBottomLeft = JS_GetPropertyStr(ctx, propValue, "bottomLeft");
+    if (JS_IsNumber(placeBottomLeft))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, placeBottomLeft);
+        cornerRadius.bottomLeft = (float)value;
+    }
+
+    JSValue placeBottomRight = JS_GetPropertyStr(ctx, propValue, "bottomRight");
+    if (JS_IsNumber(placeBottomRight))
+    {
+        double value = 0;
+        JS_ToFloat64(ctx, &value, placeBottomRight);
+        cornerRadius.bottomRight = (float)value;
+    }
+
+    return cornerRadius;
+}
+
+Clay_CornerRadius STYLES_GetBorderRadius(JSContext *ctx, JSValue element)
+{
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    if (!JS_IsObject(props))
+    {
+        return (Clay_CornerRadius){0};
+    }
+    JSValue borderRadiusValue = JS_GetPropertyStr(ctx, props, "$borderRadius");
+    Clay_CornerRadius extractedValues = parseCornerRadius(ctx, borderRadiusValue);
+    return extractedValues;
+}

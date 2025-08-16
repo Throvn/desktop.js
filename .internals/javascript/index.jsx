@@ -102,21 +102,30 @@ class GameBoard {
                         $lineHeight={120}
                         $padding={8}
                         $backgroundColor={isSnake ? "red" : isFood ? "green" : "black"}
+                    $borderRadius={{
+                        bottomLeft: 20
+                    }}
                     >
                         {" "}
                     </text>
                 );
             }
-            grid.push(<hStack>{row}</hStack>);
+            grid.push(<hStack $borderRadius={20}>{row}</hStack>);
         }
 
         return (
-            <hStack $backgroundColor="green" onMouseOver={this.handleMouseMove}>
+            <hStack $backgroundColor="green" onMouseOver={this.handleMouseMove} $borderRadius={{
+                top: 50,
+            }}>
                 <spacer />
-                <vStack $backgroundColor="blue">
+                <vStack $backgroundColor="blue" $padding={8} $borderRadius={{
+                    // top: 16,
+                    bottomLeft: 8,
+                    bottomRight: 32,
+                }}>
                     <spacer />
                     {"" + this.tick}
-                    <vStack>
+                    <vStack $borderRadius={10.5}>
                         {grid}
                     </vStack>
                     <spacer />
