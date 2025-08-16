@@ -1,7 +1,7 @@
 #include "colors.h"
 #include "styles.h"
 
-static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
+static Clay_Padding parsePadding(JSContext *ctx, JSValueConst propValue)
 {
     Clay_Padding padding = {0};
     if (JS_IsNumber(propValue))
@@ -27,6 +27,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
         padding.top = value;
         padding.bottom = value;
     }
+    JS_FreeValue(ctx, placeVertical);
 
     JSValue placeHorizontal = JS_GetPropertyStr(ctx, propValue, "horizontal");
     if (JS_IsNumber(placeHorizontal))
@@ -36,6 +37,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
         padding.left = value;
         padding.right = value;
     }
+    JS_FreeValue(ctx, placeHorizontal);
 
     JSValue placeLeft = JS_GetPropertyStr(ctx, propValue, "left");
     if (JS_IsNumber(placeLeft))
@@ -44,6 +46,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
         JS_ToUint32(ctx, &value, placeLeft);
         padding.left = value;
     }
+    JS_FreeValue(ctx, placeLeft);
 
     JSValue placeRight = JS_GetPropertyStr(ctx, propValue, "right");
     if (JS_IsNumber(placeRight))
@@ -52,6 +55,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
         JS_ToUint32(ctx, &value, placeRight);
         padding.right = value;
     }
+    JS_FreeValue(ctx, placeRight);
 
     JSValue placeTop = JS_GetPropertyStr(ctx, propValue, "top");
     if (JS_IsNumber(placeTop))
@@ -60,6 +64,7 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
         JS_ToUint32(ctx, &value, placeTop);
         padding.top = value;
     }
+    JS_FreeValue(ctx, placeTop);
 
     JSValue placeBottom = JS_GetPropertyStr(ctx, propValue, "bottom");
     if (JS_IsNumber(placeBottom))
@@ -68,21 +73,27 @@ static Clay_Padding parsePadding(JSContext *ctx, JSValue propValue)
         JS_ToUint32(ctx, &value, placeBottom);
         padding.bottom = value;
     }
+    JS_FreeValue(ctx, placeBottom);
 
     return padding;
 }
 
-Clay_Padding STYLES_GetPadding(JSContext *ctx, JSValue element)
+Clay_Padding STYLES_GetPadding(JSContext *ctx, JSValueConst element)
 {
 
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (!JS_IsObject(props))
     {
         fprintf(stderr, "[GUI_GetPadding] Passed element does not have 'props' property");
+        JS_FreeValue(ctx, props);
         return (Clay_Padding){0};
     }
     JSValue paddingValue = JS_GetPropertyStr(ctx, props, "$padding");
-    return parsePadding(ctx, paddingValue);
+    JS_FreeValue(ctx, props);
+    Clay_Padding padding = parsePadding(ctx, paddingValue);
+
+    JS_FreeValue(ctx, paddingValue);
+    return padding;
 }
 
 Clay_Color parseColor(const char *colorStr)
@@ -105,82 +116,104 @@ Clay_Color parseColor(const char *colorStr)
     return color;
 }
 
-static Clay_Color getColorFromProperty(JSContext *ctx, JSValue element, char *propName)
+static Clay_Color getColorFromProperty(JSContext *ctx, JSValueConst element, const char *propName)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (!JS_IsObject(props))
     {
+        JS_FreeValue(ctx, props);
         return (Clay_Color){0};
     }
 
     JSValue colorValue = JS_GetPropertyStr(ctx, props, propName);
+    JS_FreeValue(ctx, props);
     if (!JS_IsString(colorValue))
     {
+        JS_FreeValue(ctx, colorValue);
         return (Clay_Color){0};
     }
 
     const char *colorStr = JS_ToCString(ctx, colorValue);
     Clay_Color color = parseColor(colorStr);
-    JS_FreeCString(ctx, colorStr);
 
+    JS_FreeCString(ctx, colorStr);
+    JS_FreeValue(ctx, colorValue);
     return color;
 }
 
-Clay_Color STYLES_GetBackgroundColor(JSContext *ctx, JSValue element)
+Clay_Color STYLES_GetBackgroundColor(JSContext *ctx, JSValueConst element)
 {
     return getColorFromProperty(ctx, element, "$backgroundColor");
 }
 
-Clay_Color STYLES_GetColor(JSContext *ctx, JSValue element)
+Clay_Color STYLES_GetColor(JSContext *ctx, JSValueConst element)
 {
     return getColorFromProperty(ctx, element, "$color");
 }
 
-int STYLES_GetPropValueAsInt32(JSContext *ctx, JSValue element, char *prop)
+int STYLES_GetPropValueAsInt32(JSContext *ctx, JSValueConst element, const char *prop)
 {
 
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    if (JS_IsUndefined(props))
+    if (!JS_IsObject(props))
+    {
+        JS_FreeValue(ctx, props);
         return -1;
+    }
 
     JSValue propValue = JS_GetPropertyStr(ctx, props, prop);
+    JS_FreeValue(ctx, props);
     if (!JS_IsNumber(propValue))
+    {
+        JS_FreeValue(ctx, propValue);
         return -1;
+    }
 
     int fontSize;
     JS_ToInt32(ctx, &fontSize, propValue);
+
+    JS_FreeValue(ctx, propValue);
+
     return fontSize;
 }
 
-int STYLES_GetFontSize(JSContext *ctx, JSValue element)
+int STYLES_GetFontSize(JSContext *ctx, JSValueConst element)
 {
     return STYLES_GetPropValueAsInt32(ctx, element, "$fontSize");
 }
 
-int STYLES_GetLetterSpacing(JSContext *ctx, JSValue element)
+int STYLES_GetLetterSpacing(JSContext *ctx, JSValueConst element)
 {
     return STYLES_GetPropValueAsInt32(ctx, element, "$letterSpacing");
 }
 
-uint16_t STYLES_GetGap(JSContext *ctx, JSValue element)
+uint16_t STYLES_GetGap(JSContext *ctx, JSValueConst element)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (!JS_IsObject(props))
+    {
+        JS_FreeValue(ctx, props);
         return 0;
+    }
 
     JSValue gapValue = JS_GetPropertyStr(ctx, props, "$gap");
+    JS_FreeValue(ctx, props);
     if (!JS_IsNumber(gapValue))
+    {
+        JS_FreeValue(ctx, gapValue);
         return 0;
+    }
 
     uint16_t gap;
     int failed = JS_ToUint32(ctx, &gap, gapValue);
+    JS_FreeValue(ctx, gapValue);
     if (failed)
         return 0;
 
     return gap;
 }
 
-static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
+static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValueConst propValue)
 {
     Clay_CornerRadius cornerRadius = {0};
     if (JS_IsNumber(propValue))
@@ -193,10 +226,7 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
     }
 
     if (!JS_IsObject(propValue))
-    {
-        // fprintf(stderr, "[Warning] Padding property given but not as an object. Ignoring.\n");
         return cornerRadius;
-    }
 
     JSValue placeTop = JS_GetPropertyStr(ctx, propValue, "top");
     if (JS_IsNumber(placeTop))
@@ -206,6 +236,7 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
         cornerRadius.topLeft = (float)value;
         cornerRadius.topRight = (float)value;
     }
+    JS_FreeValue(ctx, placeTop);
 
     JSValue placeBottom = JS_GetPropertyStr(ctx, propValue, "bottom");
     if (JS_IsNumber(placeBottom))
@@ -215,6 +246,7 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
         cornerRadius.bottomLeft = (float)value;
         cornerRadius.bottomRight = (float)value;
     }
+    JS_FreeValue(ctx, placeBottom);
 
     JSValue placeLeft = JS_GetPropertyStr(ctx, propValue, "left");
     if (JS_IsNumber(placeLeft))
@@ -224,6 +256,7 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
         cornerRadius.topLeft = (float)value;
         cornerRadius.bottomLeft = (float)value;
     }
+    JS_FreeValue(ctx, placeLeft);
 
     JSValue placeRight = JS_GetPropertyStr(ctx, propValue, "right");
     if (JS_IsNumber(placeRight))
@@ -233,6 +266,7 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
         cornerRadius.topRight = (float)value;
         cornerRadius.bottomRight = (float)value;
     }
+    JS_FreeValue(ctx, placeRight);
 
     JSValue placeTopLeft = JS_GetPropertyStr(ctx, propValue, "topLeft");
     if (JS_IsNumber(placeTopLeft))
@@ -241,6 +275,7 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
         JS_ToFloat64(ctx, &value, placeTopLeft);
         cornerRadius.topLeft = (float)value;
     }
+    JS_FreeValue(ctx, placeTopLeft);
 
     JSValue placeTopRight = JS_GetPropertyStr(ctx, propValue, "topRight");
     if (JS_IsNumber(placeTopRight))
@@ -249,6 +284,7 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
         JS_ToFloat64(ctx, &value, placeTopRight);
         cornerRadius.topRight = (float)value;
     }
+    JS_FreeValue(ctx, placeTopRight);
 
     JSValue placeBottomLeft = JS_GetPropertyStr(ctx, propValue, "bottomLeft");
     if (JS_IsNumber(placeBottomLeft))
@@ -257,6 +293,7 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
         JS_ToFloat64(ctx, &value, placeBottomLeft);
         cornerRadius.bottomLeft = (float)value;
     }
+    JS_FreeValue(ctx, placeBottomLeft);
 
     JSValue placeBottomRight = JS_GetPropertyStr(ctx, propValue, "bottomRight");
     if (JS_IsNumber(placeBottomRight))
@@ -265,18 +302,23 @@ static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValue propValue)
         JS_ToFloat64(ctx, &value, placeBottomRight);
         cornerRadius.bottomRight = (float)value;
     }
+    JS_FreeValue(ctx, placeBottomRight);
 
     return cornerRadius;
 }
 
-Clay_CornerRadius STYLES_GetBorderRadius(JSContext *ctx, JSValue element)
+Clay_CornerRadius STYLES_GetBorderRadius(JSContext *ctx, JSValueConst element)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (!JS_IsObject(props))
     {
+        JS_FreeValue(ctx, props);
         return (Clay_CornerRadius){0};
     }
     JSValue borderRadiusValue = JS_GetPropertyStr(ctx, props, "$borderRadius");
     Clay_CornerRadius extractedValues = parseCornerRadius(ctx, borderRadiusValue);
+
+    JS_FreeValue(ctx, props);
+    JS_FreeValue(ctx, borderRadiusValue);
     return extractedValues;
 }

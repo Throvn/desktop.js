@@ -1,0 +1,14 @@
+# Target labels
+ fontstash-populate
+# Source files and their labels
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/CMakeFiles/fontstash-populate
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/CMakeFiles/fontstash-populate.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/CMakeFiles/fontstash-populate-complete.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/fontstash-populate-prefix/src/fontstash-populate-stamp/fontstash-populate-build.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/fontstash-populate-prefix/src/fontstash-populate-stamp/fontstash-populate-configure.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/fontstash-populate-prefix/src/fontstash-populate-stamp/fontstash-populate-download.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/fontstash-populate-prefix/src/fontstash-populate-stamp/fontstash-populate-install.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/fontstash-populate-prefix/src/fontstash-populate-stamp/fontstash-populate-mkdir.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/fontstash-populate-prefix/src/fontstash-populate-stamp/fontstash-populate-patch.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/fontstash-populate-prefix/src/fontstash-populate-stamp/fontstash-populate-test.rule
+/Users/throvn/Documents/desktop.js/build/_deps/fontstash-subbuild/fontstash-populate-prefix/src/fontstash-populate-stamp/fontstash-populate-update.rule

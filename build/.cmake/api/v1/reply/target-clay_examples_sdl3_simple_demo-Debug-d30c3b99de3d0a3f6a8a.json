@@ -1,0 +1,311 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "examples/SDL3-simple-demo/clay_examples_sdl3_simple_demo"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"sdl_generic_link_dependency",
+			"sdl_link_dependency"
+		],
+		"files" : 
+		[
+			"examples/SDL3-simple-demo/CMakeLists.txt",
+			"/Users/throvn/Documents/desktop.js/build/_deps/sdl-src/cmake/sdltargets.cmake",
+			"/Users/throvn/Documents/desktop.js/build/_deps/sdl-src/CMakeLists.txt",
+			"/Users/throvn/Documents/desktop.js/build/_deps/sdl_ttf-src/CMakeLists.txt",
+			"/Users/throvn/Documents/desktop.js/build/_deps/sdl_image-src/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 50,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 51,
+				"parent" : 0
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 1039,
+				"parent" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 75,
+				"parent" : 4
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 56,
+				"parent" : 5
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 3,
+				"line" : 316,
+				"parent" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 3,
+				"line" : 361,
+				"parent" : 7
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 1,
+				"file" : 4,
+				"line" : 385,
+				"parent" : 10
+			},
+			{
+				"command" : 1,
+				"file" : 4,
+				"line" : 387,
+				"parent" : 10
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -std=gnu99 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -fPIE"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 2,
+					"path" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl-build/include-revision"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl-src/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl_ttf-src/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl_image-src/include"
+				}
+			],
+			"language" : "C",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "99"
+			},
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "SDL3-static::@fc7b397d5a055aba6d5e"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "SDL3_ttf-static::@6d6dbd541f523c990746"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "SDL3_image-static::@6b7ccc8d74ccd70fd666"
+		}
+	],
+	"id" : "clay_examples_sdl3_simple_demo::@a1e119d2cc0c3ab247ed",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lpthread",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-L/opt/homebrew/Cellar/harfbuzz/11.2.1/lib",
+				"role" : "libraryPath"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/opt/homebrew/Cellar/harfbuzz/11.2.1/lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../_deps/sdl-build/libSDL3.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../_deps/sdl_ttf-build/libSDL3_ttf.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../_deps/sdl_image-build/libSDL3_image.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "-lm",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework CoreMedia",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework CoreVideo",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework Cocoa",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-Xlinker -weak_framework -Xlinker UniformTypeIdentifiers",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework IOKit",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework ForceFeedback",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework Carbon",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework CoreAudio",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework AudioToolbox",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework AVFoundation",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework Foundation",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework GameController",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework Metal",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-framework QuartzCore",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-Xlinker -weak_framework -Xlinker CoreHaptics",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 8,
+				"fragment" : "/opt/homebrew/Cellar/harfbuzz/11.2.1/lib/libharfbuzz.dylib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "/opt/homebrew/lib/libfreetype.dylib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-Wl,-framework,ApplicationServices",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "-lobjc",
+				"role" : "libraries"
+			}
+		],
+		"language" : "C"
+	},
+	"name" : "clay_examples_sdl3_simple_demo",
+	"nameOnDisk" : "clay_examples_sdl3_simple_demo",
+	"paths" : 
+	{
+		"build" : "examples/SDL3-simple-demo",
+		"source" : "examples/SDL3-simple-demo"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "examples/SDL3-simple-demo/main.c",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

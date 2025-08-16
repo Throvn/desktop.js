@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "_deps/sdl-build",
+		"source" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl-src"
+	}
+}

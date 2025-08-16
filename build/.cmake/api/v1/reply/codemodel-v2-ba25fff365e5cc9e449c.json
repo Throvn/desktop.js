@@ -1,0 +1,834 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						9,
+						10,
+						11,
+						15,
+						19,
+						20
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "examples/cpp-project-example",
+					"jsonFile" : "directory-examples.cpp-project-example-Debug-6f7408fbb3122538b9b1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "examples/cpp-project-example",
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"build" : "examples/clay-official-website",
+					"jsonFile" : "directory-examples.clay-official-website-Debug-be12a7432e2e4c50868c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "examples/clay-official-website",
+					"targetIndexes" : 
+					[
+						17
+					]
+				},
+				{
+					"build" : "examples/terminal-example",
+					"jsonFile" : "directory-examples.terminal-example-Debug-5e8015cba27e0b3857f1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "examples/terminal-example",
+					"targetIndexes" : 
+					[
+						16
+					]
+				},
+				{
+					"build" : "examples/introducing-clay-video-demo",
+					"childIndexes" : 
+					[
+						5
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-examples.introducing-clay-video-demo-Debug-64c2c064531191eaf04f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 4,
+					"source" : "examples/introducing-clay-video-demo",
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"build" : "_deps/raylib-build",
+					"childIndexes" : 
+					[
+						6
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-_deps.raylib-build-Debug-00f6ce85284309905c9e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 4,
+					"projectIndex" : 5,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/raylib-src",
+					"targetIndexes" : 
+					[
+						24
+					]
+				},
+				{
+					"build" : "_deps/raylib-build/raylib",
+					"childIndexes" : 
+					[
+						7
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-_deps.raylib-build.raylib-Debug-bb18dda0a78d2b52635b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 5,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/raylib-src/src",
+					"targetIndexes" : 
+					[
+						19
+					]
+				},
+				{
+					"build" : "_deps/raylib-build/raylib/external/glfw",
+					"childIndexes" : 
+					[
+						8
+					],
+					"jsonFile" : "directory-_deps.raylib-build.raylib.external.glfw-Debug-9ca0b57c6bb3eea2d441.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 6,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/raylib-src/src/external/glfw"
+				},
+				{
+					"build" : "_deps/raylib-build/raylib/external/glfw/src",
+					"jsonFile" : "directory-_deps.raylib-build.raylib.external.glfw.src-Debug-2f06caba990a3f76a90d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 6,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/raylib-src/src/external/glfw/src",
+					"targetIndexes" : 
+					[
+						18,
+						25
+					]
+				},
+				{
+					"build" : "examples/raylib-multi-context",
+					"jsonFile" : "directory-examples.raylib-multi-context-Debug-0bb98cd4fe865c1671bc.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 7,
+					"source" : "examples/raylib-multi-context",
+					"targetIndexes" : 
+					[
+						13
+					]
+				},
+				{
+					"build" : "examples/raylib-sidebar-scrolling-container",
+					"jsonFile" : "directory-examples.raylib-sidebar-scrolling-container-Debug-c66ac6457819c943bd3e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 8,
+					"source" : "examples/raylib-sidebar-scrolling-container",
+					"targetIndexes" : 
+					[
+						14
+					]
+				},
+				{
+					"build" : "examples/SDL2-video-demo",
+					"childIndexes" : 
+					[
+						12,
+						13,
+						14
+					],
+					"jsonFile" : "directory-examples.SDL2-video-demo-Debug-519389627a555bd2197f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 9,
+					"source" : "examples/SDL2-video-demo",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "_deps/sdl2-build",
+					"jsonFile" : "directory-_deps.sdl2-build-Debug-041a7da630ceeebd3548.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 11,
+					"projectIndex" : 10,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl2-src",
+					"targetIndexes" : 
+					[
+						0,
+						2,
+						5,
+						20
+					]
+				},
+				{
+					"build" : "_deps/sdl2_ttf-build",
+					"jsonFile" : "directory-_deps.sdl2_ttf-build-Debug-bcebe934975a25ea5a1c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 11,
+					"projectIndex" : 11,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl2_ttf-src",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "_deps/sdl2_image-build",
+					"jsonFile" : "directory-_deps.sdl2_image-build-Debug-ce34b1cb29b0fb1ac51b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 11,
+					"projectIndex" : 12,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl2_image-src",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "examples/SDL3-simple-demo",
+					"childIndexes" : 
+					[
+						16,
+						17,
+						18
+					],
+					"jsonFile" : "directory-examples.SDL3-simple-demo-Debug-17d821b9c4145d8e251f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 13,
+					"source" : "examples/SDL3-simple-demo",
+					"targetIndexes" : 
+					[
+						15
+					]
+				},
+				{
+					"build" : "_deps/sdl-build",
+					"jsonFile" : "directory-_deps.sdl-build-Debug-664bf1e27039c588afae.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.24"
+					},
+					"parentIndex" : 15,
+					"projectIndex" : 14,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl-src",
+					"targetIndexes" : 
+					[
+						6,
+						8,
+						10
+					]
+				},
+				{
+					"build" : "_deps/sdl_ttf-build",
+					"jsonFile" : "directory-_deps.sdl_ttf-build-Debug-09f5ab145b2407620c6f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.17"
+					},
+					"parentIndex" : 15,
+					"projectIndex" : 15,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl_ttf-src",
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"build" : "_deps/sdl_image-build",
+					"jsonFile" : "directory-_deps.sdl_image-build-Debug-f2a536c57b675a9b3ae6.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.17"
+					},
+					"parentIndex" : 15,
+					"projectIndex" : 16,
+					"source" : "/Users/throvn/Documents/desktop.js/build/_deps/sdl_image-src",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "examples/sokol-video-demo",
+					"jsonFile" : "directory-examples.sokol-video-demo-Debug-dd4ca57b78e3b3e23e9d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 17,
+					"source" : "examples/sokol-video-demo",
+					"targetIndexes" : 
+					[
+						21,
+						23
+					]
+				},
+				{
+					"build" : "examples/sokol-corner-radius",
+					"jsonFile" : "directory-examples.sokol-corner-radius-Debug-ef40ca6c273acdf6ffb0.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.27"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 18,
+					"source" : "examples/sokol-corner-radius",
+					"targetIndexes" : 
+					[
+						22
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						7,
+						8,
+						9,
+						13,
+						17,
+						18
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "clay"
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "clay_examples_cpp_project_example",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "clay_official_website",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						17
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "clay_examples_terminal",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						16
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						5
+					],
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "clay_examples_introducing_clay_video_demo",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						6
+					],
+					"directoryIndexes" : 
+					[
+						5,
+						6
+					],
+					"name" : "raylib",
+					"parentIndex" : 4,
+					"targetIndexes" : 
+					[
+						19,
+						24
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						7,
+						8
+					],
+					"name" : "GLFW",
+					"parentIndex" : 5,
+					"targetIndexes" : 
+					[
+						18,
+						25
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						9
+					],
+					"name" : "clay_examples_raylib_multi_context",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						13
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						10
+					],
+					"name" : "clay_examples_raylib_sidebar_scrolling_container",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						14
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						10,
+						11,
+						12
+					],
+					"directoryIndexes" : 
+					[
+						11
+					],
+					"name" : "SDL2_video_demo",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						12
+					],
+					"name" : "SDL2",
+					"parentIndex" : 9,
+					"targetIndexes" : 
+					[
+						0,
+						2,
+						5,
+						20
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						13
+					],
+					"name" : "SDL2_ttf",
+					"parentIndex" : 9,
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						14
+					],
+					"name" : "SDL2_image",
+					"parentIndex" : 9,
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						14,
+						15,
+						16
+					],
+					"directoryIndexes" : 
+					[
+						15
+					],
+					"name" : "clay_examples_sdl3_simple_demo",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						15
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						16
+					],
+					"name" : "SDL3",
+					"parentIndex" : 13,
+					"targetIndexes" : 
+					[
+						6,
+						8,
+						10
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						17
+					],
+					"name" : "SDL3_ttf",
+					"parentIndex" : 13,
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						18
+					],
+					"name" : "SDL3_image",
+					"parentIndex" : 13,
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						19
+					],
+					"name" : "sokol_video_demo",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						21,
+						23
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						20
+					],
+					"name" : "sokol_corner_radius",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						22
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 12,
+					"id" : "SDL2-static::@45bd952f1071c035638d",
+					"jsonFile" : "target-SDL2-static-Debug-2c0c716064cd12a85a8b.json",
+					"name" : "SDL2-static",
+					"projectIndex" : 10
+				},
+				{
+					"directoryIndex" : 14,
+					"id" : "SDL2_image::@de341d98faad78faee90",
+					"jsonFile" : "target-SDL2_image-Debug-952c38fcf2bae329a23a.json",
+					"name" : "SDL2_image",
+					"projectIndex" : 12
+				},
+				{
+					"directoryIndex" : 12,
+					"id" : "SDL2_test::@45bd952f1071c035638d",
+					"jsonFile" : "target-SDL2_test-Debug-98efcbba8fe20f561305.json",
+					"name" : "SDL2_test",
+					"projectIndex" : 10
+				},
+				{
+					"directoryIndex" : 13,
+					"id" : "SDL2_ttf::@bbdb2daa5afc341778ea",
+					"jsonFile" : "target-SDL2_ttf-Debug-1940f7313a1ff1b29d4c.json",
+					"name" : "SDL2_ttf",
+					"projectIndex" : 11
+				},
+				{
+					"directoryIndex" : 11,
+					"id" : "SDL2_video_demo::@2e0605b6e77a1ae302c4",
+					"jsonFile" : "target-SDL2_video_demo-Debug-a954b376369522c22922.json",
+					"name" : "SDL2_video_demo",
+					"projectIndex" : 9
+				},
+				{
+					"directoryIndex" : 12,
+					"id" : "SDL2main::@45bd952f1071c035638d",
+					"jsonFile" : "target-SDL2main-Debug-feac9e6553ca5f7d4855.json",
+					"name" : "SDL2main",
+					"projectIndex" : 10
+				},
+				{
+					"directoryIndex" : 16,
+					"id" : "SDL3-static::@fc7b397d5a055aba6d5e",
+					"jsonFile" : "target-SDL3-static-Debug-2f94740efb487cc2af40.json",
+					"name" : "SDL3-static",
+					"projectIndex" : 14
+				},
+				{
+					"directoryIndex" : 18,
+					"id" : "SDL3_image-static::@6b7ccc8d74ccd70fd666",
+					"jsonFile" : "target-SDL3_image-static-Debug-2129018942db2776d7fb.json",
+					"name" : "SDL3_image-static",
+					"projectIndex" : 16
+				},
+				{
+					"directoryIndex" : 16,
+					"id" : "SDL3_test::@fc7b397d5a055aba6d5e",
+					"jsonFile" : "target-SDL3_test-Debug-591eba6fa52e6c0d57ab.json",
+					"name" : "SDL3_test",
+					"projectIndex" : 14
+				},
+				{
+					"directoryIndex" : 17,
+					"id" : "SDL3_ttf-static::@6d6dbd541f523c990746",
+					"jsonFile" : "target-SDL3_ttf-static-Debug-0a9579d4aac0fa84592c.json",
+					"name" : "SDL3_ttf-static",
+					"projectIndex" : 15
+				},
+				{
+					"directoryIndex" : 16,
+					"id" : "SDL_uclibc::@fc7b397d5a055aba6d5e",
+					"jsonFile" : "target-SDL_uclibc-Debug-23930158fe12b1eb1937.json",
+					"name" : "SDL_uclibc",
+					"projectIndex" : 14
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "clay_examples_cpp_project_example::@33c085779afc2d99efdd",
+					"jsonFile" : "target-clay_examples_cpp_project_example-Debug-5e9a1ef8dbb45f00bace.json",
+					"name" : "clay_examples_cpp_project_example",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "clay_examples_introducing_clay_video_demo::@0ffd146372be54b3225a",
+					"jsonFile" : "target-clay_examples_introducing_clay_video_demo-Debug-a7bb090198a1b9f0c3ea.json",
+					"name" : "clay_examples_introducing_clay_video_demo",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "clay_examples_raylib_multi_context::@5cfce7c7c8eafe59da75",
+					"jsonFile" : "target-clay_examples_raylib_multi_context-Debug-cef23a5724d361b1e434.json",
+					"name" : "clay_examples_raylib_multi_context",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "clay_examples_raylib_sidebar_scrolling_container::@a8fa3c90c6144bfee3b0",
+					"jsonFile" : "target-clay_examples_raylib_sidebar_scrolling_container-Debug-117a7305518c4442aad8.json",
+					"name" : "clay_examples_raylib_sidebar_scrolling_container",
+					"projectIndex" : 8
+				},
+				{
+					"directoryIndex" : 15,
+					"id" : "clay_examples_sdl3_simple_demo::@a1e119d2cc0c3ab247ed",
+					"jsonFile" : "target-clay_examples_sdl3_simple_demo-Debug-d30c3b99de3d0a3f6a8a.json",
+					"name" : "clay_examples_sdl3_simple_demo",
+					"projectIndex" : 13
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "clay_examples_terminal::@88b8239faabca2275d0d",
+					"jsonFile" : "target-clay_examples_terminal-Debug-78f13b5c371c0ace345a.json",
+					"name" : "clay_examples_terminal",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "clay_official_website::@0c8237875e0127168046",
+					"jsonFile" : "target-clay_official_website-Debug-5a87bc58ed969ef942c7.json",
+					"name" : "clay_official_website",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "glfw::@9de86fbe87260ae8e66c",
+					"jsonFile" : "target-glfw-Debug-05546ef6fca4109ab142.json",
+					"name" : "glfw",
+					"projectIndex" : 6
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "raylib::@4dc3a4644cf4ded08c01",
+					"jsonFile" : "target-raylib-Debug-011537d45a9af72e8e1f.json",
+					"name" : "raylib",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 12,
+					"id" : "sdl_headers_copy::@45bd952f1071c035638d",
+					"jsonFile" : "target-sdl_headers_copy-Debug-1ca87cd13540e24d32e9.json",
+					"name" : "sdl_headers_copy",
+					"projectIndex" : 10
+				},
+				{
+					"directoryIndex" : 19,
+					"id" : "sokol::@707ed810f54447f2b407",
+					"jsonFile" : "target-sokol-Debug-81956168877bdd5b8c89.json",
+					"name" : "sokol",
+					"projectIndex" : 17
+				},
+				{
+					"directoryIndex" : 20,
+					"id" : "sokol_corner_radius::@57cd505f4ae1ff26ea5a",
+					"jsonFile" : "target-sokol_corner_radius-Debug-a178853c5e085cfef738.json",
+					"name" : "sokol_corner_radius",
+					"projectIndex" : 18
+				},
+				{
+					"directoryIndex" : 19,
+					"id" : "sokol_video_demo::@707ed810f54447f2b407",
+					"jsonFile" : "target-sokol_video_demo-Debug-4f42af162aada7c766a4.json",
+					"name" : "sokol_video_demo",
+					"projectIndex" : 17
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "uninstall::@1f4ba659214c9866b353",
+					"jsonFile" : "target-uninstall-Debug-f6e389663c5ab1bb5a48.json",
+					"name" : "uninstall",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "update_mappings::@9de86fbe87260ae8e66c",
+					"jsonFile" : "target-update_mappings-Debug-0354e1182cf1fb335400.json",
+					"name" : "update_mappings",
+					"projectIndex" : 6
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/throvn/Documents/desktop.js/build",
+		"source" : "/Users/throvn/Documents/desktop.js/lib/clay"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

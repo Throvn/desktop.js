@@ -6,7 +6,7 @@
 /// @brief Defined in js.c
 extern JSValue rootValue;
 
-void GUI_PrintKeys(JSContext *ctx, JSValue element)
+void GUI_PrintKeys(JSContext *ctx, JSValueConst element)
 {
     if (!JS_IsObject(element))
     {
@@ -28,38 +28,46 @@ void GUI_PrintKeys(JSContext *ctx, JSValue element)
     {
         JSValue key_val = JS_AtomToValue(ctx, props[i].atom);
         const char *key_str = JS_ToCString(ctx, key_val);
-        if (key_str)
-        {
-            printf("Key[%u]: %s\n", i, key_str);
-            JS_FreeCString(ctx, key_str);
-        }
+        JS_FreeValue(ctx, key_val);
+
+        printf("Key[%u]: %s\n", i, key_str);
+        JS_FreeCString(ctx, key_str);
         JS_FreeAtom(ctx, props[i].atom);
     }
 
-    js_free(ctx, props);
+    JS_FreePropertyEnum(ctx, props, len);
 }
 
 /// Checks if the JSValue could be an element by checking, if
 /// the JSValue includes all necessary parameters and their expected types.
-bool GUI_IsElement(JSContext *ctx, JSValue element)
+bool GUI_IsElement(JSContext *ctx, JSValueConst element)
 {
     if (!JS_IsObject(element))
         return false;
     JSValue key = JS_GetPropertyStr(ctx, element, "key");
     if (!JS_IsNumber(key))
+    {
+        JS_FreeValue(ctx, key);
         return false;
+    }
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (!JS_IsArray(props))
+    {
+        JS_FreeValue(ctx, key);
+        JS_FreeValue(ctx, props);
         return false;
+    }
     JSValue type = JS_GetPropertyStr(ctx, element, "type");
-    if (!JS_IsString(type))
-        return false;
+    bool isElement = JS_IsString(type);
 
-    return true;
+    JS_FreeValue(ctx, key);
+    JS_FreeValue(ctx, props);
+    JS_FreeValue(ctx, type);
+    return isElement;
 }
 
 /// @brief Gives back the value of the length property of the passed element.
-int GUI_GetLength(JSContext *ctx, JSValue element)
+int GUI_GetLength(JSContext *ctx, JSValueConst element)
 {
     if (!JS_IsObject(element))
     {
@@ -70,20 +78,23 @@ int GUI_GetLength(JSContext *ctx, JSValue element)
     if (JS_IsUndefined(lengthValue))
     {
         GUI_PrintKeys(ctx, element);
+        JS_FreeValue(ctx, lengthValue);
         exit(1);
-        return -1;
     }
     int length;
     JS_ToInt32(ctx, &length, lengthValue);
 
+    JS_FreeValue(ctx, lengthValue);
     return length;
 }
 
-int GUI_GetKey(JSContext *ctx, JSValue element)
+int GUI_GetKey(JSContext *ctx, JSValueConst element)
 {
     JSValue keyValue = JS_GetPropertyStr(ctx, element, "key");
     int key;
     JS_ToInt32(ctx, &key, keyValue);
+
+    JS_FreeValue(ctx, keyValue);
     return key;
 }
 
@@ -91,7 +102,7 @@ int GUI_GetKey(JSContext *ctx, JSValue element)
 /// @param ctx
 /// @param element
 /// @return JS Object or JS_UNDEFINED
-JSValue GUI_GetChildren(JSContext *ctx, JSValue element)
+JSValue GUI_GetChildren(JSContext *ctx, JSValueConst element)
 {
     if (!JS_IsObject(element))
     {
@@ -101,15 +112,17 @@ JSValue GUI_GetChildren(JSContext *ctx, JSValue element)
     }
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     if (JS_IsUndefined(props))
+    {
+        JS_FreeValue(ctx, props);
         return JS_UNDEFINED;
+    }
     JSValue children = JS_GetPropertyStr(ctx, props, "children");
-    if (JS_IsUndefined(props))
-        return JS_UNDEFINED;
 
+    JS_FreeValue(ctx, props);
     return children;
 }
 
-static void renderChildren(JSContext *ctx, JSValue element)
+static void renderChildren(JSContext *ctx, JSValueConst element)
 {
     JSValue children = GUI_GetChildren(ctx, element);
 
@@ -119,10 +132,11 @@ static void renderChildren(JSContext *ctx, JSValue element)
     {
         JSValue child = JS_GetPropertyUint32(ctx, children, i);
         GUI_RenderValue(ctx, child);
+        JS_FreeValue(ctx, child);
     }
 }
 
-void GUI_RenderCustom(JSContext *ctx, JSValue element)
+void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
 {
     JSValue instance = JS_GetPropertyStr(ctx, element, "instance");
     JSValue render = JS_GetPropertyStr(ctx, instance, "render");
@@ -136,7 +150,12 @@ void GUI_RenderCustom(JSContext *ctx, JSValue element)
     JSValue argv[] = {JS_UNDEFINED};
     JSValue ret = JS_Call(ctx, render, instance, 0, argv);
 
-    GUI_RenderValue(ctx, JS_DupValue(ctx, ret));
+    JS_FreeValue(ctx, instance);
+    JS_FreeValue(ctx, render);
+
+    GUI_RenderValue(ctx, ret);
+
+    JS_FreeValue(ctx, ret);
 }
 
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
@@ -184,13 +203,19 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     }
 }
 
-void GUI_RenderString(JSContext *ctx, JSValue element)
+void GUI_RenderString(JSContext *ctx, JSValueConst element)
 {
 
     JSValue stringElement = GUI_GetChildren(ctx, element);
 
     const char *string = JS_ToCString(ctx, stringElement);
-    Clay_String clayString = {.chars = string, .length = strlen(string)};
+    JS_FreeValue(ctx, stringElement);
+
+    char *str = calloc(1, strlen(string) + 1);
+    strcpy(str, string);
+    JS_FreeCString(ctx, string);
+
+    Clay_String clayString = {.chars = str, .length = strlen(str)};
 
     Clay_Color color = STYLES_GetColor(ctx, element);
     if (color.a + color.b + color.g + color.r <= 0)
@@ -228,25 +253,34 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     JSValue givenProp = JS_GetPropertyStr(ctx, props, prop);
-    if (!JS_IsUndefined(givenProp))
+    JS_FreeValue(ctx, props);
+
+    if (JS_IsUndefined(givenProp))
+        return;
+
+    JSValue children = GUI_GetChildren(ctx, element);
+    int length = GUI_GetLength(ctx, children);
+
+    // Apply prop to all children
+    for (int i = 0; i < length; i++)
     {
-        JSValue children = GUI_GetChildren(ctx, element);
-        int length = GUI_GetLength(ctx, children);
+        JSValue child = JS_GetPropertyUint32(ctx, children, i);
+        JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
 
-        // Apply prop to all children
-        for (int i = 0; i < length; i++)
+        // Never overwrite a prop on the child
+        JSValue childProp = JS_GetPropertyStr(ctx, childProps, prop);
+        if (JS_IsUndefined(childProp))
         {
-            JSValue child = JS_GetPropertyUint32(ctx, children, i);
-            JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
-
-            // Never overwrite a prop on the child
-            JSValue childProp = JS_GetPropertyStr(ctx, childProps, prop);
-            if (JS_IsUndefined(childProp))
-            {
-                JS_SetPropertyStr(ctx, childProps, prop, givenProp);
-            }
+            JS_SetPropertyStr(ctx, childProps, prop, JS_DupValue(ctx, givenProp));
         }
+
+        JS_FreeValue(ctx, child);
+        JS_FreeValue(ctx, childProps);
+        JS_FreeValue(ctx, childProp);
     }
+
+    JS_FreeValue(ctx, givenProp);
+    JS_FreeValue(ctx, children);
 }
 
 void GUI_RenderText(JSContext *ctx, JSValue element)
@@ -285,7 +319,7 @@ void GUI_RenderSpacer()
 /// @brief Handles rendering of the <group> component.
 /// @note The group component only appends its props to children, so nothing is rendered.
 /// @param node
-void GUI_RenderGroup(JSContext *ctx, JSValue element)
+void GUI_RenderGroup(JSContext *ctx, JSValueConst element)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     JSValue children = JS_GetPropertyStr(ctx, props, "children");
@@ -297,6 +331,8 @@ void GUI_RenderGroup(JSContext *ctx, JSValue element)
     if (success != 0)
     {
         fprintf(stderr, "[Error] Could not get property names\n");
+        JS_FreeValue(ctx, props);
+        JS_FreeValue(ctx, children);
         return;
     }
 
@@ -305,6 +341,7 @@ void GUI_RenderGroup(JSContext *ctx, JSValue element)
     {
         JSValue child = JS_GetPropertyUint32(ctx, children, j);
         JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
+        JS_FreeValue(ctx, child);
 
         // Get all JSX properties
         for (int i = 0; i < num_keys; i++)
@@ -312,35 +349,44 @@ void GUI_RenderGroup(JSContext *ctx, JSValue element)
             JSPropertyEnum key = keys[i];
             JSValue keyValue = JS_AtomToValue(ctx, key.atom);
             const char *keyStr = JS_ToCString(ctx, keyValue);
+            JS_FreeValue(ctx, keyValue);
 
             // Never copy children
             if (0 == strcmp(keyStr, "children"))
+            {
+                JS_FreeCString(ctx, keyStr);
                 continue;
+            }
 
             // Only add property if child prop doesn't already have it.
-            if (JS_HasProperty(ctx, childProps, key.atom))
+            if (true == JS_HasProperty(ctx, childProps, key.atom))
+            {
+                JS_FreeCString(ctx, keyStr);
                 continue;
+            }
 
             JSValue groupPropValue = JS_GetPropertyStr(ctx, props, keyStr);
-            success = JS_SetPropertyStr(ctx, childProps, keyStr, groupPropValue);
-            if (success != 1)
-            {
-                printf("[Warning] could not set property in group to %s\n", keyStr);
-            }
+            JS_SetPropertyStr(ctx, childProps, keyStr, groupPropValue);
+
+            JS_FreeCString(ctx, keyStr);
         }
+
+        JS_FreeValue(ctx, childProps);
     }
     JS_FreePropertyEnum(ctx, keys, num_keys);
+    JS_FreeValue(ctx, props);
 
     renderChildren(ctx, element);
 }
 
-void GUI_RenderArray(JSContext *ctx, JSValue element)
+void GUI_RenderArray(JSContext *ctx, JSValueConst element)
 {
     int length = GUI_GetLength(ctx, element);
     for (int i = 0; i < length; i++)
     {
         JSValue child = JS_GetPropertyUint32(ctx, element, i);
         GUI_RenderValue(ctx, child);
+        JS_FreeValue(ctx, child);
     }
 }
 

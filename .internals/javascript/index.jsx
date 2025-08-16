@@ -25,6 +25,16 @@ class Player {
     }
 }
 
+class Bold {
+    constructor(props) {
+        this.props = props;
+    }
+
+    render() {
+        return <text $padding={{bottom: 3}}>{this.props.children}</text>
+    }
+}
+
 class GameBoard {
     food = { x: 5, y: 5 };
     lastMousePos = { x: 0, y: 0 };
@@ -125,9 +135,12 @@ class GameBoard {
                 }}>
                     <spacer />
                     {"" + this.tick}
-                    <vStack $borderRadius={10.5}>
-                        {grid}
-                    </vStack>
+                    <group $padding={24}>
+                        <vStack $borderRadius={10.5}>
+                            {grid}
+                        </vStack>
+                    </group>
+                    {[<Bold>Snake</Bold>, <text>Game</text>]}
                     <spacer />
                 </vStack>
                 <spacer />

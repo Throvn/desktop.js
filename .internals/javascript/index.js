@@ -32,6 +32,15 @@ var Player = /** @class */ (function () {
     };
     return Player;
 }());
+var Bold = /** @class */ (function () {
+    function Bold(props) {
+        this.props = props;
+    }
+    Bold.prototype.render = function () {
+        return GUI.createElement("text", { "$padding": { bottom: 3 } }, this.props.children);
+    };
+    return Bold;
+}());
 var GameBoard = /** @class */ (function () {
     function GameBoard(props) {
         var _this = this;
@@ -118,7 +127,9 @@ var GameBoard = /** @class */ (function () {
                 } },
                 GUI.createElement("spacer", null),
                 "" + this.tick,
-                GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid),
+                GUI.createElement("group", { "$padding": 24 },
+                    GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
+                [GUI.createElement(Bold, null, "Snake"), GUI.createElement("text", null, "Game")],
                 GUI.createElement("spacer", null)),
             GUI.createElement("spacer", null)));
     };

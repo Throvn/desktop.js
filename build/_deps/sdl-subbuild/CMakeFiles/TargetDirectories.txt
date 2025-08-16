@@ -1,0 +1,3 @@
+/Users/throvn/Documents/desktop.js/build/_deps/sdl-subbuild/CMakeFiles/sdl-populate.dir
+/Users/throvn/Documents/desktop.js/build/_deps/sdl-subbuild/CMakeFiles/edit_cache.dir
+/Users/throvn/Documents/desktop.js/build/_deps/sdl-subbuild/CMakeFiles/rebuild_cache.dir

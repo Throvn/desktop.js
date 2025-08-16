@@ -1,0 +1,3 @@
+/Users/throvn/Documents/desktop.js/build/_deps/sokol-subbuild/CMakeFiles/sokol-populate.dir
+/Users/throvn/Documents/desktop.js/build/_deps/sokol-subbuild/CMakeFiles/edit_cache.dir
+/Users/throvn/Documents/desktop.js/build/_deps/sokol-subbuild/CMakeFiles/rebuild_cache.dir
