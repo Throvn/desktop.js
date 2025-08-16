@@ -49,7 +49,7 @@ bool GUI_IsElement(JSContext *ctx, JSValue element)
     if (!JS_IsNumber(key))
         return false;
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    if (!JS_IsArray(ctx, props))
+    if (!JS_IsArray(props))
         return false;
     JSValue type = JS_GetPropertyStr(ctx, element, "type");
     if (!JS_IsString(type))

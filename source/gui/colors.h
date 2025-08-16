@@ -147,7 +147,6 @@ enum ColorNames
     snow,
     springgreen,
     steelblue,
-    tan,
     teal,
     thistle,
     tomato,

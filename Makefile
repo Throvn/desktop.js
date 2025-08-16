@@ -23,7 +23,7 @@ LIBRARY_FILES = lib/txiki.js/build/deps/quickjs/libqjs.a \
 				lib/raylib/raylib/libraylib.a
 
 main: $(LIBRARY_FILES) $(SOURCE_FILES)
-	clang -g -fsanitize=address -O0 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos -Ilib/raylib/raylib/include -Ilib/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
+	clang -g -fsanitize=address -O0 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
 
 leaks: $(SOURCE_FILES)
 	clang --analyze -Xclang -analyzer-output=html -g -fsanitize=address -Wall $^ -Ilib/raylib/raylib/include -Ilib/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include
