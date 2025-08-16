@@ -211,7 +211,7 @@ void GUI_RenderString(JSContext *ctx, JSValueConst element)
     const char *string = JS_ToCString(ctx, stringElement);
     JS_FreeValue(ctx, stringElement);
 
-    char *str = calloc(1, strlen(string) + 1);
+    char *str = a_alloc(strlen(string) + 1);
     strcpy(str, string);
     JS_FreeCString(ctx, string);
 
@@ -470,7 +470,7 @@ Clay_RenderCommandArray GUI_RenderCommands(TJSRuntime *qrt)
         .clip = CLAY_CLIP_TO_ATTACHED_PARENT,
     })
     {
-        GUI_RenderValue(ctx, rootValue);
+        GUI_RenderValue(ctx, JS_DupValue(ctx, rootValue));
     }
 
     return Clay_EndLayout();

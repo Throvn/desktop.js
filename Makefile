@@ -7,7 +7,8 @@ debug: main
 	# lldb djs-aarch64-macos
 	leaks --list --atExit -- ./djs-aarch64-macos run ./.internals/javascript/index.js
 
-SOURCE_FILES = source/gui/colors.c \
+SOURCE_FILES = source/gui/memory.c \
+			source/gui/colors.c \
 			source/gui/js.c \
 			source/gui/styles.c \
 			source/gui/draw.c \
@@ -28,7 +29,7 @@ main: $(LIBRARY_FILES) $(SOURCE_FILES)
 
 
 minified: $(LIBRARY_FILES) $(SOURCE_FILES)
-	zig cc -O4 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
+	zig cc -O4 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
 
 lib/quickjs/libquickjs.a:
 	cd lib/quickjs/ && $(MAKE)

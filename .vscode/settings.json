@@ -20,7 +20,8 @@
     "mouse.h": "c",
     "atomic": "c",
     "cstdint": "c",
-    "locale": "c"
+    "locale": "c",
+    "memory.h": "c"
   },
   "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }

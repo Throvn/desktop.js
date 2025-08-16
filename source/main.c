@@ -19,7 +19,7 @@ void idleCallback(uv_idle_t *handle)
     if (WindowShouldClose())
     {
         CloseWindow();
-        TJS_FreeRuntime(qrt);
+        TJS_Stop(qrt);
         return;
     }
     Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
@@ -27,10 +27,15 @@ void idleCallback(uv_idle_t *handle)
 
     BeginDrawing();
     ClearBackground(BLACK);
+    a_free();
+    arenaIndex = (arenaIndex + 1) % 2;
     Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
     Font font = GetFontDefault();
     Clay_Raylib_Render(rc, &font);
     EndDrawing();
+
+    JSContext *ctx = TJS_GetJSContext(qrt);
+    JS_RunGC(JS_GetRuntime(ctx));
 }
 
 void HandleClayErrors(Clay_ErrorData errorData)
@@ -63,7 +68,8 @@ int main(int argc, char **argv)
     ToggleBorderlessWindowed();
 
     uint64_t totalMemorySize = Clay_MinMemorySize();
-    Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, malloc(totalMemorySize));
+    void *clayArenaMemory = malloc(totalMemorySize);
+    Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, clayArenaMemory);
 
     // Note: screenWidth and screenHeight will need to come from your environment, Clay doesn't handle window related tasks
     Clay_Initialize(arena, (Clay_Dimensions){GetScreenWidth(), GetScreenHeight()}, (Clay_ErrorHandler){HandleClayErrors});
@@ -71,6 +77,9 @@ int main(int argc, char **argv)
     Clay_SetMeasureTextFunction(Raylib_MeasureText, &font);
 
     TJS_RunWithIdleCallback(qrt, idleCallback);
+
+    TJS_FreeRuntime(qrt);
+    free(clayArenaMemory);
 
     return 0;
 }
