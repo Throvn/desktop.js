@@ -143,7 +143,11 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
     if (!JS_IsFunction(ctx, render))
     {
         fprintf(stderr, "[GUI_RenderCustom] FATAL: Custom elements need a render() function.\n");
-        fprintf(stderr, "[GUI_RenderCustom] FATAL: However, render() function is: %s\n", JS_ToCString(ctx, render));
+        const char *functionName = JS_ToCString(ctx, render);
+        fprintf(stderr, "[GUI_RenderCustom] FATAL: However, render() function is: %s\n", functionName);
+        JS_FreeCString(ctx, functionName);
+        JS_FreeValue(ctx, instance);
+        JS_FreeValue(ctx, render);
         exit(4);
         return;
     }
@@ -399,8 +403,15 @@ void GUI_RenderArray(JSContext *ctx, JSValueConst element)
 
 void GUI_RenderValue(JSContext *ctx, JSValue element)
 {
-    if (JS_IsUninitialized(element) || JS_IsUndefined(element))
+    if (JS_IsUninitialized(element) || JS_IsUndefined(element) || JS_IsNull(element))
         return;
+
+    if (JS_IsException(element))
+    {
+        TJSRuntime *qrt = TJS_GetRuntime(ctx);
+        TJS_Stop(qrt);
+        return;
+    }
 
     JSValue typeValue = JS_GetPropertyStr(ctx, element, "type");
     if (!JS_IsString(typeValue))
@@ -412,10 +423,15 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
         if (JS_IsObject(element) && length > 0)
         {
             GUI_RenderArray(ctx, element);
+            JS_FreeValue(ctx, element);
             return;
         }
 
         fprintf(stderr, "[GUI_RenderValue] FATAL: element type is not a string\n");
+        const char *elementString = JS_ToCString(ctx, element);
+        fprintf(stderr, "[GUI_RenderValue] FATAL: element: %s %d\n", elementString, JS_VALUE_GET_TAG(element));
+        JS_FreeCString(ctx, elementString);
+        JS_FreeValue(ctx, typeValue);
         exit(2);
         return;
     }

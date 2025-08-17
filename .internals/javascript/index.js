@@ -32,6 +32,18 @@ var Player = /** @class */ (function () {
     };
     return Player;
 }());
+var GBText = /** @class */ (function () {
+    function GBText(props) {
+        this.name = "SNAKE BOY".split("");
+        this.index = 0;
+    }
+    GBText.prototype.render = function () {
+        return GUI.createElement("group", { "$color": "#333960", "$lineHeight": 24 * 2 },
+            GUI.createElement("text", null, "Throvn's"),
+            GUI.createElement("text", { "$fontSize": 8 }, "TM"));
+    };
+    return GBText;
+}());
 var GameBoard = /** @class */ (function () {
     function GameBoard(props) {
         var _this = this;
@@ -123,10 +135,7 @@ var GameBoard = /** @class */ (function () {
                     } },
                     GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
                 GUI.createElement("hStack", { "$gap": 5 },
-                    GUI.createElement("group", { "$color": "#333960", "$lineHeight": 24 * 2 },
-                        GUI.createElement("text", null, "Throvn's"),
-                        GUI.createElement("text", { "$fontSize": 24 }, "SNAKE BOY"),
-                        GUI.createElement("text", { "$fontSize": 8 }, "TM")),
+                    [GUI.createElement(GBText, null), GUI.createElement(GBText, null)],
                     GUI.createElement("spacer", null))),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null),

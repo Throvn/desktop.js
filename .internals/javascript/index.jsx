@@ -25,6 +25,25 @@ class Player {
     }
 }
 
+class GBText {
+    constructor(props) {
+        this.name = "SNAKE BOY".split("")
+        this.index = 0
+    }
+
+    render() {
+        return <group $color="#333960" $lineHeight={24 * 2}>
+            <text>Throvn's</text>
+            {/* <text $fontSize={24}>{this.name.map((c, i) => {
+                if (i == this.index) 
+                    return c.toUpperCase();
+                return c.toLowerCase();
+            })}</text> */}
+            <text $fontSize={8}>TM</text>
+        </group>;
+    }
+}
+
 class GameBoard {
     food = { x: 5, y: 5 };
     lastMousePos = { x: 0, y: 0 };
@@ -137,11 +156,7 @@ class GameBoard {
                         </vStack>
                     </vStack>
                     <hStack $gap={5}>
-                        <group $color="#333960" $lineHeight={24 * 2}>
-                            <text>Throvn's</text>
-                            <text $fontSize={24}>SNAKE BOY</text>
-                            <text $fontSize={8}>TM</text>
-                        </group>
+                        {[<GBText />, <GBText />]}
                         <spacer />
                     </hStack>
                     </vStack>

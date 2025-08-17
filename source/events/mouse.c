@@ -30,23 +30,27 @@ JSValue createMouseEvent(JSContext *ctx)
     return mouseEvent;
 }
 
-void EVENT_OnMouseOver(Clay_ElementId elementId, Clay_PointerData pointerInfo, intptr_t userData)
+void EVENT_OnMouseOver(JSContext *ctx, JSValueConst props)
 {
-    EventProps *eventProps = (EventProps *)userData;
-    JSValue mouseOverFunc = JS_GetPropertyStr(eventProps->ctx, eventProps->props, "onMouseOver");
-    if (!JS_IsFunction(eventProps->ctx, mouseOverFunc))
+    JSValue mouseOverFunc = JS_GetPropertyStr(ctx, props, "onMouseOver");
+    if (!JS_IsFunction(ctx, mouseOverFunc))
     {
-        JS_FreeValue(eventProps->ctx, mouseOverFunc);
-        free(eventProps);
+        JS_FreeValue(ctx, mouseOverFunc);
         return;
     }
 
-    JSValue event = createMouseEvent(eventProps->ctx);
-    JSValue ret = JS_Call(eventProps->ctx, mouseOverFunc, mouseOverFunc, 1, &event);
+    JSValue event = createMouseEvent(ctx);
+    JSValue ret = JS_Call(ctx, mouseOverFunc, mouseOverFunc, 1, &event);
 
-    JS_FreeValue(eventProps->ctx, mouseOverFunc);
-    JS_FreeValue(eventProps->ctx, event);
-    JS_FreeValue(eventProps->ctx, ret);
+    JS_FreeValue(ctx, mouseOverFunc);
+    JS_FreeValue(ctx, event);
+    JS_FreeValue(ctx, ret);
+}
+
+void EVENT_OnClay(Clay_ElementId elementId, Clay_PointerData pointerInfo, intptr_t userData)
+{
+    EventProps *eventProps = (EventProps *)userData;
+    EVENT_OnMouseOver(eventProps->ctx, eventProps->props);
 
     JS_FreeValue(eventProps->ctx, eventProps->props);
     free(eventProps);
@@ -59,5 +63,5 @@ void EVENT_HandleMouseEvents(JSContext *ctx, JSValueConst element)
     eventProps->ctx = ctx;
     eventProps->props = props;
 
-    Clay_OnHover(EVENT_OnMouseOver, (intptr_t)eventProps);
+    Clay_OnHover(EVENT_OnClay, (intptr_t)eventProps);
 }

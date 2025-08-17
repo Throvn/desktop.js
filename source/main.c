@@ -25,9 +25,10 @@ void idleCallback(uv_idle_t *handle)
     Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
     Clay_SetPointerState((Clay_Vector2){GetMouseX(), GetMouseY()}, IsMouseButtonDown(MOUSE_BUTTON_LEFT));
 
+    a_free();
+
     BeginDrawing();
     ClearBackground(BLACK);
-    a_free();
     JSContext *ctx = TJS_GetJSContext(qrt);
     JS_RunGC(JS_GetRuntime(ctx));
 
@@ -35,6 +36,7 @@ void idleCallback(uv_idle_t *handle)
     Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
     Font font = GetFontDefault();
     Clay_Raylib_Render(rc, &font);
+    DrawFPS(10, 10);
     EndDrawing();
 }
 
