@@ -32,15 +32,6 @@ var Player = /** @class */ (function () {
     };
     return Player;
 }());
-var Bold = /** @class */ (function () {
-    function Bold(props) {
-        this.props = props;
-    }
-    Bold.prototype.render = function () {
-        return GUI.createElement("text", { "$padding": { bottom: 3 } }, this.props.children);
-    };
-    return Bold;
-}());
 var GameBoard = /** @class */ (function () {
     function GameBoard(props) {
         var _this = this;
@@ -103,7 +94,7 @@ var GameBoard = /** @class */ (function () {
             var _loop_2 = function (j) {
                 var isSnake = this_1.player.body.some(function (s) { return s.x === j && s.y === i; });
                 var isFood = this_1.food.x === j && this_1.food.y === i;
-                row.push(GUI.createElement("text", { "$lineHeight": 120, "$padding": 8, "$backgroundColor": isSnake ? "red" : isFood ? "green" : "#6f8500", "$borderRadius": {
+                row.push(GUI.createElement("text", { "$lineHeight": 3, "$padding": 8, "$backgroundColor": isSnake ? "red" : isFood ? "green" : "#6f8500", "$borderRadius": {
                         bottomLeft: 20
                     } }, " "));
             };
@@ -132,7 +123,7 @@ var GameBoard = /** @class */ (function () {
                     } },
                     GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
                 GUI.createElement("hStack", { "$gap": 5 },
-                    GUI.createElement("group", { "$color": "#333960" },
+                    GUI.createElement("group", { "$color": "#333960", "$lineHeight": 24 * 2 },
                         GUI.createElement("text", null, "Throvn's"),
                         GUI.createElement("text", { "$fontSize": 24 }, "SNAKE BOY"),
                         GUI.createElement("text", { "$fontSize": 8 }, "TM")),

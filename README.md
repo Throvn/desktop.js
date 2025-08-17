@@ -68,14 +68,16 @@ This has two advantages:
 
 > **Note:** If you are here the first time, you might want to read the [Built in Components](#built-in-components) section first.
 
-| Property Name    | Property Type                                                                                                         | Examples                                     | Description                                                                                                                                                                 |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| $backgroundColor | `string`                                                                                                              | `#aabbcc`, `"#00ff00ff"`, `"tomato"`         | Supported color types are: HTML Colors or hex colors with or without an alpha value                                                                                         |
-| $padding         | `integer` \| `{horizontal?: number; vertical?: number; left?: number; right?: number; top?: number; bottom?: number}` | `34`, `{vertical: 12}`, `{top: 6, left: 12}` | If passed a single number, padding applies to **all** sides, otherwise only what is specified. Numer is a 16bit integer. If this doesn't suffice, you are truly a maniac^^. |
-| $fontSize        | `unsigned integer`                                                                                                    | `0` \| `100` \| `12`                         | Font size is generally thought of as `x pixels tall`. Default is 12 (pixels tall).                                                                                          |
-| $color           | `string`                                                                                                              | `#aabbcc`, `"#00ff00ff"`, `"tomato"`         | Applied to `<text>`. Supported color types are: HTML Colors or hex colors with or without an alpha value.                                                                   |
-| $letterSpacing   | `unsigned integer`                                                                                                    | `0` \| `1234`                                | Results in **horizontal** whitespace between the individual characters.                                                                                                     |
-| $gap             | `unsigned integer`                                                                                                    | `0` \| `8`                                   | Adds x `px` of spacing between the child elements of a stack.                                                                                                               |
+| Property Name    | Property Type                                                                                                                                                | Examples                                        | Description                                                                                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| $backgroundColor | `string`                                                                                                                                                     | `"#aabbcc"`, `"#00ff00ff"`, `"tomato"`          | Supported color types are: HTML Colors or hex colors with or without an alpha value                                                                                                                                          |
+| $padding         | `integer` \| `{horizontal?: number; vertical?: number; left?: number; right?: number; top?: number; bottom?: number}`                                        | `34`, `{vertical: 12}`, `{top: 6, left: 12}`    | If passed a single number, padding applies to **all** sides, otherwise only what is specified. Numer is a 16bit integer. If this doesn't suffice, you are truly a maniac^^.                                                  |
+| $fontSize        | `unsigned integer`                                                                                                                                           | `0` \| `100` \| `12`                            | Font size is generally thought of as `x pixels tall`. Default is 12 (pixels tall).                                                                                                                                           |
+| $color           | `string`                                                                                                                                                     | `#aabbcc`, `"#00ff00ff"`, `"tomato"`            | Applied to `<text>`. Supported color types are: HTML Colors or hex colors with or without an alpha value.                                                                                                                    |
+| $letterSpacing   | `unsigned integer`                                                                                                                                           | `0` \| `1234`                                   | Results in **horizontal** whitespace between the individual characters.                                                                                                                                                      |
+| $gap             | `unsigned integer`                                                                                                                                           | `0` \| `8`                                      | Adds x `px` of spacing between the child elements of a stack.                                                                                                                                                                |
+| $borderRadius    | `number` \| `{top?: number, bottom?: number, left?: number, right?: number, topLeft?: number, topRight?: number, bottomLeft?: number, bottomRight?: number}` | `{top: 12, bottomRight: 8, topLeft: 2}` \| `12` | Determines how rounded the corners of a (e.g.) stack are. Union radii (like top or bottom) are evaluated first, which makes it possible to overwrite part of the values through more fine grained properties like `topLeft`. |
+| $lineHeight      | `unsigned integer`                                                                                                                                           | `12` \| `15`                                    | Determines how tall the text should be. Default is 12 (just like the font size).                                                                                                                                             |
 
 ### Built in Components
 
@@ -117,6 +119,7 @@ Each child is centered automatically. To change the position of children use [`<
 ##### Style Props
 
 - `$backgroundColor`
+- `$borderRadius`
 - `$padding`
 - `$gap`
 
@@ -140,10 +143,12 @@ The default font size is 12px tall and the default color is black.
 ##### Style Props
 
 - `$backgroundColor`
+- `$borderRadius`
 - `$padding`
 - `$color`
 - `$fontSize`
 - `$letterSpacing`
+- `$lineHeight`
 
 ### Built in Event Listeners
 

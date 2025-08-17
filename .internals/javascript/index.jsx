@@ -99,7 +99,7 @@ class GameBoard {
                 const isFood = this.food.x === j && this.food.y === i;
                 row.push(
                     <text
-                        $lineHeight={120}
+                        $lineHeight={3}
                         $padding={8}
                         $backgroundColor={isSnake ? "red" : isFood ? "green" : "#6f8500"}
                     $borderRadius={{
@@ -137,7 +137,7 @@ class GameBoard {
                         </vStack>
                     </vStack>
                     <hStack $gap={5}>
-                        <group $color="#333960">
+                        <group $color="#333960" $lineHeight={24 * 2}>
                             <text>Throvn's</text>
                             <text $fontSize={24}>SNAKE BOY</text>
                             <text $fontSize={8}>TM</text>

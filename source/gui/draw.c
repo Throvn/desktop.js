@@ -184,7 +184,6 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     uint16_t childGap = STYLES_GetGap(ctx, element);
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
 
-    printf("Corner Radius: %f, %f, %f, %f\n", cornerRadius.topLeft, cornerRadius.topRight, cornerRadius.bottomLeft, cornerRadius.bottomRight);
     CLAY((Clay_ElementDeclaration){
         .layout = {
             .layoutDirection = dir,
@@ -234,6 +233,10 @@ void GUI_RenderString(JSContext *ctx, JSValueConst element)
     if (letterSpacing < 0)
         letterSpacing = 1;
 
+    int lineHeight = STYLES_GetLineHeight(ctx, element);
+    if (lineHeight == -1)
+        lineHeight = fontSize;
+
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .backgroundColor = backgroundColor,
@@ -243,6 +246,7 @@ void GUI_RenderString(JSContext *ctx, JSValueConst element)
                                   .textColor = color,
                                   .fontSize = fontSize,
                                   .letterSpacing = letterSpacing,
+                                  .lineHeight = lineHeight,
                               }));
     }
 }
@@ -290,6 +294,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     GUI_ApplyPropToChild(ctx, element, "$color");
     GUI_ApplyPropToChild(ctx, element, "$fontSize");
     GUI_ApplyPropToChild(ctx, element, "$letterSpacing");
+    GUI_ApplyPropToChild(ctx, element, "$lineHeight");
 
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);

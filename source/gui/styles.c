@@ -322,3 +322,8 @@ Clay_CornerRadius STYLES_GetBorderRadius(JSContext *ctx, JSValueConst element)
     JS_FreeValue(ctx, borderRadiusValue);
     return extractedValues;
 }
+
+int STYLES_GetLineHeight(JSContext *ctx, JSValueConst element)
+{
+    return STYLES_GetPropValueAsInt32(ctx, element, "$lineHeight");
+}
