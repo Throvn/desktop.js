@@ -28,14 +28,14 @@ void idleCallback(uv_idle_t *handle)
     BeginDrawing();
     ClearBackground(BLACK);
     a_free();
+    JSContext *ctx = TJS_GetJSContext(qrt);
+    JS_RunGC(JS_GetRuntime(ctx));
+
     arenaIndex = (arenaIndex + 1) % 2;
     Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
     Font font = GetFontDefault();
     Clay_Raylib_Render(rc, &font);
     EndDrawing();
-
-    JSContext *ctx = TJS_GetJSContext(qrt);
-    JS_RunGC(JS_GetRuntime(ctx));
 }
 
 void HandleClayErrors(Clay_ErrorData errorData)
