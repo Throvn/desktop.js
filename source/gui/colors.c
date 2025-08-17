@@ -13,7 +13,7 @@ Clay_Color parseHexColor(const char *hexCode)
     }
 
     Clay_Color color;
-    char buffer[2] = {0};
+    char buffer[3] = {0};
 
     strncpy(buffer, hexCode, 2);
     color.r = (float)strtol(buffer, NULL, 16);

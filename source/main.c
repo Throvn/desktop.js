@@ -61,7 +61,8 @@ int main(int argc, char **argv)
     GUI_js_init_module(ctx);
 
     SetTraceLogLevel(LOG_ERROR);
-    InitWindow(600, 300, "Test Window");
+    InitWindow(300, 500, "Test Window");
+    SetWindowState(FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_HIGHDPI);
 
     // Otherwise text doesn't draw somehow.
     ToggleBorderlessWindowed();

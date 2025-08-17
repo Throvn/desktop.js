@@ -111,7 +111,7 @@ class GameBoard {
                     <text
                         $lineHeight={120}
                         $padding={8}
-                        $backgroundColor={isSnake ? "red" : isFood ? "green" : "black"}
+                        $backgroundColor={isSnake ? "red" : isFood ? "green" : "#6f8500"}
                     $borderRadius={{
                         bottomLeft: 20
                     }}
@@ -124,27 +124,43 @@ class GameBoard {
         }
 
         return (
-            <hStack $backgroundColor="green" onMouseOver={this.handleMouseMove} $borderRadius={{
-                topLeft: 50,
-            }}>
-                <spacer />
-                <vStack $backgroundColor="blue" $padding={8} $borderRadius={{
+                <vStack $backgroundColor="#dbd8cc" $padding={8} $borderRadius={{
                     top: 16,
                     // bottomLeft: 8,
                     // bottomRight: 32,
-                }}>
+                }}
+                onMouseOver={this.handleMouseMove}>
                     <spacer />
+                    <vStack>
                     {"" + this.tick}
-                    <group $padding={24}>
+                    <vStack
+                        $backgroundColor="#4d4a55" 
+                        $padding={{
+                            horizontal: 48,
+                            vertical: 20
+                        }}
+                        $borderRadius={{
+                            top: 8,
+                            bottomLeft: 8,
+                            bottomRight: 32,
+                        }}>
                         <vStack $borderRadius={10.5}>
                             {grid}
                         </vStack>
-                    </group>
-                    {[<Bold>Snake</Bold>, <text>Game</text>]}
+                    </vStack>
+                    <hStack $gap={5}>
+                        <group $color="#333960">
+                            <text>Throvn's</text>
+                            <text $fontSize={24}>SNAKE BOY</text>
+                            <text $fontSize={8}>TM</text>
+                        </group>
+                        <spacer />
+                    </hStack>
+                    </vStack>
+                    <spacer />
+                    <spacer />
                     <spacer />
                 </vStack>
-                <spacer />
-            </hStack>
         );
     }
 }

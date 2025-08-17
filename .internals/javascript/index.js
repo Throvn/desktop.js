@@ -103,7 +103,7 @@ var GameBoard = /** @class */ (function () {
             var _loop_2 = function (j) {
                 var isSnake = this_1.player.body.some(function (s) { return s.x === j && s.y === i; });
                 var isFood = this_1.food.x === j && this_1.food.y === i;
-                row.push(GUI.createElement("text", { "$lineHeight": 120, "$padding": 8, "$backgroundColor": isSnake ? "red" : isFood ? "green" : "black", "$borderRadius": {
+                row.push(GUI.createElement("text", { "$lineHeight": 120, "$padding": 8, "$backgroundColor": isSnake ? "red" : isFood ? "green" : "#6f8500", "$borderRadius": {
                         bottomLeft: 20
                     } }, " "));
             };
@@ -116,19 +116,29 @@ var GameBoard = /** @class */ (function () {
         for (var i = 0; i < SIZE; i++) {
             _loop_1(i);
         }
-        return (GUI.createElement("hStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove, "$borderRadius": {
-                topLeft: 50
-            } },
+        return (GUI.createElement("vStack", { "$backgroundColor": "#dbd8cc", "$padding": 8, "$borderRadius": {
+                top: 16
+            }, onMouseOver: this.handleMouseMove },
             GUI.createElement("spacer", null),
-            GUI.createElement("vStack", { "$backgroundColor": "blue", "$padding": 8, "$borderRadius": {
-                    top: 16
-                } },
-                GUI.createElement("spacer", null),
+            GUI.createElement("vStack", null,
                 "" + this.tick,
-                GUI.createElement("group", { "$padding": 24 },
+                GUI.createElement("vStack", { "$backgroundColor": "#4d4a55", "$padding": {
+                        horizontal: 48,
+                        vertical: 20
+                    }, "$borderRadius": {
+                        top: 8,
+                        bottomLeft: 8,
+                        bottomRight: 32
+                    } },
                     GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
-                [GUI.createElement(Bold, null, "Snake"), GUI.createElement("text", null, "Game")],
-                GUI.createElement("spacer", null)),
+                GUI.createElement("hStack", { "$gap": 5 },
+                    GUI.createElement("group", { "$color": "#333960" },
+                        GUI.createElement("text", null, "Throvn's"),
+                        GUI.createElement("text", { "$fontSize": 24 }, "SNAKE BOY"),
+                        GUI.createElement("text", { "$fontSize": 8 }, "TM")),
+                    GUI.createElement("spacer", null))),
+            GUI.createElement("spacer", null),
+            GUI.createElement("spacer", null),
             GUI.createElement("spacer", null)));
     };
     return GameBoard;
