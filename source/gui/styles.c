@@ -215,7 +215,7 @@ uint16_t STYLES_GetGap(JSContext *ctx, JSValueConst element)
 
 static Clay_CornerRadius parseCornerRadius(JSContext *ctx, JSValueConst propValue)
 {
-    Clay_CornerRadius cornerRadius = {0};
+    Clay_CornerRadius cornerRadius = {0, 0, 0, 0};
     if (JS_IsNumber(propValue))
     {
         double value = 0;

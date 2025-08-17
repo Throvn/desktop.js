@@ -117,13 +117,11 @@ var GameBoard = /** @class */ (function () {
             _loop_1(i);
         }
         return (GUI.createElement("hStack", { "$backgroundColor": "green", onMouseOver: this.handleMouseMove, "$borderRadius": {
-                top: 50
+                topLeft: 50
             } },
             GUI.createElement("spacer", null),
             GUI.createElement("vStack", { "$backgroundColor": "blue", "$padding": 8, "$borderRadius": {
-                    // top: 16,
-                    bottomLeft: 8,
-                    bottomRight: 32
+                    top: 16
                 } },
                 GUI.createElement("spacer", null),
                 "" + this.tick,

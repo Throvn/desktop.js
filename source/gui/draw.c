@@ -183,6 +183,8 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     uint16_t childGap = STYLES_GetGap(ctx, element);
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
+
+    printf("Corner Radius: %f, %f, %f, %f\n", cornerRadius.topLeft, cornerRadius.topRight, cornerRadius.bottomLeft, cornerRadius.bottomRight);
     CLAY((Clay_ElementDeclaration){
         .layout = {
             .layoutDirection = dir,
@@ -470,7 +472,7 @@ Clay_RenderCommandArray GUI_RenderCommands(TJSRuntime *qrt)
         .clip = CLAY_CLIP_TO_ATTACHED_PARENT,
     })
     {
-        GUI_RenderValue(ctx, JS_DupValue(ctx, rootValue));
+        GUI_RenderValue(ctx, rootValue);
     }
 
     return Clay_EndLayout();

@@ -125,13 +125,13 @@ class GameBoard {
 
         return (
             <hStack $backgroundColor="green" onMouseOver={this.handleMouseMove} $borderRadius={{
-                top: 50,
+                topLeft: 50,
             }}>
                 <spacer />
                 <vStack $backgroundColor="blue" $padding={8} $borderRadius={{
-                    // top: 16,
-                    bottomLeft: 8,
-                    bottomRight: 32,
+                    top: 16,
+                    // bottomLeft: 8,
+                    // bottomRight: 32,
                 }}>
                     <spacer />
                     {"" + this.tick}
