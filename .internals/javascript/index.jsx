@@ -25,16 +25,6 @@ class Player {
     }
 }
 
-class Bold {
-    constructor(props) {
-        this.props = props;
-    }
-
-    render() {
-        return <text $padding={{bottom: 3}}>{this.props.children}</text>
-    }
-}
-
 class GameBoard {
     food = { x: 5, y: 5 };
     lastMousePos = { x: 0, y: 0 };
@@ -126,8 +116,6 @@ class GameBoard {
         return (
                 <vStack $backgroundColor="#dbd8cc" $padding={8} $borderRadius={{
                     top: 16,
-                    // bottomLeft: 8,
-                    // bottomRight: 32,
                 }}
                 onMouseOver={this.handleMouseMove}>
                     <spacer />
