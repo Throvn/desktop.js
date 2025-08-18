@@ -11,6 +11,7 @@ SOURCE_FILES = source/gui/memory.c \
 			source/gui/colors.c \
 			source/gui/js.c \
 			source/gui/styles.c \
+			source/renderer/reconcile.c \
 			source/gui/draw.c \
 			source/events/mouse.c \
 			source/main.c

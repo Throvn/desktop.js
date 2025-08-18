@@ -2,6 +2,7 @@
 #include "stdlib.h"
 #include "draw.h"
 #include "styles.h"
+#include "../renderer/reconcile.h"
 
 /// @brief Defined in js.c
 extern JSValue rootValue;
@@ -153,6 +154,10 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
     }
     JSValue argv[] = {JS_UNDEFINED};
     JSValue ret = JS_Call(ctx, render, instance, 0, argv);
+
+    JSValue renderChild = JS_GetPropertyStr(ctx, element, "_renderChild");
+    GUI_Diff(ctx, renderChild, ret);
+    JS_SetPropertyStr(ctx, element, "_renderChild", JS_DupValue(ctx, ret));
 
     JS_FreeValue(ctx, instance);
     JS_FreeValue(ctx, render);

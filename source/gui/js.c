@@ -97,6 +97,7 @@ static JSValue GUI_CreateCustomElement(JSContext *ctx, int argc, JSValueConst *a
         return JS_UNDEFINED;
     }
     JS_SetPropertyStr(ctx, element, "instance", JS_DupValue(ctx, instance));
+    JS_SetPropertyStr(ctx, element, "_renderChild", JS_UNDEFINED);
 
     return element;
 }
