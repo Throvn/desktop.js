@@ -1,21 +1,29 @@
 #include "reconcile.h"
 
-void GUI_DiffChildren(JSContext *ctx, JSValue currentElement, JSValue wipElement)
+void GUI_DiffChildren(JSContext *ctx, JSValueConst currentElement, JSValueConst wipElement)
 {
     JSValue cChildren = GUI_GetChildren(ctx, currentElement);
     JSValue wipChildren = GUI_GetChildren(ctx, wipElement);
 
     int wipChildrenLength = GUI_GetLength(ctx, wipChildren);
-    for (int i = 0; i < wipChildrenLength; i++)
+    int cChildrenLength = GUI_GetLength(ctx, cChildren);
+    int maxLength = (wipChildrenLength > cChildrenLength ? wipChildrenLength : cChildrenLength);
+    for (int i = 0; i < maxLength; i++)
     {
 
         JSValue cChild = JS_GetPropertyUint32(ctx, cChildren, i);
         JSValue wipChild = JS_GetPropertyUint32(ctx, wipChildren, i);
         GUI_Diff(ctx, cChild, wipChild);
+
+        JS_FreeValue(ctx, cChild);
+        // JS_FreeValue(ctx, wipChild);
     }
+
+    JS_FreeValue(ctx, cChildren);
+    JS_FreeValue(ctx, wipChildren);
 }
 
-void GUI_Diff(JSContext *ctx, JSValue currentElement, JSValue wipElement)
+void GUI_Diff(JSContext *ctx, JSValue currentElement, JSValueConst wipElement)
 {
     if (JS_IsUndefined(currentElement) || !JS_IsObject(wipElement))
         return;
@@ -33,6 +41,7 @@ void GUI_Diff(JSContext *ctx, JSValue currentElement, JSValue wipElement)
         JSValue cInstance = JS_GetPropertyStr(ctx, currentElement, "instance");
         JS_SetPropertyStr(ctx, wipElement, "instance", cInstance);
     }
+    JS_FreeCString(ctx, cTypeString);
 
     if (isTypeEqual)
     {

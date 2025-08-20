@@ -81,6 +81,11 @@ int main(int argc, char **argv)
 
     TJS_RunWithIdleCallback(qrt, idleCallback);
 
+    JSRuntime *rt = JS_GetRuntime(ctx);
+    JSMemoryUsage usage;
+    JS_ComputeMemoryUsage(rt, &usage);
+    printf("Obj count: %d\nMem used size: %d\n", usage.obj_count, usage.memory_used_size);
+
     TJS_FreeRuntime(qrt);
     free(clayArenaMemory);
 

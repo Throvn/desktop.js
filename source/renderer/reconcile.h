@@ -5,6 +5,6 @@
 #include "../gui/memory.h"
 #include "../gui/draw.h"
 
-void GUI_Diff(JSContext *ctx, JSValue currentTree, JSValue wipTree);
+void GUI_Diff(JSContext *ctx, JSValue currentTree, JSValueConst wipTree);
 
 #endif

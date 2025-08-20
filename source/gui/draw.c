@@ -140,6 +140,18 @@ static void renderChildren(JSContext *ctx, JSValueConst element)
 void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
 {
     JSValue instance = JS_GetPropertyStr(ctx, element, "instance");
+    // Create a new instance only if it doesn't exist yet.
+    if (JS_IsUndefined(instance))
+    {
+        JSValue class = JS_GetPropertyStr(ctx, element, "class");
+        JSValue props = JS_GetPropertyStr(ctx, element, "props");
+        JS_FreeValue(ctx, instance);
+        JSValue ret = JS_CallConstructor(ctx, class, 1, &props);
+        JS_SetPropertyStr(ctx, element, "instance", ret);
+        instance = JS_GetPropertyStr(ctx, element, "instance");
+        JS_FreeValue(ctx, class);
+        JS_FreeValue(ctx, props);
+    }
     JSValue render = JS_GetPropertyStr(ctx, instance, "render");
     if (!JS_IsFunction(ctx, render))
     {
@@ -154,17 +166,14 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
     }
     JSValue argv[] = {JS_UNDEFINED};
     JSValue ret = JS_Call(ctx, render, instance, 0, argv);
-
-    JSValue renderChild = JS_GetPropertyStr(ctx, element, "_renderChild");
-    GUI_Diff(ctx, renderChild, ret);
-    JS_SetPropertyStr(ctx, element, "_renderChild", JS_DupValue(ctx, ret));
-
     JS_FreeValue(ctx, instance);
     JS_FreeValue(ctx, render);
 
-    GUI_RenderValue(ctx, ret);
+    JSValue renderChild = JS_GetPropertyStr(ctx, element, "_renderChild");
+    GUI_Diff(ctx, renderChild, JS_DupValue(ctx, ret));
+    JS_SetPropertyStr(ctx, element, "_renderChild", ret);
 
-    JS_FreeValue(ctx, ret);
+    GUI_RenderValue(ctx, ret);
 }
 
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
@@ -271,7 +280,10 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
     JS_FreeValue(ctx, props);
 
     if (JS_IsUndefined(givenProp))
+    {
+        JS_FreeValue(ctx, givenProp);
         return;
+    }
 
     JSValue children = GUI_GetChildren(ctx, element);
     int length = GUI_GetLength(ctx, children);
@@ -428,7 +440,6 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
         if (JS_IsObject(element) && length > 0)
         {
             GUI_RenderArray(ctx, element);
-            JS_FreeValue(ctx, element);
             return;
         }
 
