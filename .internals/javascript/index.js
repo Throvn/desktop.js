@@ -43,6 +43,9 @@ var GBText = /** @class */ (function () {
         this.interval = setInterval(function () {
             _this.color = _this.color === "red" ? "blue" : "red";
         }, 1000);
+        fetch('https://api.animechan.io/v1/quotes/random')
+            .then(function (response) { return response.json(); })
+            .then(function (quote) { return console.log(quote); });
     }
     GBText.prototype.render = function () {
         var _this = this;
@@ -158,3 +161,9 @@ var GameBoard = /** @class */ (function () {
     return GameBoard;
 }());
 GUI.render(GUI.createElement(GameBoard, null));
+console.log("Test");
+// await fetch('https://api.animechan.io/v1/quotes/random')
+//     .then(response => response.json())
+//     .then(quote => console.log(quote))
+//     .catch(console.error)
+console.log("Bye");
