@@ -40,14 +40,21 @@ var GBText = /** @class */ (function () {
         this.onMouseOver = props.onMouseOver || (function () { });
         this.color = "red";
         console.log("New GBText");
-        setInterval(function () {
+        this.interval = setInterval(function () {
             _this.color = _this.color === "red" ? "blue" : "red";
         }, 1000);
+        fetch('https://api.animechan.io/v1/quotes/random')
+            .then(function (response) { return response.json(); })
+            .then(function (quote) { return console.log(quote); });
     }
     GBText.prototype.render = function () {
+        var _this = this;
         return GUI.createElement("group", { "$color": "#333960", "$lineHeight": 24 * 2, onMouseOver: this.onMouseOver },
             GUI.createElement("text", null, "Throvn's"),
-            GUI.createElement("text", { "$fontSize": 24, "$backgroundColor": this.color }, this.name),
+            GUI.createElement("text", { "$fontSize": 24, "$color": this.color, onMouseDown: (function (e) {
+                    console.log(e);
+                    clearInterval(_this.interval);
+                }) }, this.name),
             GUI.createElement("text", { "$fontSize": 8 }, "TM"));
     };
     return GBText;
@@ -144,8 +151,8 @@ var GameBoard = /** @class */ (function () {
                         bottomRight: 32
                     } },
                     GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
-                GUI.createElement("hStack", { "$gap": 5 },
-                    !this.hideText ? GUI.createElement(GBText, { onMouseOver: function () { _this.hideText = true; } }) : GUI.createElement("text", { onMOuseOver: function () { return _this.hideText = false; } }, "Hidden"),
+                GUI.createElement("hStack", { "$gap": 5, onMouseUp: function () { return _this.hideText = !_this.hideText; } },
+                    !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
                     GUI.createElement("spacer", null))),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null),
@@ -154,19 +161,9 @@ var GameBoard = /** @class */ (function () {
     return GameBoard;
 }());
 GUI.render(GUI.createElement(GameBoard, null));
-// class SmallTest {
-//     constructor() {
-//     }
-//     render() {
-//         return (<hStack onMouseOver={(event) => {
-//             console.log(event)
-//         }}>
-//             <group >
-//                 <text>Test</text>
-//                 <spacer />
-//                 <text>Bye</text>
-//             </group>
-//         </hStack>);
-//     }
-// }
-// GUI.render(<SmallTest />)
+console.log("Test");
+// await fetch('https://api.animechan.io/v1/quotes/random')
+//     .then(response => response.json())
+//     .then(quote => console.log(quote))
+//     .catch(console.error)
+console.log("Bye");
