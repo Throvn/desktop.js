@@ -47,21 +47,17 @@ void EVENT_OnMouseOver(JSContext *ctx, JSValueConst props)
     JS_FreeValue(ctx, ret);
 }
 
-void EVENT_OnClay(Clay_ElementId elementId, Clay_PointerData pointerInfo, intptr_t userData)
+void EVENT_OnHover(JSContext *ctx, JSValueConst props)
 {
-    EventProps *eventProps = (EventProps *)userData;
-    EVENT_OnMouseOver(eventProps->ctx, eventProps->props);
-
-    JS_FreeValue(eventProps->ctx, eventProps->props);
-    free(eventProps);
+    EVENT_OnMouseOver(ctx, props);
 }
 
 void EVENT_HandleMouseEvents(JSContext *ctx, JSValueConst element)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    EventProps *eventProps = calloc(1, sizeof(EventProps));
-    eventProps->ctx = ctx;
-    eventProps->props = props;
 
-    Clay_OnHover(EVENT_OnClay, (intptr_t)eventProps);
+    if (Clay_Hovered())
+        EVENT_OnHover(ctx, props);
+
+    JS_FreeValue(ctx, props);
 }

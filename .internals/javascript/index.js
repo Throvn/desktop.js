@@ -153,4 +153,19 @@ var GameBoard = /** @class */ (function () {
     };
     return GameBoard;
 }());
-GUI.render(GUI.createElement(GameBoard, null));
+// GUI.render(<GameBoard />)
+var SmallTest = /** @class */ (function () {
+    function SmallTest() {
+    }
+    SmallTest.prototype.render = function () {
+        return (GUI.createElement("hStack", { onMouseOver: function (event) {
+                console.log(event);
+            } },
+            GUI.createElement("group", null,
+                GUI.createElement("text", null, "Test"),
+                GUI.createElement("spacer", null),
+                GUI.createElement("text", null, "Bye"))));
+    };
+    return SmallTest;
+}());
+GUI.render(GUI.createElement(SmallTest, null));

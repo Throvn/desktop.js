@@ -171,5 +171,24 @@ class GameBoard {
         );
     }
 }
+// GUI.render(<GameBoard />)
 
-GUI.render(<GameBoard />)
+class SmallTest {
+    constructor() {
+
+    }
+
+    render() {
+        return (<hStack onMouseOver={(event) => {
+            console.log(event)
+        }}>
+            <group>
+                <text>Test</text>
+                <spacer />
+                <text>Bye</text>
+            </group>
+        </hStack>);
+    }
+}
+
+GUI.render(<SmallTest />)

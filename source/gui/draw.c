@@ -411,6 +411,7 @@ void GUI_RenderGroup(JSContext *ctx, JSValueConst element)
     }
     JS_FreePropertyEnum(ctx, keys, num_keys);
     JS_FreeValue(ctx, props);
+    JS_FreeValue(ctx, children);
 
     renderChildren(ctx, element);
 }
