@@ -152,6 +152,31 @@ The default font size is 12px tall and the default color is black.
 
 ### Built in Event Listeners
 
+#### `onMouseUp`
+
+The mouse down event is called once a mouse button was pressed.
+It tries to mimic the [MouseUp JS event](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseup_event).
+
+##### Example
+
+```jsx
+<text
+  onMouseUp={(event) => {
+    console.log("Mouse DOWN Event Called!");
+  }}
+></text>
+```
+
+##### Event Props
+
+- `button` the id of the pressed mouse button (0 = left, 1 = right, 2 = middle).
+- `layerX` x position in pixels relative to the window.
+- `layerY` y position in pixels relative to the window.
+
+- `altKey` boolean indicating if the **alt key** was pressed.
+- `ctrlKey` boolean indicating if the **control key** was pressed.
+- `shiftKey` boolean indicating if the **shift key** was pressed
+
 #### `onMouseDown`
 
 The mouse down event is called once a mouse button was pressed.
@@ -169,6 +194,7 @@ It tries to mimic the [MouseDown JS event](https://developer.mozilla.org/en-US/d
 
 ##### Event Props
 
+- `button` the id of the pressed mouse button (0 = left, 1 = right, 2 = middle).
 - `layerX` x position in pixels relative to the window.
 - `layerY` y position in pixels relative to the window.
 

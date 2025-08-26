@@ -36,7 +36,6 @@ void GUI_Diff(JSContext *ctx, JSValueConst currentElement, JSValueConst wipEleme
     JSValue wipType = JS_GetPropertyStr(ctx, wipElement, "type");
 
     bool isTypeEqual = JS_IsStrictEqual(ctx, cType, wipType);
-    printf("isTypeEqual %d\n", isTypeEqual);
 
     const char *cTypeString = JS_ToCString(ctx, cType);
     if (isTypeEqual && 0 == strcmp(cTypeString, "custom"))

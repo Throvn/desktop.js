@@ -174,7 +174,6 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
 
     JSValue renderChild = JS_GetPropertyStr(ctx, element, "_renderChild");
     GUI_Diff(ctx, renderChild, ret);
-    JS_PrintRefCount("renderChild", renderChild);
 
     GUI_RenderValue(ctx, ret);
     JS_SetPropertyStr(ctx, element, "_renderChild", ret);
@@ -336,6 +335,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
         .cornerRadius = cornerRadius,
     })
     {
+        EVENT_HandleMouseEvents(ctx, element);
         renderChildren(ctx, element);
     }
 }
