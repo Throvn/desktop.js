@@ -3,6 +3,7 @@
 #include "draw.h"
 #include "styles.h"
 #include "../renderer/reconcile.h"
+#include "../debug.h"
 
 /// @brief Defined in js.c
 extern JSValue rootValue;
@@ -135,6 +136,7 @@ static void renderChildren(JSContext *ctx, JSValueConst element)
         GUI_RenderValue(ctx, child);
         JS_FreeValue(ctx, child);
     }
+    JS_FreeValue(ctx, children);
 }
 
 void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
@@ -143,15 +145,19 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
     // Create a new instance only if it doesn't exist yet.
     if (JS_IsUndefined(instance))
     {
+        JS_FreeValue(ctx, instance);
+
         JSValue class = JS_GetPropertyStr(ctx, element, "class");
         JSValue props = JS_GetPropertyStr(ctx, element, "props");
-        JS_FreeValue(ctx, instance);
         JSValue ret = JS_CallConstructor(ctx, class, 1, &props);
-        JS_SetPropertyStr(ctx, element, "instance", ret);
-        instance = JS_GetPropertyStr(ctx, element, "instance");
+
         JS_FreeValue(ctx, class);
         JS_FreeValue(ctx, props);
+
+        JS_SetPropertyStr(ctx, element, "instance", JS_DupValue(ctx, ret));
+        instance = ret;
     }
+
     JSValue render = JS_GetPropertyStr(ctx, instance, "render");
     if (!JS_IsFunction(ctx, render))
     {
@@ -164,16 +170,18 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
         exit(4);
         return;
     }
-    JSValue argv[] = {JS_UNDEFINED};
-    JSValue ret = JS_Call(ctx, render, instance, 0, argv);
-    JS_FreeValue(ctx, instance);
-    JS_FreeValue(ctx, render);
+    JSValue ret = JS_Call(ctx, render, instance, 0, NULL);
 
     JSValue renderChild = JS_GetPropertyStr(ctx, element, "_renderChild");
-    GUI_Diff(ctx, renderChild, JS_DupValue(ctx, ret));
-    JS_SetPropertyStr(ctx, element, "_renderChild", ret);
+    GUI_Diff(ctx, renderChild, ret);
+    JS_PrintRefCount("renderChild", renderChild);
 
     GUI_RenderValue(ctx, ret);
+    JS_SetPropertyStr(ctx, element, "_renderChild", ret);
+
+    JS_FreeValue(ctx, instance);
+    JS_FreeValue(ctx, render);
+    JS_FreeValue(ctx, renderChild);
 }
 
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
@@ -421,7 +429,10 @@ void GUI_RenderArray(JSContext *ctx, JSValueConst element)
 void GUI_RenderValue(JSContext *ctx, JSValue element)
 {
     if (JS_IsUninitialized(element) || JS_IsUndefined(element) || JS_IsNull(element))
+    {
+        JS_FreeValue(ctx, element);
         return;
+    }
 
     if (JS_IsException(element))
     {
@@ -440,6 +451,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
         if (JS_IsObject(element) && length > 0)
         {
             GUI_RenderArray(ctx, element);
+            JS_FreeValue(ctx, typeValue);
             return;
         }
 
@@ -452,7 +464,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
         return;
     }
     const char *type = JS_ToCString(ctx, typeValue);
-    // printf("[GUI_RenderValue] Type is: %s\n", type);
+    JS_FreeValue(ctx, typeValue);
 
     if (0 == strcmp(type, "custom"))
     {

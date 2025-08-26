@@ -1,4 +1,6 @@
 #include "reconcile.h"
+#include "../debug.h"
+#include <stdlib.h>
 
 void GUI_DiffChildren(JSContext *ctx, JSValueConst currentElement, JSValueConst wipElement)
 {
@@ -16,35 +18,38 @@ void GUI_DiffChildren(JSContext *ctx, JSValueConst currentElement, JSValueConst 
         GUI_Diff(ctx, cChild, wipChild);
 
         JS_FreeValue(ctx, cChild);
-        // JS_FreeValue(ctx, wipChild);
+        JS_FreeValue(ctx, wipChild);
     }
 
     JS_FreeValue(ctx, cChildren);
     JS_FreeValue(ctx, wipChildren);
 }
 
-void GUI_Diff(JSContext *ctx, JSValue currentElement, JSValueConst wipElement)
+void GUI_Diff(JSContext *ctx, JSValueConst currentElement, JSValueConst wipElement)
 {
     if (JS_IsUndefined(currentElement) || !JS_IsObject(wipElement))
+    {
         return;
+    }
 
     JSValue cType = JS_GetPropertyStr(ctx, currentElement, "type");
     JSValue wipType = JS_GetPropertyStr(ctx, wipElement, "type");
 
     bool isTypeEqual = JS_IsStrictEqual(ctx, cType, wipType);
-    JS_FreeValue(ctx, wipType);
+    printf("isTypeEqual %d\n", isTypeEqual);
 
     const char *cTypeString = JS_ToCString(ctx, cType);
-    JS_FreeValue(ctx, cType);
     if (isTypeEqual && 0 == strcmp(cTypeString, "custom"))
     {
         JSValue cInstance = JS_GetPropertyStr(ctx, currentElement, "instance");
         JS_SetPropertyStr(ctx, wipElement, "instance", cInstance);
     }
-    JS_FreeCString(ctx, cTypeString);
-
-    if (isTypeEqual)
+    else if (isTypeEqual)
     {
         GUI_DiffChildren(ctx, currentElement, wipElement);
     }
+
+    JS_FreeCString(ctx, cTypeString);
+    JS_FreeValue(ctx, wipType);
+    JS_FreeValue(ctx, cType);
 }

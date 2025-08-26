@@ -1,5 +1,6 @@
 #include <quickjs.h>
 #include <stdlib.h>
+#include "../debug.h"
 
 JSValue rootValue = JS_UNINITIALIZED;
 
@@ -78,7 +79,7 @@ static JSValue GUI_CreateCustomElement(JSContext *ctx, int argc, JSValueConst *a
         JSValue child = JS_DupValue(ctx, argv[2 + i]);
         if (JS_IsString(argv[2 + i]))
         {
-            child = GUI_ToStringElement(ctx, argv[2 + i]);
+            child = GUI_ToStringElement(ctx, child);
         }
         JS_SetPropertyUint32(ctx, children, i, child);
     }
