@@ -34,12 +34,20 @@ var Player = /** @class */ (function () {
 }());
 var GBText = /** @class */ (function () {
     function GBText(props) {
-        this.name = "SNAKE BOY".split("");
+        var _this = this;
+        this.name = "SNAKE BOY";
         this.index = 0;
+        this.onMouseOver = props.onMouseOver || (function () { });
+        this.color = "red";
+        console.log("New GBText");
+        setInterval(function () {
+            _this.color = _this.color === "red" ? "blue" : "red";
+        }, 1000);
     }
     GBText.prototype.render = function () {
-        return GUI.createElement("group", { "$color": "#333960", "$lineHeight": 24 * 2 },
+        return GUI.createElement("group", { "$color": "#333960", "$lineHeight": 24 * 2, onMouseOver: this.onMouseOver },
             GUI.createElement("text", null, "Throvn's"),
+            GUI.createElement("text", { "$fontSize": 24, "$backgroundColor": this.color }, this.name),
             GUI.createElement("text", { "$fontSize": 8 }, "TM"));
     };
     return GBText;
@@ -85,6 +93,7 @@ var GameBoard = /** @class */ (function () {
         };
         this.props = props;
         this.player = new Player(0, 0);
+        this.hideText = false;
         setInterval(this.gameLoop, 500);
     }
     GameBoard.prototype.spawnFood = function () {
@@ -99,6 +108,7 @@ var GameBoard = /** @class */ (function () {
         return head.x === this.food.x && head.y === this.food.y;
     };
     GameBoard.prototype.render = function () {
+        var _this = this;
         // Draw grid
         var grid = [];
         var _loop_1 = function (i) {
@@ -135,7 +145,7 @@ var GameBoard = /** @class */ (function () {
                     } },
                     GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
                 GUI.createElement("hStack", { "$gap": 5 },
-                    [GUI.createElement(GBText, null), GUI.createElement(GBText, null)],
+                    !this.hideText ? GUI.createElement(GBText, { onMouseOver: function () { _this.hideText = true; } }) : GUI.createElement("text", { onMOuseOver: function () { return _this.hideText = false; } }, "Hidden"),
                     GUI.createElement("spacer", null))),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null),
@@ -144,3 +154,19 @@ var GameBoard = /** @class */ (function () {
     return GameBoard;
 }());
 GUI.render(GUI.createElement(GameBoard, null));
+// class SmallTest {
+//     constructor() {
+//     }
+//     render() {
+//         return (<hStack onMouseOver={(event) => {
+//             console.log(event)
+//         }}>
+//             <group >
+//                 <text>Test</text>
+//                 <spacer />
+//                 <text>Bye</text>
+//             </group>
+//         </hStack>);
+//     }
+// }
+// GUI.render(<SmallTest />)

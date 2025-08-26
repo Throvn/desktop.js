@@ -1,5 +1,6 @@
 #include <quickjs.h>
 #include <stdlib.h>
+#include "../debug.h"
 
 JSValue rootValue = JS_UNINITIALIZED;
 
@@ -33,7 +34,6 @@ static JSValue GUI_ToStringElement(JSContext *ctx, JSValue string)
 
     JSValue element = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, element, "type", JS_NewString(ctx, "string"));
-    JS_SetPropertyStr(ctx, element, "key", JS_NewInt32(ctx, rand()));
     JSValue props = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, element, "props", props);
     JS_SetPropertyStr(ctx, props, "children", string);
@@ -44,7 +44,6 @@ static JSValue GUI_CreateBuiltInElement(JSContext *ctx, int argc, JSValueConst *
 {
     JSValue element = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, element, "type", JS_DupValue(ctx, argv[0]));
-    JS_SetPropertyStr(ctx, element, "key", JS_NewInt64(ctx, rand()));
 
     JSValue props = JS_IsNull(argv[1]) ? JS_NewObject(ctx) : JS_DupValue(ctx, argv[1]);
     JS_SetPropertyStr(ctx, element, "props", props);
@@ -70,7 +69,6 @@ static JSValue GUI_CreateCustomElement(JSContext *ctx, int argc, JSValueConst *a
     JSValue element = JS_NewObject(ctx);
 
     JS_SetPropertyStr(ctx, element, "type", JS_NewString(ctx, "custom"));
-    JS_SetPropertyStr(ctx, element, "key", JS_NewInt64(ctx, rand()));
 
     JSValue props = JS_IsNull(argv[1]) ? JS_NewObject(ctx) : JS_DupValue(ctx, argv[1]);
     JS_SetPropertyStr(ctx, element, "props", props);
@@ -81,22 +79,22 @@ static JSValue GUI_CreateCustomElement(JSContext *ctx, int argc, JSValueConst *a
         JSValue child = JS_DupValue(ctx, argv[2 + i]);
         if (JS_IsString(argv[2 + i]))
         {
-            child = GUI_ToStringElement(ctx, argv[2 + i]);
+            child = GUI_ToStringElement(ctx, child);
         }
         JS_SetPropertyUint32(ctx, children, i, child);
     }
 
     JS_SetPropertyStr(ctx, props, "children", children);
 
-    JSValue instanceArgv[1] = {JS_DupValue(ctx, props)};
-    JSValue instance = JS_CallConstructor(ctx, argv[0], 1, instanceArgv);
-    if (JS_IsException(instance))
+    if (!JS_IsConstructor(ctx, argv[0]))
     {
-        fprintf(stderr, "[GUI] Instantiation of custom element failed. Constructor threw.\n");
+        fprintf(stderr, "[GUI] Instantiation of custom element failed. Element is not a class.\n");
         exit(5);
         return JS_UNDEFINED;
     }
-    JS_SetPropertyStr(ctx, element, "instance", JS_DupValue(ctx, instance));
+    JS_SetPropertyStr(ctx, element, "class", JS_DupValue(ctx, argv[0]));
+    JS_SetPropertyStr(ctx, element, "instance", JS_UNDEFINED);
+    JS_SetPropertyStr(ctx, element, "_renderChild", JS_UNDEFINED);
 
     return element;
 }

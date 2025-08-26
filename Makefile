@@ -7,10 +7,12 @@ debug: main
 	# lldb djs-aarch64-macos
 	leaks --list --atExit -- ./djs-aarch64-macos run ./.internals/javascript/index.js
 
-SOURCE_FILES = source/gui/memory.c \
+SOURCE_FILES = source/debug.c \
+			source/gui/memory.c \
 			source/gui/colors.c \
 			source/gui/js.c \
 			source/gui/styles.c \
+			source/renderer/reconcile.c \
 			source/gui/draw.c \
 			source/events/mouse.c \
 			source/main.c

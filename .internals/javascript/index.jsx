@@ -27,18 +27,21 @@ class Player {
 
 class GBText {
     constructor(props) {
-        this.name = "SNAKE BOY".split("")
+        this.name = "SNAKE BOY"
         this.index = 0
+        this.onMouseOver = props.onMouseOver || (() => {});
+        this.color = "red";
+        console.log("New GBText");
+
+        setInterval(() => {
+            this.color = this.color === "red" ? "blue" : "red"
+        }, 1000)
     }
 
     render() {
-        return <group $color="#333960" $lineHeight={24 * 2}>
+        return <group $color="#333960" $lineHeight={24 * 2} onMouseOver={this.onMouseOver}>
             <text>Throvn's</text>
-            {/* <text $fontSize={24}>{this.name.map((c, i) => {
-                if (i == this.index) 
-                    return c.toUpperCase();
-                return c.toLowerCase();
-            })}</text> */}
+            <text $fontSize={24} $backgroundColor={this.color}>{this.name}</text>
             <text $fontSize={8}>TM</text>
         </group>;
     }
@@ -53,6 +56,7 @@ class GameBoard {
     constructor(props) {
         this.props = props;
         this.player = new Player(0, 0);
+        this.hideText = false;
 
         setInterval(this.gameLoop, 500);
     }
@@ -156,7 +160,7 @@ class GameBoard {
                         </vStack>
                     </vStack>
                     <hStack $gap={5}>
-                        {[<GBText />, <GBText />]}
+                        {!this.hideText ? <GBText onMouseOver={() => { this.hideText = true; }}/> : <text onMOuseOver={() => this.hideText = false}>Hidden</text>}
                         <spacer />
                     </hStack>
                     </vStack>
@@ -167,5 +171,4 @@ class GameBoard {
         );
     }
 }
-
-GUI.render(<GameBoard />)
+GUI.render(<GameBoard />);

@@ -2,7 +2,7 @@
 #define COLORS_H
 #include "../../lib/clay/clay.h"
 
-Clay_Color parseHexColor(char *hexCode);
+Clay_Color parseHexColor(const char *hexCode);
 
 extern const char *COLOR_Names[];
 extern const Clay_Color COLOR_Values[];
