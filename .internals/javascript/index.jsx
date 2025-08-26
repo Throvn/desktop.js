@@ -33,7 +33,7 @@ class GBText {
         this.color = "red";
         console.log("New GBText");
 
-        setInterval(() => {
+        this.interval = setInterval(() => {
             this.color = this.color === "red" ? "blue" : "red"
         }, 1000)
     }
@@ -41,7 +41,10 @@ class GBText {
     render() {
         return <group $color="#333960" $lineHeight={24 * 2} onMouseOver={this.onMouseOver}>
             <text>Throvn's</text>
-            <text $fontSize={24} $backgroundColor={this.color}>{this.name}</text>
+            <text $fontSize={24} $color={this.color} onMouseDown={(e => {
+                console.log(e);
+                clearInterval(this.interval);
+            })}>{this.name}</text>
             <text $fontSize={8}>TM</text>
         </group>;
     }
@@ -159,8 +162,8 @@ class GameBoard {
                             {grid}
                         </vStack>
                     </vStack>
-                    <hStack $gap={5}>
-                        {!this.hideText ? <GBText onMouseOver={() => { this.hideText = true; }}/> : <text onMOuseOver={() => this.hideText = false}>Hidden</text>}
+                    <hStack $gap={5}onMouseUp={() => this.hideText = !this.hideText}>
+                        {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
                     </hStack>
                     </vStack>
