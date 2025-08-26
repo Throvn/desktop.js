@@ -9,6 +9,7 @@
 #include "gui/js.h"
 #include "gui/draw.h"
 #include "events/mouse.h"
+#include "debug.h"
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 
@@ -80,6 +81,11 @@ int main(int argc, char **argv)
     Clay_SetMeasureTextFunction(Raylib_MeasureText, &font);
 
     TJS_RunWithIdleCallback(qrt, idleCallback);
+
+    JSRuntime *rt = JS_GetRuntime(ctx);
+    JSMemoryUsage usage;
+    JS_ComputeMemoryUsage(rt, &usage);
+    printf("Obj count: %d\nMem used size: %d\nStr count: %d\n", usage.obj_count, usage.memory_used_size, usage.str_count);
 
     TJS_FreeRuntime(qrt);
     free(clayArenaMemory);
