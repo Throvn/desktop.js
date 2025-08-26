@@ -63,17 +63,13 @@ int main(int argc, char **argv)
     JSContext *ctx = TJS_GetJSContext(qrt);
     GUI_js_init_module(ctx);
 
-    SetTraceLogLevel(LOG_ERROR);
-    InitWindow(300, 500, "Test Window");
-    SetWindowState(FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_HIGHDPI);
-
-    // Otherwise text doesn't draw somehow.
-    ToggleBorderlessWindowed();
-    ToggleBorderlessWindowed();
-
     uint64_t totalMemorySize = Clay_MinMemorySize();
     void *clayArenaMemory = malloc(totalMemorySize);
     Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, clayArenaMemory);
+
+    SetTraceLogLevel(LOG_ERROR);
+    InitWindow(500, 300, "Desktop.js");
+    SetWindowOpacity(0);
 
     // Note: screenWidth and screenHeight will need to come from your environment, Clay doesn't handle window related tasks
     Clay_Initialize(arena, (Clay_Dimensions){GetScreenWidth(), GetScreenHeight()}, (Clay_ErrorHandler){HandleClayErrors});
