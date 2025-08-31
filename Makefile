@@ -15,6 +15,7 @@ SOURCE_FILES = source/debug.c \
 			source/renderer/reconcile.c \
 			source/gui/draw.c \
 			source/events/mouse.c \
+			source/platform.c \
 			source/main.c
 
 LIBRARY_FILES = lib/txiki.js/build/deps/quickjs/libqjs.a \

@@ -1,16 +1,55 @@
 #include <quickjs.h>
 #include <stdlib.h>
 #include "../debug.h"
+#include "raylib.h"
 
 JSValue rootValue = JS_UNINITIALIZED;
+
+static void GUI_SetWindowOptions(JSContext *ctx, JSValueConst options)
+{
+    // Set window size.
+    JSValue widthValue = JS_GetPropertyStr(ctx, options, "width");
+    int width = 500;
+    if (JS_IsNumber(widthValue))
+        JS_ToInt32(ctx, &width, widthValue);
+    JS_FreeValue(ctx, widthValue);
+    JSValue heightValue = JS_GetPropertyStr(ctx, options, "height");
+    int height = 300;
+    if (JS_IsNumber(heightValue))
+        JS_ToInt32(ctx, &height, heightValue);
+    JS_FreeValue(ctx, heightValue);
+
+    SetWindowSize(width, height);
+
+    // Set window title.
+    JSValue titleValue = JS_GetPropertyStr(ctx, options, "title");
+    if (JS_IsString(titleValue))
+    {
+        const char *title = JS_ToCString(ctx, titleValue);
+        SetWindowTitle(title);
+        JS_FreeCString(ctx, title);
+    }
+
+    JSValue resizableValue = JS_GetPropertyStr(ctx, options, "resizable");
+    if (JS_IsBool(resizableValue) && JS_ToBool(ctx, resizableValue))
+    {
+        SetWindowState(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
+    }
+
+    SetWindowOpacity(1);
+
+    JS_FreeValue(ctx, titleValue);
+    JS_FreeValue(ctx, heightValue);
+    JS_FreeValue(ctx, widthValue);
+}
 
 // GUI.render()
 static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
                              int argc, JSValueConst *argv)
 {
-    if (argc != 1)
+    if (argc != 1 && argc != 2)
     {
-        JS_ThrowTypeError(ctx, "GUI.render() only takes one JSX element");
+        JS_ThrowTypeError(ctx, "GUI.render() only takes one JSX element and an optional options object");
         return JS_UNDEFINED;
     }
     if (!JS_IsObject(argv[0]))
@@ -18,6 +57,12 @@ static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
         JS_ThrowTypeError(ctx, "GUI.render() accepts only objects");
         return JS_UNDEFINED;
     }
+    if (argc == 2 && !JS_IsObject(argv[1]))
+    {
+        JS_ThrowTypeError(ctx, "GUI.render() did not receive an options object as a second parameter");
+        return JS_UNDEFINED;
+    }
+    GUI_SetWindowOptions(ctx, argv[1]);
 
     printf("[GUI] render() called\n");
     rootValue = JS_DupValue(ctx, argv[0]);
@@ -127,7 +172,7 @@ static JSValue GUI_js_create_element(JSContext *ctx, JSValueConst this_val,
 static int js_gui_init(JSContext *ctx, JSModuleDef *m)
 {
     JS_SetModuleExport(ctx, m, "render",
-                       JS_NewCFunction(ctx, GUI_js_render, "render", 0));
+                       JS_NewCFunction(ctx, GUI_js_render, "render", 1));
     JS_SetModuleExport(ctx, m, "createElement",
                        JS_NewCFunction(ctx, GUI_js_create_element, "createElement", 0));
     return 0;
