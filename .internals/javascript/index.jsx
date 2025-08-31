@@ -162,7 +162,7 @@ class GameBoard {
                             {grid}
                         </vStack>
                     </vStack>
-                    <hStack $gap={5}onMouseUp={() => this.hideText = !this.hideText}>
+                    <hStack $gap={5} onMouseUp={() => this.hideText = !this.hideText}>
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
                     </hStack>
@@ -174,4 +174,8 @@ class GameBoard {
         );
     }
 }
-GUI.render(<GameBoard />);
+GUI.render(<GameBoard />, {
+    width: 300,
+    height: 500,
+    resizable: false,
+});
