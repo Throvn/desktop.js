@@ -21,7 +21,9 @@
     "atomic": "c",
     "cstdint": "c",
     "locale": "c",
-    "memory.h": "c"
+    "memory.h": "c",
+    "darwin-stub.h": "c",
+    "darwin.h": "c"
   },
   "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }
