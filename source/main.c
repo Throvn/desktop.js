@@ -10,6 +10,7 @@
 #include "gui/draw.h"
 #include "events/mouse.h"
 #include "debug.h"
+#include "platform.h"
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 
@@ -31,7 +32,6 @@ void idleCallback(uv_idle_t *handle)
     BeginDrawing();
     ClearBackground(BLACK);
     JSContext *ctx = TJS_GetJSContext(qrt);
-    JS_RunGC(JS_GetRuntime(ctx));
 
     arenaIndex = (arenaIndex + 1) % 2;
     Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
@@ -50,14 +50,14 @@ void HandleClayErrors(Clay_ErrorData errorData)
 
 int main(int argc, char **argv)
 {
+    // No need to free, because we need the result until shutdown.
+    CliArgs *args = prepareArgs(argc, argv);
     // Init JS runtime
-    TJS_Initialize(argc, argv);
+    TJS_Initialize(args->count, args->variables);
 
     TJSRuntime *qrt = TJS_NewRuntime();
     if (!qrt)
-    {
         return 1;
-    }
 
     // Load GUI import.
     JSContext *ctx = TJS_GetJSContext(qrt);
