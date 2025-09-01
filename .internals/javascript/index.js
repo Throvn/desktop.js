@@ -138,7 +138,7 @@ var GameBoard = /** @class */ (function () {
             }, onMouseOver: this.handleMouseMove },
             GUI.createElement("spacer", null),
             GUI.createElement("vStack", null,
-                "" + this.tick,
+                this.tick,
                 GUI.createElement("vStack", { "$backgroundColor": "#4d4a55", "$padding": {
                         horizontal: 48,
                         vertical: 20
