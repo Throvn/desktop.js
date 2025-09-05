@@ -1,0 +1,102 @@
+diff --git a/./lib/clay/renderers/raylib/clay_renderer_raylib.orig.c b/./lib/clay/renderers/raylib/clay_renderer_raylib.c
+index 910a2ae..75e4fc4 100644
+--- a/./lib/clay/renderers/raylib/clay_renderer_raylib.orig.c
++++ b/./lib/clay/renderers/raylib/clay_renderer_raylib.c
+@@ -4,6 +4,7 @@
+ #include "string.h"
+ #include "stdio.h"
+ #include "stdlib.h"
++#include "rlgl.h"
+ 
+ #define CLAY_RECTANGLE_TO_RAYLIB_RECTANGLE(rectangle) \
+     (Rectangle) { .x = rectangle.x, .y = rectangle.y, .width = rectangle.width, .height = rectangle.height }
+@@ -131,11 +132,45 @@ static inline Clay_Dimensions Raylib_MeasureText(Clay_StringSlice text, Clay_Tex
+     return textSize;
+ }
+ 
++static const char *roundedRectFragShader =
++    "#version 330\n"
++    "uniform vec2 iResolution;\n"
++    "uniform vec2 rectSize;\n"
++    "uniform vec4 rectColor;\n"
++    "uniform vec4 rectRadii;\n"
++    "uniform vec2 rectPos;\n"
++    "out vec4 fragColor;\n"
++    "\n"
++    "float DistRoundedRect(vec2 pos, vec2 ext, vec4 cr) {\n"
++    "  float r = pos.x > 0.0 ? (pos.y > 0.0 ? cr.y : cr.z) : (pos.y > 0.0 ? cr.x : cr.w);\n"
++    "  float maxAllowed = min(ext.x, ext.y) * 0.5;\n"
++    "  r = clamp(r, 2.0, maxAllowed - 2.0); // Otherwise the corners don't align correctly anymore.\n"
++    "  vec2 d = abs(pos) + vec2(r,r) - (ext * 0.5);\n"
++    "  return length(max(d,0.0)) + min(max(d.x,d.y),1.0) - r;\n"
++    "}\n"
++    "void main() {\n"
++    "    vec2 pixelPos = gl_FragCoord.xy - rectPos;\n"
++    "    float inside = DistRoundedRect(pixelPos, rectSize, rectRadii);\n"
++    "    float mask = inside < 0.5 ? 1.0 : 0.0;\n"
++    "    fragColor = vec4(rectColor.rgb, rectColor.a * mask);\n"
++    "}\n";
++
++Shader shader;
++int resolutionLoc, rectSizeLoc, rectColorLoc, rectRadiiLoc, rectPosLoc;
++float resolution[2];
+ void Clay_Raylib_Initialize(int width, int height, const char *title, unsigned int flags)
+ {
+     SetConfigFlags(flags);
+     InitWindow(width, height, title);
+     //    EnableEventWaiting();
++    shader = LoadShaderFromMemory(0, roundedRectFragShader);
++    resolutionLoc = GetShaderLocation(shader, "iResolution");
++    rectSizeLoc = GetShaderLocation(shader, "rectSize");
++    rectColorLoc = GetShaderLocation(shader, "rectColor");
++    rectRadiiLoc = GetShaderLocation(shader, "rectRadii");
++    rectPosLoc = GetShaderLocation(shader, "rectPos");
++    resolution[0] = width;
++    resolution[1] = height;
+ }
+ 
+ // A MALLOC'd buffer, that we keep modifying inorder to save from so many Malloc and Free Calls.
+@@ -150,9 +185,33 @@ void Clay_Raylib_Close()
+         free(temp_render_buffer);
+     temp_render_buffer_len = 0;
+ 
++    UnloadShader(shader);
+     CloseWindow();
+ }
+ 
++void DrawRectangleRoundedEx(Rectangle rec, Clay_CornerRadius radius, Color color)
++{
++    // Update uniform each frame (window could be resized)
++    resolution[0] = (float)GetScreenWidth();
++    resolution[1] = (float)GetScreenHeight();
++    Vector2 size = {rec.width, rec.height};
++    SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
++    SetShaderValue(shader, rectColorLoc, (float[]){color.r / 255.0, color.g / 255.0, color.b / 255.0, color.a / 255.0}, SHADER_UNIFORM_VEC4);
++    SetShaderValue(shader, rectSizeLoc, &size, SHADER_UNIFORM_VEC2);
++    SetShaderValue(shader, rectRadiiLoc, &radius, SHADER_UNIFORM_VEC4);
++    float rectPos[2] = {rec.x + (size.x / 2.0f), (resolution[1] - size.y / 2.0f) - rec.y};
++    SetShaderValue(shader, rectPosLoc, rectPos, SHADER_UNIFORM_VEC2);
++
++    if (!shader.id)
++    {
++        fprintf(stderr, "Rounded rect shader not set. Did you forget to call Clay_Raylib_Initialize()?");
++        return;
++    }
++    BeginShaderMode(shader);
++    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), WHITE);
++    EndShaderMode();
++}
++
+ void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts)
+ {
+     for (int j = 0; j < renderCommands.length; j++)
+@@ -216,8 +275,7 @@ void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts)
+             Clay_RectangleRenderData *config = &renderCommand->renderData.rectangle;
+             if (config->cornerRadius.topLeft > 0)
+             {
+-                float radius = (config->cornerRadius.topLeft * 2) / (float)((boundingBox.width > boundingBox.height) ? boundingBox.height : boundingBox.width);
+-                DrawRectangleRounded((Rectangle){boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height}, radius, 8, CLAY_COLOR_TO_RAYLIB_COLOR(config->backgroundColor));
++                DrawRectangleRoundedEx((Rectangle){boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height}, config->cornerRadius, CLAY_COLOR_TO_RAYLIB_COLOR(config->backgroundColor));
+             }
+             else
+             {

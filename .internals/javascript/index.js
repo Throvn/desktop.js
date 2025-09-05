@@ -143,7 +143,7 @@ var GameBoard = /** @class */ (function () {
                         horizontal: 48,
                         vertical: 20
                     }, "$borderRadius": {
-                        top: 8,
+                        top: 8 + this.tick,
                         bottomLeft: 8,
                         bottomRight: 32
                     } },
