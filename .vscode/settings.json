@@ -23,7 +23,8 @@
     "locale": "c",
     "memory.h": "c",
     "darwin-stub.h": "c",
-    "darwin.h": "c"
+    "darwin.h": "c",
+    "stdio.h": "c"
   },
   "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }
