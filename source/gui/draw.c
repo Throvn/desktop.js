@@ -238,58 +238,62 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 
 void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 {
-    // return;
-    // JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    // JSValue data = JS_GetPropertyStr(ctx, props, "data");
-    // if (!JS_IsObject(data))
-    // {
-    //     JS_FreeValue(ctx, data);
-    //     JS_FreeValue(ctx, props);
-    //     return;
-    // }
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    JSValue data = JS_GetPropertyStr(ctx, props, "data");
+    if (!JS_IsObject(data))
+    {
+        JS_FreeValue(ctx, data);
+        JS_FreeValue(ctx, props);
+        return;
+    }
 
-    // JS_FreeValue(ctx, props);
+    JS_FreeValue(ctx, props);
 
-    // int size = JS_GetBlobSize(ctx, data);
-    // uint8_t *imageData = a_alloc(size);
-    // int status = JS_GetBlobUint8Array(ctx, data, imageData);
-    // if (status < 0)
-    // {
-    //     return;
-    // }
+    int size = JS_GetBlobSize(ctx, data);
+    printf("Blob size: %d\n", size);
+    uint8_t *imageData = a_alloc(size);
+    int status = JS_GetBlobUint8Array(ctx, data, imageData);
+    if (status < 0)
+    {
+        exit(-1);
+        return;
+    }
 
-    // JSValue typeValue = JS_GetPropertyStr(ctx, data, "type");
-    // const char *type = JS_ToCString(ctx, typeValue);
-    // JS_FreeValue(ctx, typeValue);
-    // JS_FreeValue(ctx, data);
-    // if (strncmp(type, "image/", 6))
-    // {
-    //     JS_FreeCString(ctx, type);
-    //     return;
-    // }
+    JSValue typeValue = JS_GetPropertyStr(ctx, data, "type");
+    const char *type = JS_ToCString(ctx, typeValue);
+    JS_FreeValue(ctx, typeValue);
+    JS_FreeValue(ctx, data);
+    if (strncmp(type, "image/", 6))
+    {
+        JS_FreeCString(ctx, type);
+        return;
+    }
 
-    // char *imageExt = a_alloc(strlen(type) - 4);
-    // imageExt[0] = '.';
-    // strcpy(&imageExt[1], &type[6]);
-    // JS_FreeCString(ctx, type);
-    // printf("%s\n", imageExt);
+    char *imageExt = a_alloc(strlen(type) - 4);
+    imageExt[0] = '.';
+    strcpy(&imageExt[1], &type[6]);
+    JS_FreeCString(ctx, type);
+    printf("%s\n", imageExt);
 
-    // Image img = LoadImageFromMemory(imageExt, imageData, size);
-    // Texture2D texture = LoadTextureFromImage(img);
-    // CLAY((Clay_ElementDeclaration){
-    //     .image = {
-    //         .imageData = &texture,
-    //     },
-    //     .layout = {
-    //         .sizing = {
-    //             .height = 300,
-    //             .width = 200,
-    //         },
-    //     },
-    //     .backgroundColor = {255, 0, 0, 175},
-    // })
-    // {
-    // }
+    Image *img = a_alloc(sizeof(Image));
+    *img = LoadImageFromMemory(imageExt, imageData, size);
+    Texture2D *texture = a_alloc(sizeof(Texture2D));
+    *texture = LoadTextureFromImage(*img);
+
+    CLAY((Clay_ElementDeclaration){
+        .image = {
+            .imageData = texture,
+        },
+        .layout = {
+            .sizing = {
+                .height = 300,
+                .width = 200,
+            },
+        },
+        .backgroundColor = {255, 0, 0, 175},
+    })
+    {
+    }
 }
 
 void GUI_RenderString(JSContext *ctx, JSValueConst element)
@@ -560,7 +564,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
     }
     else if (0 == strcmp(type, "image"))
     {
-        // GUI_RenderImage(ctx, element);
+        GUI_RenderImage(ctx, element);
     }
     else
     {
@@ -577,6 +581,7 @@ Clay_RenderCommandArray GUI_RenderCommands(TJSRuntime *qrt)
     Clay_BeginLayout();
 
     CLAY((Clay_ElementDeclaration){
+        .backgroundColor = {255, 255, 255, 255},
         .layout = {
             .layoutDirection = CLAY_TOP_TO_BOTTOM,
             .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
