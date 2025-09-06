@@ -6,7 +6,7 @@
 typedef struct CliArgs
 {
     int count;
-    char **variables;
+    const char **variables;
 } CliArgs;
 
 char *getJavaScriptSourcePath();

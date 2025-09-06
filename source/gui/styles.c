@@ -205,7 +205,7 @@ uint16_t STYLES_GetGap(JSContext *ctx, JSValueConst element)
     }
 
     uint16_t gap;
-    int failed = JS_ToUint32(ctx, &gap, gapValue);
+    int failed = JS_ToUint32(ctx, (uint32_t *)&gap, gapValue);
     JS_FreeValue(ctx, gapValue);
     if (failed)
         return 0;
