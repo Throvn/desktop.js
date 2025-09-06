@@ -98,9 +98,12 @@ function fetchImage() {
         var r, b, blob;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png')];
+                case 0:
+                    console.log("fetching image");
+                    return [4 /*yield*/, fetch('https://picsum.photos/200/300.jpg')];
                 case 1:
                     r = _b.sent();
+                    console.log(r);
                     return [4 /*yield*/, r.blob()];
                 case 2:
                     b = _b.sent();

@@ -151,6 +151,12 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
         JSValue class = JS_GetPropertyStr(ctx, element, "class");
         JSValue props = JS_GetPropertyStr(ctx, element, "props");
         JSValue ret = JS_CallConstructor(ctx, class, 1, &props);
+        if (JS_IsException(ret))
+        {
+            TJSRuntime *qrt = TJS_GetRuntime(ctx);
+            TJS_Stop(qrt);
+            return;
+        }
 
         JS_FreeValue(ctx, class);
         JS_FreeValue(ctx, props);
@@ -571,7 +577,6 @@ Clay_RenderCommandArray GUI_RenderCommands(TJSRuntime *qrt)
     Clay_BeginLayout();
 
     CLAY((Clay_ElementDeclaration){
-        .backgroundColor = {255, 255, 255, 255},
         .layout = {
             .layoutDirection = CLAY_TOP_TO_BOTTOM,
             .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
