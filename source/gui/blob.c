@@ -1,12 +1,13 @@
 #include "blob.h"
 #include "memory.h"
 #include "draw.h"
+#include "../debug.h"
 
-int JS_GetBlobSize(JSContext *ctx, JSValueConst blob)
+size_t JS_GetBlobSize(JSContext *ctx, JSValueConst blob)
 {
     JSValue sizeValue = JS_GetPropertyStr(ctx, blob, "size");
-    int size;
-    JS_ToInt32(ctx, &size, sizeValue);
+    size_t size;
+    JS_ToInt64(ctx, &size, sizeValue);
     JS_FreeValue(ctx, sizeValue);
 
     return size;
@@ -42,13 +43,8 @@ JSValue JS_GetBlobParts(JSContext *ctx, JSValueConst blob)
     return parts;
 }
 
-int JS_GetBlobUint8Array(JSContext *ctx, JSValueConst blob, uint8_t *out_buf)
+size_t JS_GetBlobUint8Array(JSContext *ctx, JSValueConst blob, uint8_t *out_buf)
 {
-    JSValue sizeValue = JS_GetPropertyStr(ctx, blob, "size");
-    int size;
-    JS_ToInt32(ctx, &size, sizeValue);
-    JS_FreeValue(ctx, sizeValue);
-
     size_t offset = 0;
 
     JSValue partsArr = JS_GetBlobParts(ctx, blob);
@@ -58,11 +54,12 @@ int JS_GetBlobUint8Array(JSContext *ctx, JSValueConst blob, uint8_t *out_buf)
         JSValue part = JS_GetPropertyUint32(ctx, partsArr, i);
         if (JS_GetTypedArrayType(part) == JS_TYPED_ARRAY_UINT8)
         {
-            size_t arrBufLength = 0;
+            size_t arrBufLength;
             uint8_t *arrBuf = JS_GetUint8Array(ctx, &arrBufLength, part);
             if (!arrBuf)
             {
                 JS_FreeValue(ctx, partsArr);
+                JS_FreeValue(ctx, part);
                 JS_ThrowTypeError(ctx, "Could not render image as buffer seems corrupt");
                 return 0;
             }
@@ -74,7 +71,11 @@ int JS_GetBlobUint8Array(JSContext *ctx, JSValueConst blob, uint8_t *out_buf)
         {
             int subBlobSize = JS_GetBlobUint8Array(ctx, part, &out_buf[offset]);
             if (subBlobSize == 0)
+            {
+                JS_FreeValue(ctx, partsArr);
+                JS_FreeValue(ctx, part);
                 return 0;
+            }
             offset += subBlobSize;
         };
         JS_FreeValue(ctx, part);

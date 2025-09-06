@@ -250,12 +250,12 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     JS_FreeValue(ctx, props);
 
     int size = JS_GetBlobSize(ctx, data);
-    printf("Blob size: %d\n", size);
-    uint8_t *imageData = a_alloc(size);
+    uint8_t *imageData = malloc(size);
     int status = JS_GetBlobUint8Array(ctx, data, imageData);
     if (status < 0)
     {
-        exit(-1);
+        JS_FreeValue(ctx, data);
+        free(imageData);
         return;
     }
 
@@ -266,31 +266,38 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     if (strncmp(type, "image/", 6))
     {
         JS_FreeCString(ctx, type);
+        free(imageData);
         return;
     }
 
-    char *imageExt = a_alloc(strlen(type) - 4);
+    char *imageExt = calloc(1, strlen(type) - 4);
     imageExt[0] = '.';
     strcpy(&imageExt[1], &type[6]);
     JS_FreeCString(ctx, type);
-    printf("%s\n", imageExt);
 
-    Image *img = a_alloc(sizeof(Image));
+    Image *img = malloc(sizeof(Image));
     *img = LoadImageFromMemory(imageExt, imageData, size);
-    Texture2D *texture = a_alloc(sizeof(Texture2D));
+
+    free(imageExt);
+    free(imageData);
+
+    Texture2D *texture = tex_alloc();
     *texture = LoadTextureFromImage(*img);
+
+    UnloadImage(*img);
+    free(img);
 
     CLAY((Clay_ElementDeclaration){
         .image = {
             .imageData = texture,
+
         },
         .layout = {
             .sizing = {
-                .height = 300,
-                .width = 200,
+                .height = 200,
+                .width = 300,
             },
         },
-        .backgroundColor = {255, 0, 0, 175},
     })
     {
     }
@@ -413,7 +420,6 @@ void GUI_RenderSpacer()
         .layout = {
             .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
         },
-        .clip = CLAY_CLIP_TO_ATTACHED_PARENT,
     })
     {
     }
@@ -584,13 +590,12 @@ Clay_RenderCommandArray GUI_RenderCommands(TJSRuntime *qrt)
         .backgroundColor = {255, 255, 255, 255},
         .layout = {
             .layoutDirection = CLAY_TOP_TO_BOTTOM,
-            .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
+            .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_GROW()},
             .childAlignment = {
                 CLAY_ALIGN_X_CENTER,
                 CLAY_ALIGN_Y_CENTER,
             },
         },
-        .clip = CLAY_CLIP_TO_ATTACHED_PARENT,
     })
     {
         GUI_RenderValue(ctx, rootValue);

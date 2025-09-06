@@ -24,7 +24,10 @@
     "memory.h": "c",
     "darwin-stub.h": "c",
     "darwin.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "map": "c",
+    "set": "c",
+    "unordered_set": "c"
   },
   "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }
