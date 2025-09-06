@@ -51,7 +51,10 @@ class GBText {
 }
 
 async function fetchImage() {
-    const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
+    console.log("fetching image")
+    // const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
+    const r = await fetch('https://picsum.photos/200/300.jpg');
+    console.log(r)
     const b = await r.blob();
     const blob = new Blob([b], {
         type: r.headers.get('content-type') ?? '',
