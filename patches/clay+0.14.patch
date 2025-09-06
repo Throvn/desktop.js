@@ -1,5 +1,5 @@
 diff --git a/./lib/clay/renderers/raylib/clay_renderer_raylib.c b/./lib/clay/renderers/raylib/clay_renderer_raylib.c
-index 910a2ae..75e4fc4 100644
+index 910a2ae..a0fbbce 100644
 --- a/./lib/clay/renderers/raylib/clay_renderer_raylib.c
 +++ b/./lib/clay/renderers/raylib/clay_renderer_raylib.c
 @@ -4,6 +4,7 @@
@@ -26,9 +26,9 @@ index 910a2ae..75e4fc4 100644
 +    "float DistRoundedRect(vec2 pos, vec2 ext, vec4 cr) {\n"
 +    "  float r = pos.x > 0.0 ? (pos.y > 0.0 ? cr.y : cr.z) : (pos.y > 0.0 ? cr.x : cr.w);\n"
 +    "  float maxAllowed = min(ext.x, ext.y) * 0.5;\n"
-+    "  r = clamp(r, 2.0, maxAllowed - 2.0); // Otherwise the corners don't align correctly anymore.\n"
++    "  r = min(r, maxAllowed);\n"
 +    "  vec2 d = abs(pos) + vec2(r,r) - (ext * 0.5);\n"
-+    "  return length(max(d,0.0)) + min(max(d.x,d.y),1.0) - r;\n"
++    "  return floor(length(max(d,0.0)) + min(max(d.x,d.y),1.0) - r);\n"
 +    "}\n"
 +    "void main() {\n"
 +    "    vec2 pixelPos = gl_FragCoord.xy - rectPos;\n"
