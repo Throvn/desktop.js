@@ -50,6 +50,16 @@ class GBText {
     }
 }
 
+async function fetchImage() {
+    const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
+    const b = await r.blob();
+    const blob = new Blob([b], {
+        type: r.headers.get('content-type') ?? '',
+    });
+    console.log(blob.type);
+    return blob;
+}
+
 class GameBoard {
     food = { x: 5, y: 5 };
     lastMousePos = { x: 0, y: 0 };
@@ -62,6 +72,14 @@ class GameBoard {
         this.hideText = false;
 
         setInterval(this.gameLoop, 500);
+        fetchImage()
+            .then(async b => {
+                const arrayBuffer = await b.arrayBuffer();
+                const buffer = new Uint8Array(arrayBuffer);
+                this.imageType = b.type;
+                // this.imageData = buffer;
+                this.imageData = b;
+            });
     }
 
     gameLoop = () => {
@@ -165,6 +183,7 @@ class GameBoard {
                     <hStack $gap={5} onMouseUp={() => this.hideText = !this.hideText}>
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
+                        <image type={this.imageType} data={this.imageData} />
                     </hStack>
                     </vStack>
                     <spacer />

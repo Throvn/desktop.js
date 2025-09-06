@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     // No need to free, because we need the result until shutdown.
     CliArgs *args = prepareArgs(argc, argv);
     // Init JS runtime
-    TJS_Initialize(args->count, args->variables);
+    TJS_Initialize(args->count, (char **)args->variables);
 
     TJSRuntime *qrt = TJS_NewRuntime();
     if (!qrt)
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     JSRuntime *rt = JS_GetRuntime(ctx);
     JSMemoryUsage usage;
     JS_ComputeMemoryUsage(rt, &usage);
-    printf("Obj count: %d\nMem used size: %d\nStr count: %d\n", usage.obj_count, usage.memory_used_size, usage.str_count);
+    printf("Obj count: %lld\nMem used size: %lld\nStr count: %lld\n", usage.obj_count, usage.memory_used_size, usage.str_count);
 
     TJS_FreeRuntime(qrt);
     free(clayArenaMemory);
