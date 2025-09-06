@@ -186,7 +186,7 @@ class GameBoard {
                     <hStack $gap={5} onMouseUp={() => this.hideText = !this.hideText}>
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
-                        <image type={this.imageType} data={this.imageData} />
+                        <image data={this.imageData} />
                     </hStack>
                     </vStack>
                     <spacer />

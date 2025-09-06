@@ -68,7 +68,8 @@ int main(int argc, char **argv)
     Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, clayArenaMemory);
 
     SetTraceLogLevel(LOG_ERROR);
-    Clay_Raylib_Initialize(500, 300, "Desktop.js", FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
+    SetWindowState(FLAG_WINDOW_HIGHDPI);
+    Clay_Raylib_Initialize(500, 300, "Desktop.js", FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     SetWindowOpacity(0);
 
     // Note: screenWidth and screenHeight will need to come from your environment, Clay doesn't handle window related tasks
@@ -81,7 +82,7 @@ int main(int argc, char **argv)
     JSRuntime *rt = JS_GetRuntime(ctx);
     JSMemoryUsage usage;
     JS_ComputeMemoryUsage(rt, &usage);
-    printf("Obj count: %lld\nMem used size: %lld\nStr count: %lld\n", usage.obj_count, usage.memory_used_size, usage.str_count);
+    printf("\nObject count:  %lld\nMem used size: %lld\nString count:  %lld\n", usage.obj_count, usage.memory_used_size, usage.str_count);
 
     TJS_FreeRuntime(qrt);
     free(clayArenaMemory);
