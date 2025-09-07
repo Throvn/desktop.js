@@ -230,7 +230,7 @@ var GameBoard = /** @class */ (function () {
                 GUI.createElement("hStack", { "$gap": 5, onMouseUp: function () { return _this.hideText = !_this.hideText; } },
                     !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
                     GUI.createElement("spacer", null),
-                    GUI.createElement("image", { "$width": 150, "$height": 150, data: this.imageData },
+                    GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData },
                         GUI.createElement("text", null, "This image is not yet rendered!")))),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null),

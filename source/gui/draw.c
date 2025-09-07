@@ -604,7 +604,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
     {
         GUI_RenderGroup(ctx, element);
     }
-    else if (0 == strcmp(type, "image"))
+    else if (0 == strcmp(type, "img"))
     {
         GUI_RenderImage(ctx, element);
     }
