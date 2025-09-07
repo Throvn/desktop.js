@@ -81,7 +81,9 @@ class GameBoard {
                 const buffer = new Uint8Array(arrayBuffer);
                 this.imageType = b.type;
                 // this.imageData = buffer;
+                setTimeout(() => {
                 this.imageData = b;
+                }, 3000);
             });
     }
 
@@ -186,7 +188,9 @@ class GameBoard {
                     <hStack $gap={5} onMouseUp={() => this.hideText = !this.hideText}>
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
-                        <image $width={150} $height={150} data={this.imageData} />
+                        <image $width={150} $height={150} data={this.imageData}>
+                            <text>This image is not yet rendered!</text>
+                        </image>
                     </hStack>
                     </vStack>
                     <spacer />

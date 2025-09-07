@@ -236,6 +236,25 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     }
 }
 
+void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
+{
+    int width = STYLES_GetWidth(ctx, element);
+    int height = STYLES_GetHeight(ctx, element);
+    printf("width %d, height %d\n", width, height);
+    Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
+    CLAY((Clay_ElementDeclaration){
+        .layout = {
+            .sizing = {
+                .height = height != -1 ? CLAY_SIZING_FIXED(height) : CLAY_SIZING_FIT(),
+                .width = width != -1 ? CLAY_SIZING_FIXED(width) : CLAY_SIZING_FIT(),
+            },
+        },
+        .backgroundColor = backgroundColor,
+    })
+    {
+        renderChildren(ctx, element);
+    }
+}
 void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
@@ -244,6 +263,7 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     {
         JS_FreeValue(ctx, data);
         JS_FreeValue(ctx, props);
+        GUI_RenderImagePlaceholder(ctx, element);
         return;
     }
 
@@ -256,6 +276,7 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     {
         JS_FreeValue(ctx, data);
         free(imageData);
+        GUI_RenderImagePlaceholder(ctx, element);
         return;
     }
 
@@ -267,6 +288,7 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     {
         JS_FreeCString(ctx, type);
         free(imageData);
+        GUI_RenderImagePlaceholder(ctx, element);
         return;
     }
 
@@ -306,8 +328,8 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
         },
         .layout = {
             .sizing = {
-                .height = height,
-                .width = width,
+                .height = CLAY_SIZING_FIXED(height),
+                .width = CLAY_SIZING_FIXED(width),
             },
         },
     })
