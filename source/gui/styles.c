@@ -205,7 +205,7 @@ uint16_t STYLES_GetGap(JSContext *ctx, JSValueConst element)
     }
 
     uint16_t gap;
-    int failed = JS_ToUint32(ctx, &gap, gapValue);
+    int failed = JS_ToUint32(ctx, (uint32_t *)&gap, gapValue);
     JS_FreeValue(ctx, gapValue);
     if (failed)
         return 0;
@@ -326,4 +326,14 @@ Clay_CornerRadius STYLES_GetBorderRadius(JSContext *ctx, JSValueConst element)
 int STYLES_GetLineHeight(JSContext *ctx, JSValueConst element)
 {
     return STYLES_GetPropValueAsInt32(ctx, element, "$lineHeight");
+}
+
+int STYLES_GetWidth(JSContext *ctx, JSValueConst element)
+{
+    return STYLES_GetPropValueAsInt32(ctx, element, "$width");
+}
+
+int STYLES_GetHeight(JSContext *ctx, JSValueConst element)
+{
+    return STYLES_GetPropValueAsInt32(ctx, element, "$height");
 }

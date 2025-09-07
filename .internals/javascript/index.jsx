@@ -50,6 +50,19 @@ class GBText {
     }
 }
 
+async function fetchImage() {
+    console.log("fetching image")
+    // const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
+    const r = await fetch('https://picsum.photos/200/300.jpg');
+    console.log(r)
+    const b = await r.blob();
+    const blob = new Blob([b], {
+        type: r.headers.get('content-type') ?? '',
+    });
+    console.log(blob.type);
+    return blob;
+}
+
 class GameBoard {
     food = { x: 5, y: 5 };
     lastMousePos = { x: 0, y: 0 };
@@ -62,6 +75,16 @@ class GameBoard {
         this.hideText = false;
 
         setInterval(this.gameLoop, 500);
+        fetchImage()
+            .then(async b => {
+                const arrayBuffer = await b.arrayBuffer();
+                const buffer = new Uint8Array(arrayBuffer);
+                this.imageType = b.type;
+                // this.imageData = buffer;
+                setTimeout(() => {
+                this.imageData = b;
+                }, 3000);
+            });
     }
 
     gameLoop = () => {
@@ -141,7 +164,7 @@ class GameBoard {
 
         return (
                 <vStack $backgroundColor="#dbd8cc" $padding={8} $borderRadius={{
-                    top: 16,
+                    top: 10,
                 }}
                 onMouseOver={this.handleMouseMove}>
                     <spacer />
@@ -151,7 +174,7 @@ class GameBoard {
                         $backgroundColor="#4d4a55" 
                         $padding={{
                             horizontal: 48,
-                            vertical: 20
+                            vertical: 20,
                         }}
                         $borderRadius={{
                             top: 8 + this.tick,
@@ -165,6 +188,9 @@ class GameBoard {
                     <hStack $gap={5} onMouseUp={() => this.hideText = !this.hideText}>
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
+                        <img $width={150} $height={150} data={this.imageData}>
+                            <text>This image is not yet rendered!</text>
+                        </img>
                     </hStack>
                     </vStack>
                     <spacer />

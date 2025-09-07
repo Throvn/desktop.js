@@ -8,6 +8,7 @@ debug: main
 	leaks --list --atExit -- ./djs-aarch64-macos run ./.internals/javascript/index.js
 
 SOURCE_FILES = source/debug.c \
+			source/gui/blob.c \
 			source/gui/memory.c \
 			source/gui/colors.c \
 			source/gui/js.c \

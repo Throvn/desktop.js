@@ -30,7 +30,7 @@ void idleCallback(uv_idle_t *handle)
     a_free();
 
     BeginDrawing();
-    ClearBackground(BLACK);
+    ClearBackground(BLANK);
     JSContext *ctx = TJS_GetJSContext(qrt);
 
     arenaIndex = (arenaIndex + 1) % 2;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     // No need to free, because we need the result until shutdown.
     CliArgs *args = prepareArgs(argc, argv);
     // Init JS runtime
-    TJS_Initialize(args->count, args->variables);
+    TJS_Initialize(args->count, (char **)args->variables);
 
     TJSRuntime *qrt = TJS_NewRuntime();
     if (!qrt)
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, clayArenaMemory);
 
     SetTraceLogLevel(LOG_ERROR);
-    Clay_Raylib_Initialize(500, 300, "Desktop.js", FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
+    Clay_Raylib_Initialize(500, 300, "Desktop.js", FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
     SetWindowOpacity(0);
 
     // Note: screenWidth and screenHeight will need to come from your environment, Clay doesn't handle window related tasks
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     JSRuntime *rt = JS_GetRuntime(ctx);
     JSMemoryUsage usage;
     JS_ComputeMemoryUsage(rt, &usage);
-    printf("Obj count: %d\nMem used size: %d\nStr count: %d\n", usage.obj_count, usage.memory_used_size, usage.str_count);
+    printf("\nObject count:  %lld\nMem used size: %lld\nString count:  %lld\n", usage.obj_count, usage.memory_used_size, usage.str_count);
 
     TJS_FreeRuntime(qrt);
     free(clayArenaMemory);
