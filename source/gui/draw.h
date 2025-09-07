@@ -11,7 +11,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element);
 void GUI_PrintKeys(JSContext *ctx, JSValueConst element);
 bool GUI_IsElement(JSContext *ctx, JSValueConst element);
 int GUI_GetLength(JSContext *ctx, JSValueConst element);
-int GUI_GetKey(JSContext *ctx, JSValueConst element);
+uint32_t GUI_GetKey(JSContext *ctx, JSValueConst element);
 JSValue GUI_GetChildren(JSContext *ctx, JSValueConst element);
 
 #endif

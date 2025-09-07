@@ -107,19 +107,78 @@ static void EVENT_OnMouseUp(JSContext *ctx, JSValueConst props)
     JS_FreeValue(ctx, ret);
 }
 
-void EVENT_OnHover(JSContext *ctx, JSValueConst props)
-{
-    EVENT_OnMouseOver(ctx, props);
-    EVENT_OnMouseDown(ctx, props);
-    EVENT_OnMouseUp(ctx, props);
-}
-
-void EVENT_HandleMouseEvents(JSContext *ctx, JSValueConst element)
+void EVENT_TriggerMouseEvents(JSContext *ctx, JSValueConst element)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
 
-    if (Clay_Hovered())
-        EVENT_OnHover(ctx, props);
+    EVENT_OnMouseOver(ctx, props);
+    EVENT_OnMouseDown(ctx, props);
+    EVENT_OnMouseUp(ctx, props);
 
     JS_FreeValue(ctx, props);
+}
+
+JSValue findElementByKey(JSContext *ctx, JSValueConst element, uint32_t id)
+{
+    uint32_t key = GUI_GetKey(ctx, element);
+    if (key == id)
+        return JS_DupValue(ctx, element);
+
+    JSValue renderChild = JS_GetPropertyStr(ctx, element, "_renderChild");
+    if (GUI_IsElement(ctx, renderChild))
+    {
+        JSValue found = findElementByKey(ctx, renderChild, id);
+        JS_FreeValue(ctx, renderChild);
+        return found;
+    }
+
+    JSValue children = GUI_GetChildren(ctx, element);
+    int childrenLength = GUI_GetLength(ctx, children);
+    for (int i = 0; i < childrenLength; i++)
+    {
+        JSValue child = JS_GetPropertyUint32(ctx, children, i);
+        JSValue found = findElementByKey(ctx, child, id);
+        if (!JS_IsUndefined(found))
+        {
+            JS_FreeValue(ctx, children);
+            JS_FreeValue(ctx, child);
+            return found;
+        }
+        JS_FreeValue(ctx, child);
+    }
+    JS_FreeValue(ctx, children);
+
+    return JS_UNDEFINED;
+}
+
+/// Call once per c event loop execution.
+/// Gets all Clay_ElementId s and calls the correct JS callbacks for the elements.
+void EVENT_HandleMouseEvents(JSContext *ctx)
+{
+    if (!GUI_IsElement(ctx, rootValue))
+        return;
+
+    Clay_ElementIdArray ids = Clay_GetPointerOverIds();
+
+    JSValue *elementChain = calloc(ids.length + 1, sizeof(JSValue));
+    elementChain[0] = JS_DupValue(ctx, rootValue);
+    int elementChainLength = 1;
+    for (int32_t i = ids.length - 1; i >= 0; i--)
+    {
+        uint32_t id = ids.internalArray[i].offset;
+        JSValue element = findElementByKey(ctx, rootValue, id);
+        if (GUI_IsElement(ctx, element))
+        {
+            elementChain[elementChainLength] = element;
+            elementChainLength += 1;
+            continue;
+        }
+        JS_FreeValue(ctx, element);
+    }
+
+    for (int32_t i = elementChainLength - 1; i >= 0; i--)
+    {
+        EVENT_TriggerMouseEvents(ctx, elementChain[i]);
+        JS_FreeValue(ctx, elementChain[i]);
+    }
 }
