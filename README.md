@@ -40,12 +40,12 @@ GUI.render(<MyComponent />);
 
 We can see:
 
-- It tries to mimic the same naming convention as React.js's class components (e.g. `render`)
-- Built in components start with lower case letters
-- Custom components start with upper case letters
+- It tries to mimic the same naming convention as React.js's class components (e.g. `render`).
+- **Built in** components start with lower case letters.
+- **Custom** components start with upper case letters.
 - The main entry point is `GUI.render()`. Only call it once in your entire app.
-- The `<vStack />` borrows from SwiftUI, which puts all of its children from top to bottom
-- The `$gap` property (prop) is a style prop, applying 10 pixels of space between each of children.
+- The `<vStack />` borrows from SwiftUI, which puts all of its children from top to bottom.
+- The `$gap` property (prop) is a style prop, applying 10 pixels of space between each of the children.
 
 ### Styling
 
@@ -68,16 +68,18 @@ This has two advantages:
 
 > **Note:** If you are here the first time, you might want to read the [Built in Components](#built-in-components) section first.
 
-| Property Name    | Property Type                                                                                                                                                | Examples                                        | Description                                                                                                                                                                                                                  |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| $backgroundColor | `string`                                                                                                                                                     | `"#aabbcc"`, `"#00ff00ff"`, `"tomato"`          | Supported color types are: HTML Colors or hex colors with or without an alpha value                                                                                                                                          |
-| $padding         | `integer` \| `{horizontal?: number; vertical?: number; left?: number; right?: number; top?: number; bottom?: number}`                                        | `34`, `{vertical: 12}`, `{top: 6, left: 12}`    | If passed a single number, padding applies to **all** sides, otherwise only what is specified. Numer is a 16bit integer. If this doesn't suffice, you are truly a maniac^^.                                                  |
-| $fontSize        | `unsigned integer`                                                                                                                                           | `0` \| `100` \| `12`                            | Font size is generally thought of as `x pixels tall`. Default is 12 (pixels tall).                                                                                                                                           |
-| $color           | `string`                                                                                                                                                     | `#aabbcc`, `"#00ff00ff"`, `"tomato"`            | Applied to `<text>`. Supported color types are: HTML Colors or hex colors with or without an alpha value.                                                                                                                    |
-| $letterSpacing   | `unsigned integer`                                                                                                                                           | `0` \| `1234`                                   | Results in **horizontal** whitespace between the individual characters.                                                                                                                                                      |
-| $gap             | `unsigned integer`                                                                                                                                           | `0` \| `8`                                      | Adds x `px` of spacing between the child elements of a stack.                                                                                                                                                                |
-| $borderRadius    | `number` \| `{top?: number, bottom?: number, left?: number, right?: number, topLeft?: number, topRight?: number, bottomLeft?: number, bottomRight?: number}` | `{top: 12, bottomRight: 8, topLeft: 2}` \| `12` | Determines how rounded the corners of a (e.g.) stack are. Union radii (like top or bottom) are evaluated first, which makes it possible to overwrite part of the values through more fine grained properties like `topLeft`. |
-| $lineHeight      | `unsigned integer`                                                                                                                                           | `12` \| `15`                                    | Determines how tall the text should be. Default is 12 (just like the font size).                                                                                                                                             |
+| Property Name    | Property Type                                                                                                                                                | Examples                                        | Description                                                                                                                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| $backgroundColor | `string`                                                                                                                                                     | `"#aabbcc"`, `"#00ff00ff"`, `"tomato"`          | Supported color types are: HTML Colors or hex colors with or without an alpha value                                                                                                                                       |
+| $padding         | `integer` \| `{horizontal?: number; vertical?: number; left?: number; right?: number; top?: number; bottom?: number}`                                        | `34`, `{vertical: 12}`, `{top: 6, left: 12}`    | If passed a single number, padding applies to **all** sides, otherwise only what is specified. Numer is a 16bit integer. If this doesn't suffice, you are truly a maniac^^.                                               |
+| $fontSize        | `unsigned integer`                                                                                                                                           | `0` \| `100` \| `12`                            | Font size is generally thought of as `x pixels tall`. Default is 12 (pixels tall).                                                                                                                                        |
+| $color           | `string`                                                                                                                                                     | `#aabbcc`, `"#00ff00ff"`, `"tomato"`            | Applied to `<text>`. Supported color types are: HTML Colors or hex colors with or without an alpha value.                                                                                                                 |
+| $letterSpacing   | `unsigned integer`                                                                                                                                           | `0` \| `1234`                                   | Results in **horizontal** whitespace between the individual characters.                                                                                                                                                   |
+| $gap             | `unsigned integer`                                                                                                                                           | `0` \| `8`                                      | Adds x `px` of spacing between the child elements of a stack.                                                                                                                                                             |
+| $borderRadius    | `number` \| `{top?: number, bottom?: number, left?: number, right?: number, topLeft?: number, topRight?: number, bottomLeft?: number, bottomRight?: number}` | `{top: 12, bottomRight: 8, topLeft: 2}` \| `12` | Determines how rounded the corners of a component are. Union radii (like top or bottom) are evaluated first, which makes it possible to overwrite part of the values through more fine grained properties like `topLeft`. |
+| $lineHeight      | `unsigned integer`                                                                                                                                           | `12` \| `15`                                    | Determines how tall the text should be. Default is 12 (just like the font size).                                                                                                                                          |
+| $width           | `number`                                                                                                                                                     | `24` \| `7` \| `2`                              | Give the component a **fixed** width.                                                                                                                                                                                     |
+| $height          | `number`                                                                                                                                                     | `24` \| `7` \| `2`                              | Give the component a **fixed** height.                                                                                                                                                                                    |
 
 ### Built in Components
 
@@ -150,6 +152,31 @@ The default font size is 12px tall and the default color is black.
 - `$letterSpacing`
 - `$lineHeight`
 
+#### `<img>`
+
+A component to display an image. It's children are displayed only if the the supplied `data` prop is not a valid `Blob` object, functioning as a placeholder.
+
+If the `$width` and or `$height` attributes are set before the image loaded, the placeholder will receive the same dimensions.
+
+##### Example
+
+**Note**: A correct file type of the `Blob` is required! The current txiki.js version [has a bug](https://github.com/saghul/txiki.js/pull/723) where the `Blob` from the fetch response does not yet have a file type. If this is the case, you need to set it manually (easiest by wrapping the returned blob in a new one where you set the type in the initialization options).
+
+```jsx
+const r = await fetch("https://picsum.photos/200/300.jpg");
+const blob = await r.blob();
+
+<img $width={150} $height={150} data={blob}>
+  The image is not fully loaded yet!
+</img>;
+```
+
+##### Style Props
+
+- `$backgroundColor` Only applied to the children.
+- `$width`
+- `$height`
+
 ### Built in Event Listeners
 
 #### `onMouseUp`
@@ -172,7 +199,6 @@ It tries to mimic the [MouseUp JS event](https://developer.mozilla.org/en-US/doc
 - `button` the id of the pressed mouse button (0 = left, 1 = right, 2 = middle).
 - `layerX` x position in pixels relative to the window.
 - `layerY` y position in pixels relative to the window.
-
 - `altKey` boolean indicating if the **alt key** was pressed.
 - `ctrlKey` boolean indicating if the **control key** was pressed.
 - `shiftKey` boolean indicating if the **shift key** was pressed
@@ -197,7 +223,6 @@ It tries to mimic the [MouseDown JS event](https://developer.mozilla.org/en-US/d
 - `button` the id of the pressed mouse button (0 = left, 1 = right, 2 = middle).
 - `layerX` x position in pixels relative to the window.
 - `layerY` y position in pixels relative to the window.
-
 - `altKey` boolean indicating if the **alt key** was pressed.
 - `ctrlKey` boolean indicating if the **control key** was pressed.
 - `shiftKey` boolean indicating if the **shift key** was pressed.
@@ -221,7 +246,6 @@ It is called once per frame and tries to mimic the [MouseOver JS event](https://
 
 - `layerX` x position in pixels relative to the window.
 - `layerY` y position in pixels relative to the window.
-
 - `altKey` boolean indicating if the **alt key** was pressed.
 - `ctrlKey` boolean indicating if the **control key** was pressed.
 - `shiftKey` boolean indicating if the **shift key** was pressed.
