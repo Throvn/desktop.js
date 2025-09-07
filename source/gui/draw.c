@@ -283,7 +283,7 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 
     Texture2D *texture = tex_alloc();
     *texture = LoadTextureFromImage(*img);
-    UnloadImage(*img);
+    SetTextureFilter(*texture, TEXTURE_FILTER_TRILINEAR);
 
     CLAY((Clay_ElementDeclaration){
         .image = {
@@ -299,6 +299,8 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     })
     {
     }
+
+    UnloadImage(*img);
     free(img);
 }
 

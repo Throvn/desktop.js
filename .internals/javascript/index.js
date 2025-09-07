@@ -210,14 +210,15 @@ var GameBoard = /** @class */ (function () {
             _loop_1(i);
         }
         return (GUI.createElement("vStack", { "$backgroundColor": "#dbd8cc", "$padding": 8, "$borderRadius": {
-                top: 16
+                top: 10
             }, onMouseOver: this.handleMouseMove },
             GUI.createElement("spacer", null),
             GUI.createElement("vStack", null,
                 "" + this.tick,
                 GUI.createElement("vStack", { "$backgroundColor": "#4d4a55", "$padding": {
                         horizontal: 48,
-                        vertical: 20
+                        vertical: 20,
+                        left: 150
                     }, "$borderRadius": {
                         top: 8 + this.tick,
                         bottomLeft: 8,
@@ -226,8 +227,7 @@ var GameBoard = /** @class */ (function () {
                     GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
                 GUI.createElement("hStack", { "$gap": 5, onMouseUp: function () { return _this.hideText = !_this.hideText; } },
                     !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
-                    GUI.createElement("spacer", null),
-                    GUI.createElement("image", { data: this.imageData }))),
+                    GUI.createElement("spacer", null))),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null)));

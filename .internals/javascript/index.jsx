@@ -162,7 +162,7 @@ class GameBoard {
 
         return (
                 <vStack $backgroundColor="#dbd8cc" $padding={8} $borderRadius={{
-                    top: 16,
+                    top: 10,
                 }}
                 onMouseOver={this.handleMouseMove}>
                     <spacer />
@@ -172,7 +172,7 @@ class GameBoard {
                         $backgroundColor="#4d4a55" 
                         $padding={{
                             horizontal: 48,
-                            vertical: 20
+                            vertical: 20,
                         }}
                         $borderRadius={{
                             top: 8 + this.tick,
@@ -186,7 +186,7 @@ class GameBoard {
                     <hStack $gap={5} onMouseUp={() => this.hideText = !this.hideText}>
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
-                        <image data={this.imageData} />
+                        {/* <image data={this.imageData} /> */}
                     </hStack>
                     </vStack>
                     <spacer />
