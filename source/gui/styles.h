@@ -12,5 +12,6 @@ int STYLES_GetLetterSpacing(JSContext *ctx, JSValueConst element);
 uint16_t STYLES_GetGap(JSContext *ctx, JSValueConst element);
 Clay_CornerRadius STYLES_GetBorderRadius(JSContext *ctx, JSValueConst element);
 int STYLES_GetLineHeight(JSContext *ctx, JSValueConst element);
-
+int STYLES_GetWidth(JSContext *ctx, JSValueConst element);
+int STYLES_GetHeight(JSContext *ctx, JSValueConst element);
 #endif

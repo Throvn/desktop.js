@@ -327,3 +327,13 @@ int STYLES_GetLineHeight(JSContext *ctx, JSValueConst element)
 {
     return STYLES_GetPropValueAsInt32(ctx, element, "$lineHeight");
 }
+
+int STYLES_GetWidth(JSContext *ctx, JSValueConst element)
+{
+    return STYLES_GetPropValueAsInt32(ctx, element, "$width");
+}
+
+int STYLES_GetHeight(JSContext *ctx, JSValueConst element)
+{
+    return STYLES_GetPropValueAsInt32(ctx, element, "$height");
+}
