@@ -16,7 +16,7 @@ CliArgs *prepareArgs(int argc, const char **argv)
         args->count = 3;
         // Heap allocated
         char *path = getJavaScriptSourcePath();
-        char **nargv = calloc(3, sizeof(char *));
+        const char **nargv = calloc(3, sizeof(char *));
         nargv[0] = strdup(argv[0]);
         nargv[1] = "run";
         nargv[2] = path;
