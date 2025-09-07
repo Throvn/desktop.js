@@ -285,15 +285,29 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     *texture = LoadTextureFromImage(*img);
     SetTextureFilter(*texture, TEXTURE_FILTER_TRILINEAR);
 
+    int width = STYLES_GetWidth(ctx, element);
+    int height = STYLES_GetHeight(ctx, element);
+
+    float aspectRatio = (float)img->width / (float)img->height;
+    // If both values are not set (aka. -1)
+    if (width == -1 && height == -1)
+    {
+        width = img->width;
+        height = img->height;
+    }
+    else if (height == -1)
+        height = width / aspectRatio;
+    else if (width == -1)
+        width = height * aspectRatio;
+
     CLAY((Clay_ElementDeclaration){
         .image = {
             .imageData = texture,
-
         },
         .layout = {
             .sizing = {
-                .height = img->height,
-                .width = img->width,
+                .height = height,
+                .width = width,
             },
         },
     })
