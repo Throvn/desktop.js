@@ -166,7 +166,7 @@ void EVENT_HandleMouseEvents(JSContext *ctx)
     for (int32_t i = ids.length - 1; i >= 0; i--)
     {
         uint32_t id = ids.internalArray[i].offset;
-        JSValue element = findElementByKey(ctx, rootValue, id);
+        JSValue element = findElementByKey(ctx, elementChain[elementChainLength - 1], id);
         if (GUI_IsElement(ctx, element))
         {
             elementChain[elementChainLength] = element;
