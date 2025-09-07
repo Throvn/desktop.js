@@ -283,9 +283,7 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 
     Texture2D *texture = tex_alloc();
     *texture = LoadTextureFromImage(*img);
-
     UnloadImage(*img);
-    free(img);
 
     CLAY((Clay_ElementDeclaration){
         .image = {
@@ -294,18 +292,18 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
         },
         .layout = {
             .sizing = {
-                .height = 200,
-                .width = 300,
+                .height = img->height,
+                .width = img->width,
             },
         },
     })
     {
     }
+    free(img);
 }
 
 void GUI_RenderString(JSContext *ctx, JSValueConst element)
 {
-
     JSValue stringElement = GUI_GetChildren(ctx, element);
 
     const char *string = JS_ToCString(ctx, stringElement);
