@@ -153,19 +153,18 @@ static JSValue GUI_js_create_element(JSContext *ctx, JSValueConst this_val,
         return JS_UNDEFINED;
     }
 
+    JSValue element = JS_UNDEFINED;
     if (JS_IsString(argv[0]))
-    {
-        return GUI_CreateBuiltInElement(ctx, argc, argv);
-    }
+        element = GUI_CreateBuiltInElement(ctx, argc, argv);
     else if (JS_IsFunction(ctx, argv[0]))
-    {
-        return GUI_CreateCustomElement(ctx, argc, argv);
-    }
+        element = GUI_CreateCustomElement(ctx, argc, argv);
     else
-    {
-        printf("[GUI] createElement()s first parameter has an unknown type\n");
-    }
-    return JS_UNDEFINED;
+        fprintf(stderr, "[GUI] createElement()s first parameter has an unknown type\n");
+
+    // Give each element a random key. (Needed for mouse events)
+    JS_SetPropertyStr(ctx, element, "key", JS_NewUint32(ctx, rand()));
+
+    return element;
 }
 
 // Module init function: defines exports

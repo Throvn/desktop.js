@@ -227,8 +227,14 @@ var GameBoard = /** @class */ (function () {
                         bottomRight: 32
                     } },
                     GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
-                GUI.createElement("hStack", { "$gap": 5, onMouseUp: function () { return _this.hideText = !_this.hideText; } },
-                    !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
+                GUI.createElement("hStack", { "$gap": 5, onMouseUp: function () {
+                        _this.hideText = !_this.hideText;
+                        console.log("hStack Mouse Up");
+                    } },
+                    !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", { onMouseUp: function (e) {
+                            e.preventDefault();
+                            console.log("Hidden Text Mouse Up");
+                        } }, "Hidden"),
                     GUI.createElement("spacer", null),
                     GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData },
                         GUI.createElement("text", null, "This image is not yet rendered!")))),

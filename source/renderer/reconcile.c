@@ -40,6 +40,7 @@ void GUI_Diff(JSContext *ctx, JSValueConst currentElement, JSValueConst wipEleme
     const char *cTypeString = JS_ToCString(ctx, cType);
     if (isTypeEqual && 0 == strcmp(cTypeString, "custom"))
     {
+        // Take the instance with you to the wipElement
         JSValue cInstance = JS_GetPropertyStr(ctx, currentElement, "instance");
         JS_SetPropertyStr(ctx, wipElement, "instance", cInstance);
     }
@@ -47,6 +48,10 @@ void GUI_Diff(JSContext *ctx, JSValueConst currentElement, JSValueConst wipEleme
     {
         GUI_DiffChildren(ctx, currentElement, wipElement);
     }
+
+    // Copy over the key to be persistent across renders.
+    JSValue key = JS_GetPropertyStr(ctx, currentElement, "key");
+    JS_SetPropertyStr(ctx, wipElement, "key", key);
 
     JS_FreeCString(ctx, cTypeString);
     JS_FreeValue(ctx, wipType);

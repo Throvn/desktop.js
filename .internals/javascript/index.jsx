@@ -185,8 +185,14 @@ class GameBoard {
                             {grid}
                         </vStack>
                     </vStack>
-                    <hStack $gap={5} onMouseUp={() => this.hideText = !this.hideText}>
-                        {!this.hideText ? <GBText/> : <text>Hidden</text>}
+                    <hStack $gap={5} onMouseUp={() => {
+                            this.hideText = !this.hideText;
+                            console.log("hStack Mouse Up");
+                        }}>
+                        {!this.hideText ? <GBText/> : <text onMouseUp={(e) => {
+                            e.preventDefault();
+                            console.log("Hidden Text Mouse Up");
+                        }}>Hidden</text>}
                         <spacer />
                         <img $width={150} $height={150} data={this.imageData}>
                             <text>This image is not yet rendered!</text>

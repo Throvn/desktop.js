@@ -17,28 +17,31 @@ extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fon
 void idleCallback(uv_idle_t *handle)
 {
     TJSRuntime *qrt = handle->data;
+    JSContext *ctx = TJS_GetJSContext(qrt);
 
-    if (WindowShouldClose())
+    if (WindowShouldClose() || JS_HasException(ctx))
     {
         CloseWindow();
         TJS_Stop(qrt);
         return;
     }
+
     Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
     Clay_SetPointerState((Clay_Vector2){GetMouseX(), GetMouseY()}, IsMouseButtonDown(MOUSE_BUTTON_LEFT));
 
     a_free();
 
-    BeginDrawing();
-    ClearBackground(BLANK);
-    JSContext *ctx = TJS_GetJSContext(qrt);
-
     arenaIndex = (arenaIndex + 1) % 2;
     Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
     Font font = GetFontDefault();
+
+    BeginDrawing();
+    ClearBackground(BLANK);
     Clay_Raylib_Render(rc, &font);
     DrawFPS(10, 10);
     EndDrawing();
+
+    EVENT_HandleMouseEvents(ctx);
 }
 
 void HandleClayErrors(Clay_ErrorData errorData)
@@ -50,6 +53,7 @@ void HandleClayErrors(Clay_ErrorData errorData)
 
 int main(int argc, char **argv)
 {
+    srand(123);
     // No need to free, because we need the result until shutdown.
     CliArgs *args = prepareArgs(argc, argv);
     // Init JS runtime
