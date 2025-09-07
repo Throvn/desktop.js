@@ -162,6 +162,7 @@ var GameBoard = /** @class */ (function () {
         fetchImage()
             .then(function (b) { return __awaiter(_this, void 0, void 0, function () {
             var arrayBuffer, buffer;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, b.arrayBuffer()];
@@ -170,7 +171,9 @@ var GameBoard = /** @class */ (function () {
                         buffer = new Uint8Array(arrayBuffer);
                         this.imageType = b.type;
                         // this.imageData = buffer;
-                        this.imageData = b;
+                        setTimeout(function () {
+                            _this.imageData = b;
+                        }, 3000);
                         return [2 /*return*/];
                 }
             });
@@ -227,7 +230,8 @@ var GameBoard = /** @class */ (function () {
                 GUI.createElement("hStack", { "$gap": 5, onMouseUp: function () { return _this.hideText = !_this.hideText; } },
                     !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
                     GUI.createElement("spacer", null),
-                    GUI.createElement("image", { "$width": 150, "$height": 150, data: this.imageData }))),
+                    GUI.createElement("image", { "$width": 150, "$height": 150, data: this.imageData },
+                        GUI.createElement("text", null, "This image is not yet rendered!")))),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null)));
