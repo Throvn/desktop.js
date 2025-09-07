@@ -152,11 +152,19 @@ The default font size is 12px tall and the default color is black.
 - `$letterSpacing`
 - `$lineHeight`
 
-#### `<img>`
+#### `<img data={Blob}>`
 
 A component to display an image. It's children are displayed only if the the supplied `data` prop is not a valid `Blob` object, functioning as a placeholder.
 
 If the `$width` and or `$height` attributes are set before the image loaded, the placeholder will receive the same dimensions.
+
+##### Supported MIME types
+
+- `image/bmp`
+- `image/gif` Only shows the first frame. Not moving images!
+- `image/jpeg`
+- `image/png`
+- `image/psd`
 
 ##### Example
 
