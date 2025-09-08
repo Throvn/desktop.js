@@ -231,12 +231,12 @@ var GameBoard = /** @class */ (function () {
                         _this.hideText = !_this.hideText;
                         console.log("hStack Mouse Up");
                     } },
-                    !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", { onMouseUp: function (e) {
-                            e.preventDefault();
-                            console.log("Hidden Text Mouse Up");
-                        } }, "Hidden"),
+                    !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
                     GUI.createElement("spacer", null),
-                    GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData },
+                    GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData, onMouseUp: function (e) {
+                            // e.preventDefault();
+                            console.log("Hidden Text Mouse Up");
+                        } },
                         GUI.createElement("text", null, "This image is not yet rendered!")))),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null),

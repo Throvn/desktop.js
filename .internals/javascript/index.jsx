@@ -163,10 +163,14 @@ class GameBoard {
         }
 
         return (
-                <vStack $backgroundColor="#dbd8cc" $padding={8} $borderRadius={{
-                    top: 10,
-                }}
-                onMouseOver={this.handleMouseMove}>
+                <vStack
+                    $backgroundColor="#dbd8cc" 
+                    $padding={8}
+                    $borderRadius={{
+                        top: 10,
+                    }}
+                    onMouseOver={this.handleMouseMove}
+                >
                     <spacer />
                     <vStack>
                     {"" + this.tick}
@@ -189,12 +193,12 @@ class GameBoard {
                             this.hideText = !this.hideText;
                             console.log("hStack Mouse Up");
                         }}>
-                        {!this.hideText ? <GBText/> : <text onMouseUp={(e) => {
-                            e.preventDefault();
-                            console.log("Hidden Text Mouse Up");
-                        }}>Hidden</text>}
+                        {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
-                        <img $width={150} $height={150} data={this.imageData}>
+                        <img $width={150} $height={150} data={this.imageData} onMouseUp={(e) => {
+                            // e.preventDefault();
+                            console.log("Hidden Text Mouse Up");
+                        }}>
                             <text>This image is not yet rendered!</text>
                         </img>
                     </hStack>
