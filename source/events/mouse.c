@@ -131,6 +131,7 @@ JSValue findElementByKey(JSContext *ctx, JSValueConst element, uint32_t id)
         JS_FreeValue(ctx, renderChild);
         return found;
     }
+    JS_FreeValue(ctx, renderChild);
 
     JSValue children = GUI_GetChildren(ctx, element);
     int childrenLength = GUI_GetLength(ctx, children);
@@ -163,7 +164,7 @@ void EVENT_HandleMouseEvents(JSContext *ctx)
     JSValue *elementChain = calloc(ids.length + 1, sizeof(JSValue));
     elementChain[0] = JS_DupValue(ctx, rootValue);
     int elementChainLength = 1;
-    for (int32_t i = ids.length - 1; i >= 0; i--)
+    for (int32_t i = 0; i < ids.length; i++)
     {
         uint32_t id = ids.internalArray[i].offset;
         JSValue element = findElementByKey(ctx, elementChain[elementChainLength - 1], id);
@@ -181,4 +182,6 @@ void EVENT_HandleMouseEvents(JSContext *ctx)
         EVENT_TriggerMouseEvents(ctx, elementChain[i]);
         JS_FreeValue(ctx, elementChain[i]);
     }
+
+    free(elementChain);
 }
