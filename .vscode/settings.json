@@ -27,7 +27,8 @@
     "stdio.h": "c",
     "map": "c",
     "set": "c",
-    "unordered_set": "c"
+    "unordered_set": "c",
+    "ios": "c"
   },
   "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }
