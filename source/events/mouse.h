@@ -12,7 +12,7 @@ typedef struct EventProps
     JSValue props;
 } EventProps;
 
-void EVENT_TriggerMouseEvents(JSContext *ctx, JSValueConst element);
+void EVENT_TriggerMouseEvents(JSContext *ctx, JSValueConst element, int *stopPropagations);
 void EVENT_HandleMouseEvents(JSContext *ctx);
 
 #endif

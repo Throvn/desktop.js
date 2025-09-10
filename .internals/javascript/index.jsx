@@ -53,11 +53,14 @@ class GBText {
 async function fetchImage() {
     console.log("fetching image")
     // const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
-    const r = await fetch('https://picsum.photos/200/300.jpg');
-    console.log(r)
-    const b = await r.blob();
+    // const r = await fetch('https://picsum.photos/200/300.jpg');
+    // console.log(r)
+    // const b = await r.blob();
+    const b = new Blob([], {
+        type: "text/plain"
+    });
     const blob = new Blob([b], {
-        type: r.headers.get('content-type') ?? '',
+    //     type: r.headers.get('content-type') ?? '',
     });
     console.log(blob.type);
     return blob;
@@ -198,6 +201,9 @@ class GameBoard {
                         <img $width={150} $height={150} data={this.imageData} onMouseUp={(e) => {
                             // e.preventDefault();
                             console.log("Hidden Text Mouse Up");
+                        }} onMouseOver={(e) => {
+                            // e.stopPropagation();
+                            // console.log("Image mouse over!");
                         }}>
                             <text>This image is not yet rendered!</text>
                         </img>

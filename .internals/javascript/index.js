@@ -93,26 +93,18 @@ var GBText = /** @class */ (function () {
     return GBText;
 }());
 function fetchImage() {
-    var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var r, b, blob;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    console.log("fetching image");
-                    return [4 /*yield*/, fetch('https://picsum.photos/200/300.jpg')];
-                case 1:
-                    r = _b.sent();
-                    console.log(r);
-                    return [4 /*yield*/, r.blob()];
-                case 2:
-                    b = _b.sent();
-                    blob = new Blob([b], {
-                        type: (_a = r.headers.get('content-type')) !== null && _a !== void 0 ? _a : ''
-                    });
-                    console.log(blob.type);
-                    return [2 /*return*/, blob];
-            }
+        var b, blob;
+        return __generator(this, function (_a) {
+            console.log("fetching image");
+            b = new Blob([], {
+                type: "text/plain"
+            });
+            blob = new Blob([b], {
+            //     type: r.headers.get('content-type') ?? '',
+            });
+            console.log(blob.type);
+            return [2 /*return*/, blob];
         });
     });
 }
@@ -236,6 +228,9 @@ var GameBoard = /** @class */ (function () {
                     GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData, onMouseUp: function (e) {
                             // e.preventDefault();
                             console.log("Hidden Text Mouse Up");
+                        }, onMouseOver: function (e) {
+                            // e.stopPropagation();
+                            // console.log("Image mouse over!");
                         } },
                         GUI.createElement("text", null, "This image is not yet rendered!")))),
             GUI.createElement("spacer", null),

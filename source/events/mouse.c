@@ -1,121 +1,218 @@
 #include "mouse.h"
 #include <stdlib.h>
+#include "../debug.h"
+
+#define STOP_PROPAGATION_NONE 0
+#define STOP_PROPAGATION_MOUSE_UP 1 << 0
+#define STOP_PROPAGATION_MOUSE_OVER 1 << 1
+#define STOP_PROPAGATION_MOUSE_DOWN 1 << 2
 
 extern JSValue rootValue;
 
-JSValue createMouseEvent(JSContext *ctx)
+static JSValue createMouseEvent(JSContext *ctx, const char *type)
 {
-    JSValue mouseEvent = JS_NewObject(ctx);
+    JSValue global = JS_GetGlobalObject(ctx);
+    JSValue eventConstructorFunc = JS_GetPropertyStr(ctx, global, "Event");
+    JSValue mouseEventInit = JS_NewObject(ctx);
 
     // Add altKey property
     int isAltKeyPressed = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
     JSValue isAltKeyPressedJSValue = JS_NewBool(ctx, isAltKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "altKey", isAltKeyPressedJSValue);
+    JS_SetPropertyStr(ctx, mouseEventInit, "altKey", isAltKeyPressedJSValue);
 
     int isShiftKeyPressed = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
     JSValue isShiftKeyPressedJSValue = JS_NewBool(ctx, isShiftKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "shiftKey", isShiftKeyPressedJSValue);
+    JS_SetPropertyStr(ctx, mouseEventInit, "shiftKey", isShiftKeyPressedJSValue);
 
     int isCtrlKeyPressed = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
     JSValue isCtrlKeyPressedJSValue = JS_NewBool(ctx, isCtrlKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "ctrlKey", isCtrlKeyPressedJSValue);
+    JS_SetPropertyStr(ctx, mouseEventInit, "ctrlKey", isCtrlKeyPressedJSValue);
 
     // Add coordinates
     Vector2 screenMousePosition = GetMousePosition();
     JSValue xScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.x);
-    JS_SetPropertyStr(ctx, mouseEvent, "layerX", xScreenCoordinate);
+    JS_SetPropertyStr(ctx, mouseEventInit, "layerX", xScreenCoordinate);
     JSValue yScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.y);
-    JS_SetPropertyStr(ctx, mouseEvent, "layerY", yScreenCoordinate);
+    JS_SetPropertyStr(ctx, mouseEventInit, "layerY", yScreenCoordinate);
 
-    return mouseEvent;
+    JSValue argv[2];
+    argv[0] = JS_NewString(ctx, type);
+    argv[1] = mouseEventInit;
+    JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 2, argv);
+
+    JS_FreeValue(ctx, global);
+    JS_FreeValue(ctx, eventConstructorFunc);
+    JS_FreeValue(ctx, argv[0]);
+    JS_FreeValue(ctx, argv[1]);
+
+    return event;
 }
 
-static void EVENT_OnMouseOver(JSContext *ctx, JSValueConst props)
+JSValue js_stopPropagation(JSContext *ctx, JSValue this_val, int argc, JSValueConst argv[], int magic, JSValue *stoppedSymbol)
 {
+    JSAtom stoppedAtom = JS_ValueToAtom(ctx, *stoppedSymbol);
+    JS_SetProperty(ctx, this_val, stoppedAtom, JS_TRUE);
+    JS_FreeAtom(ctx, stoppedAtom);
+
+    return JS_UNDEFINED;
+}
+
+static int EVENT_GetButtonPressed()
+{
+    int pressedLeft = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    int pressedRight = IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
+    int pressedMiddle = IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE);
+    if (!pressedLeft && !pressedRight && !pressedMiddle)
+        return -1;
+
+    // Determines the number of the button pressed.
+    // For if right was pressed, the button is 1, middle is 2, and left remains 0.
+    int pressedButton = pressedLeft * 0 + pressedRight * 1 + pressedMiddle * 2;
+    return pressedButton;
+}
+
+/// @brief Returns the int of the mouse button which was released (otherwise -1)
+/// @return -1 => No mouse button released | 0 => left | 1 => right | 2 = middle
+static int EVENT_GetButtonReleased()
+{
+    int pressedLeft = IsMouseButtonReleased(MOUSE_BUTTON_LEFT);
+    int pressedRight = IsMouseButtonReleased(MOUSE_BUTTON_RIGHT);
+    int pressedMiddle = IsMouseButtonReleased(MOUSE_BUTTON_MIDDLE);
+    if (!pressedLeft && !pressedRight && !pressedMiddle)
+        return -1;
+
+    // Determines the number of the button pressed.
+    // For if right was pressed, the button is 1, middle is 2, and left remains 0.
+    int pressedButton = pressedLeft * 0 + pressedRight * 1 + pressedMiddle * 2;
+    return pressedButton;
+}
+
+static void EVENT_InvokeCallback(JSContext *ctx, JSValueConst element, JSValueConst callback, int stopPropagationEnum, int *stopPropagations)
+{
+    int pressedButton = -1;
+
+    const char *eventType;
+    switch (stopPropagationEnum)
+    {
+    case STOP_PROPAGATION_MOUSE_DOWN:
+        eventType = "mousedown";
+        pressedButton = EVENT_GetButtonPressed();
+        break;
+    case STOP_PROPAGATION_MOUSE_OVER:
+        eventType = "mouseover";
+        break;
+    case STOP_PROPAGATION_MOUSE_UP:
+        eventType = "mouseup";
+        pressedButton = EVENT_GetButtonReleased();
+        break;
+    default:
+        fprintf(stderr, "[Event_HandleStopPropagation] Unknown stop propagation state");
+        exit(7);
+        break;
+    }
+
+    // Create a symbol where we can track if the stopPropagation function was called from js.
+    JSValue stoppedSymbol = JS_DupValue(ctx, JS_NewSymbol(ctx, "stopped", false));
+    JSAtom stoppedAtom = JS_ValueToAtom(ctx, stoppedSymbol);
+
+    JSValue stopPropagationFunc = JS_NewCFunctionData(ctx, js_stopPropagation, 0, 0, 1, &stoppedSymbol);
+
+    JSValue event = createMouseEvent(ctx, eventType);
+    // Overwrite the stopPropagation function so we can check for bubbling.
+    JS_SetPropertyStr(ctx, event, "stopPropagation", stopPropagationFunc);
+
+    if (pressedButton != -1)
+    {
+        // Set the button property on the event object.
+        JS_SetPropertyStr(ctx, event, "button", JS_NewInt32(ctx, pressedButton));
+    }
+
+    JSValue ret = JS_Call(ctx, callback, JS_UNDEFINED, 1, &event);
+    JSValue stoppedValue = JS_GetProperty(ctx, event, stoppedAtom);
+    bool stop = JS_ToBool(ctx, stoppedValue);
+    if (stop)
+        *stopPropagations |= stopPropagationEnum;
+
+    JS_FreeValue(ctx, stoppedSymbol);
+    JS_FreeAtom(ctx, stoppedAtom);
+    JS_FreeValue(ctx, event);
+    JS_FreeValue(ctx, ret);
+    JS_FreeValue(ctx, stoppedValue);
+}
+
+static void EVENT_OnMouseOver(JSContext *ctx, JSValueConst element, int *stopPropagations)
+{
+    // If bubbling is already stopped, don't run this function.
+    if (*stopPropagations & STOP_PROPAGATION_MOUSE_OVER)
+        return;
+
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+
     JSValue mouseOverFunc = JS_GetPropertyStr(ctx, props, "onMouseOver");
+    JS_FreeValue(ctx, props);
     if (!JS_IsFunction(ctx, mouseOverFunc))
     {
         JS_FreeValue(ctx, mouseOverFunc);
         return;
     }
 
-    JSValue event = createMouseEvent(ctx);
-    JSValue ret = JS_Call(ctx, mouseOverFunc, mouseOverFunc, 1, &event);
+    EVENT_InvokeCallback(ctx, element, mouseOverFunc, STOP_PROPAGATION_MOUSE_OVER, stopPropagations);
 
     JS_FreeValue(ctx, mouseOverFunc);
-    JS_FreeValue(ctx, event);
-    JS_FreeValue(ctx, ret);
 }
 
-static void EVENT_OnMouseDown(JSContext *ctx, JSValueConst props)
+static void EVENT_OnMouseDown(JSContext *ctx, JSValueConst element, int *stopPropagations)
 {
-    int pressedLeft = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
-    int pressedRight = IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
-    int pressedMiddle = IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE);
-    if (!pressedLeft && !pressedRight && !pressedMiddle)
+    if (*stopPropagations & STOP_PROPAGATION_MOUSE_DOWN)
         return;
 
-    // Determines the number of the button pressed.
-    // For if right was pressed, the button is 1, middle is 2, and left remains 0.
-    int pressedButton = pressedLeft * 0 + pressedRight * 1 + pressedMiddle * 2;
-
-    JSValue clickFunc = JS_GetPropertyStr(ctx, props, "onMouseDown");
-    if (!JS_IsFunction(ctx, clickFunc))
-    {
-        JS_FreeValue(ctx, clickFunc);
-        return;
-    }
-
-    JSValue event = createMouseEvent(ctx);
-    // Set the button property on the event object.
-    JS_SetPropertyStr(ctx, event, "button", JS_NewInt32(ctx, pressedButton));
-
-    JSValue ret = JS_Call(ctx, clickFunc, clickFunc, 1, &event);
-
-    JS_FreeValue(ctx, clickFunc);
-    JS_FreeValue(ctx, event);
-    JS_FreeValue(ctx, ret);
-}
-
-static void EVENT_OnMouseUp(JSContext *ctx, JSValueConst props)
-{
-    int pressedLeft = IsMouseButtonReleased(MOUSE_BUTTON_LEFT);
-    int pressedRight = IsMouseButtonReleased(MOUSE_BUTTON_RIGHT);
-    int pressedMiddle = IsMouseButtonReleased(MOUSE_BUTTON_MIDDLE);
-    if (!pressedLeft && !pressedRight && !pressedMiddle)
+    int pressedButton = EVENT_GetButtonPressed();
+    if (pressedButton == -1)
         return;
 
-    // Determines the number of the button pressed.
-    // For if right was pressed, the button is 1, middle is 2, and left remains 0.
-    int pressedButton = pressedLeft * 0 + pressedRight * 1 + pressedMiddle * 2;
-
-    JSValue clickFunc = JS_GetPropertyStr(ctx, props, "onMouseUp");
-    if (!JS_IsFunction(ctx, clickFunc))
-    {
-        JS_FreeValue(ctx, clickFunc);
-        return;
-    }
-
-    JSValue event = createMouseEvent(ctx);
-    // Set the button property on the event object.
-    JS_SetPropertyStr(ctx, event, "button", JS_NewInt32(ctx, pressedButton));
-
-    JSValue ret = JS_Call(ctx, clickFunc, clickFunc, 1, &event);
-
-    JS_FreeValue(ctx, clickFunc);
-    JS_FreeValue(ctx, event);
-    JS_FreeValue(ctx, ret);
-}
-
-void EVENT_TriggerMouseEvents(JSContext *ctx, JSValueConst element)
-{
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
 
-    EVENT_OnMouseOver(ctx, props);
-    EVENT_OnMouseDown(ctx, props);
-    EVENT_OnMouseUp(ctx, props);
-
+    JSValue mouseDownFunc = JS_GetPropertyStr(ctx, props, "onMouseDown");
     JS_FreeValue(ctx, props);
+    if (!JS_IsFunction(ctx, mouseDownFunc))
+    {
+        JS_FreeValue(ctx, mouseDownFunc);
+        return;
+    }
+
+    EVENT_InvokeCallback(ctx, element, mouseDownFunc, STOP_PROPAGATION_MOUSE_DOWN, stopPropagations);
+
+    JS_FreeValue(ctx, mouseDownFunc);
+}
+
+static void EVENT_OnMouseUp(JSContext *ctx, JSValueConst element, int *stopPropagations)
+{
+    if (*stopPropagations == STOP_PROPAGATION_MOUSE_UP)
+        return;
+
+    int releasedButton = EVENT_GetButtonReleased();
+    if (releasedButton == -1)
+        return;
+
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    JSValue mouseUpFunc = JS_GetPropertyStr(ctx, props, "onMouseUp");
+    JS_FreeValue(ctx, props);
+    if (!JS_IsFunction(ctx, mouseUpFunc))
+    {
+        JS_FreeValue(ctx, mouseUpFunc);
+        return;
+    }
+
+    EVENT_InvokeCallback(ctx, element, mouseUpFunc, STOP_PROPAGATION_MOUSE_UP, stopPropagations);
+
+    JS_FreeValue(ctx, mouseUpFunc);
+}
+
+void EVENT_TriggerMouseEvents(JSContext *ctx, JSValueConst element, int *stopPropagations)
+{
+    EVENT_OnMouseOver(ctx, element, stopPropagations);
+    EVENT_OnMouseDown(ctx, element, stopPropagations);
+    EVENT_OnMouseUp(ctx, element, stopPropagations);
 }
 
 JSValue findElementByKey(JSContext *ctx, JSValueConst element, uint32_t id)
@@ -177,9 +274,10 @@ void EVENT_HandleMouseEvents(JSContext *ctx)
         JS_FreeValue(ctx, element);
     }
 
+    int stopPropagations = STOP_PROPAGATION_NONE;
     for (int32_t i = elementChainLength - 1; i >= 0; i--)
     {
-        EVENT_TriggerMouseEvents(ctx, elementChain[i]);
+        EVENT_TriggerMouseEvents(ctx, elementChain[i], &stopPropagations);
         JS_FreeValue(ctx, elementChain[i]);
     }
 
