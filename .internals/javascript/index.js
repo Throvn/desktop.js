@@ -230,8 +230,8 @@ var GameBoard = /** @class */ (function () {
                             console.log("Hidden Text Mouse Up");
                         }, onMouseOver: function (e) {
                             // e.stopPropagation();
-                            console.log(e instanceof Event, e);
-                            console.log("Image mouse over!");
+                            var isEvent = e instanceof Event;
+                            console.log("Image mouse over!", isEvent);
                         } },
                         GUI.createElement("text", null, "This image is not yet rendered!")))),
             GUI.createElement("spacer", null),
