@@ -42,7 +42,6 @@ class GBText {
         return <group $color="#333960" $lineHeight={24 * 2} onMouseOver={this.onMouseOver}>
             <text>Throvn's</text>
             <text $fontSize={24} $color={this.color} onMouseDown={(e => {
-                console.log(e);
                 clearInterval(this.interval);
             })}>{this.name}</text>
             <text $fontSize={8}>TM</text>
@@ -53,11 +52,14 @@ class GBText {
 async function fetchImage() {
     console.log("fetching image")
     // const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
-    const r = await fetch('https://picsum.photos/200/300.jpg');
-    console.log(r)
-    const b = await r.blob();
+    // const r = await fetch('https://picsum.photos/200/300.jpg');
+    // console.log(r)
+    // const b = await r.blob();
+    const b = new Blob([], {
+        type: "text/plain"
+    });
     const blob = new Blob([b], {
-        type: r.headers.get('content-type') ?? '',
+    //     type: r.headers.get('content-type') ?? '',
     });
     console.log(blob.type);
     return blob;
@@ -108,6 +110,7 @@ class GameBoard {
     }
 
     handleMouseMove = (event) => {
+        console.log("test", event);
         const mouseX = event.layerX;
         const mouseY = event.layerY;
 
@@ -163,10 +166,14 @@ class GameBoard {
         }
 
         return (
-                <vStack $backgroundColor="#dbd8cc" $padding={8} $borderRadius={{
-                    top: 10,
-                }}
-                onMouseOver={this.handleMouseMove}>
+                <vStack
+                    $backgroundColor="#dbd8cc" 
+                    $padding={8}
+                    $borderRadius={{
+                        top: 10,
+                    }}
+                    onMouseOver={this.handleMouseMove}
+                >
                     <spacer />
                     <vStack>
                     {"" + this.tick}
@@ -185,10 +192,20 @@ class GameBoard {
                             {grid}
                         </vStack>
                     </vStack>
-                    <hStack $gap={5} onMouseUp={() => this.hideText = !this.hideText}>
+                    <hStack $gap={5} onMouseUp={() => {
+                            this.hideText = !this.hideText;
+                            console.log("hStack Mouse Up");
+                        }}>
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
-                        <img $width={150} $height={150} data={this.imageData}>
+                        <img $width={150} $height={150} data={this.imageData} onMouseUp={(e) => {
+                            // e.stopPropagation();
+                            console.log("Hidden Text Mouse Up");
+                        }} onMouseOver={(e) => {
+                            // e.stopPropagation();
+                            const isEvent = e instanceof Event;
+                            console.log("Image mouse over!", isEvent);
+                        }}>
                             <text>This image is not yet rendered!</text>
                         </img>
                     </hStack>
