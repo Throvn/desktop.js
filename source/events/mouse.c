@@ -13,39 +13,40 @@ static JSValue createMouseEvent(JSContext *ctx, const char *type)
 {
     JSValue global = JS_GetGlobalObject(ctx);
     JSValue eventConstructorFunc = JS_GetPropertyStr(ctx, global, "Event");
-    JSValue mouseEventInit = JS_NewObject(ctx);
+    JSValue mouseEvent = JS_NewObject(ctx);
 
     // Add altKey property
     int isAltKeyPressed = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
     JSValue isAltKeyPressedJSValue = JS_NewBool(ctx, isAltKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEventInit, "altKey", isAltKeyPressedJSValue);
+    JS_SetPropertyStr(ctx, mouseEvent, "altKey", isAltKeyPressedJSValue);
 
     int isShiftKeyPressed = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
     JSValue isShiftKeyPressedJSValue = JS_NewBool(ctx, isShiftKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEventInit, "shiftKey", isShiftKeyPressedJSValue);
+    JS_SetPropertyStr(ctx, mouseEvent, "shiftKey", isShiftKeyPressedJSValue);
 
     int isCtrlKeyPressed = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
     JSValue isCtrlKeyPressedJSValue = JS_NewBool(ctx, isCtrlKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEventInit, "ctrlKey", isCtrlKeyPressedJSValue);
+    JS_SetPropertyStr(ctx, mouseEvent, "ctrlKey", isCtrlKeyPressedJSValue);
 
     // Add coordinates
     Vector2 screenMousePosition = GetMousePosition();
     JSValue xScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.x);
-    JS_SetPropertyStr(ctx, mouseEventInit, "layerX", xScreenCoordinate);
+    JS_SetPropertyStr(ctx, mouseEvent, "layerX", xScreenCoordinate);
     JSValue yScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.y);
-    JS_SetPropertyStr(ctx, mouseEventInit, "layerY", yScreenCoordinate);
+    JS_SetPropertyStr(ctx, mouseEvent, "layerY", yScreenCoordinate);
 
     JSValue argv[2];
     argv[0] = JS_NewString(ctx, type);
-    argv[1] = mouseEventInit;
+    argv[1] = mouseEvent;
     JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 2, argv);
+    int status = JS_SetPrototype(ctx, mouseEvent, event);
 
     JS_FreeValue(ctx, global);
     JS_FreeValue(ctx, eventConstructorFunc);
     JS_FreeValue(ctx, argv[0]);
-    JS_FreeValue(ctx, argv[1]);
+    JS_FreeValue(ctx, event);
 
-    return event;
+    return mouseEvent;
 }
 
 JSValue js_stopPropagation(JSContext *ctx, JSValue this_val, int argc, JSValueConst argv[], int magic, JSValue *stoppedSymbol)

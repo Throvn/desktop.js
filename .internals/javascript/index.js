@@ -85,7 +85,6 @@ var GBText = /** @class */ (function () {
         return GUI.createElement("group", { "$color": "#333960", "$lineHeight": 24 * 2, onMouseOver: this.onMouseOver },
             GUI.createElement("text", null, "Throvn's"),
             GUI.createElement("text", { "$fontSize": 24, "$color": this.color, onMouseDown: (function (e) {
-                    console.log(e);
                     clearInterval(_this.interval);
                 }) }, this.name),
             GUI.createElement("text", { "$fontSize": 8 }, "TM"));
@@ -132,6 +131,7 @@ var GameBoard = /** @class */ (function () {
             }
         };
         this.handleMouseMove = function (event) {
+            console.log("test", event);
             var mouseX = event.layerX;
             var mouseY = event.layerY;
             var dx = mouseX - _this.lastMousePos.x;
@@ -226,11 +226,12 @@ var GameBoard = /** @class */ (function () {
                     !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
                     GUI.createElement("spacer", null),
                     GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData, onMouseUp: function (e) {
-                            // e.preventDefault();
+                            // e.stopPropagation();
                             console.log("Hidden Text Mouse Up");
                         }, onMouseOver: function (e) {
                             // e.stopPropagation();
-                            // console.log("Image mouse over!");
+                            console.log(e instanceof Event, e);
+                            console.log("Image mouse over!");
                         } },
                         GUI.createElement("text", null, "This image is not yet rendered!")))),
             GUI.createElement("spacer", null),

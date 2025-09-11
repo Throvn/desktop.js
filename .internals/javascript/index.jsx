@@ -42,7 +42,6 @@ class GBText {
         return <group $color="#333960" $lineHeight={24 * 2} onMouseOver={this.onMouseOver}>
             <text>Throvn's</text>
             <text $fontSize={24} $color={this.color} onMouseDown={(e => {
-                console.log(e);
                 clearInterval(this.interval);
             })}>{this.name}</text>
             <text $fontSize={8}>TM</text>
@@ -111,6 +110,7 @@ class GameBoard {
     }
 
     handleMouseMove = (event) => {
+        console.log("test", event);
         const mouseX = event.layerX;
         const mouseY = event.layerY;
 
@@ -199,11 +199,11 @@ class GameBoard {
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
                         <img $width={150} $height={150} data={this.imageData} onMouseUp={(e) => {
-                            // e.preventDefault();
+                            // e.stopPropagation();
                             console.log("Hidden Text Mouse Up");
                         }} onMouseOver={(e) => {
                             // e.stopPropagation();
-                            // console.log("Image mouse over!");
+                            console.log("Image mouse over!");
                         }}>
                             <text>This image is not yet rendered!</text>
                         </img>
