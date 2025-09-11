@@ -35,15 +35,13 @@ static JSValue createMouseEvent(JSContext *ctx, const char *type)
     JSValue yScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.y);
     JS_SetPropertyStr(ctx, mouseEvent, "layerY", yScreenCoordinate);
 
-    JSValue argv[2];
-    argv[0] = JS_NewString(ctx, type);
-    argv[1] = mouseEvent;
-    JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 2, argv);
+    JSValue eventType = JS_NewString(ctx, type);
+    JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 1, &eventType);
     int status = JS_SetPrototype(ctx, mouseEvent, event);
 
     JS_FreeValue(ctx, global);
     JS_FreeValue(ctx, eventConstructorFunc);
-    JS_FreeValue(ctx, argv[0]);
+    JS_FreeValue(ctx, eventType);
     JS_FreeValue(ctx, event);
 
     return mouseEvent;

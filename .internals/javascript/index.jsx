@@ -203,7 +203,8 @@ class GameBoard {
                             console.log("Hidden Text Mouse Up");
                         }} onMouseOver={(e) => {
                             // e.stopPropagation();
-                            console.log("Image mouse over!");
+                            const isEvent = e instanceof Event;
+                            console.log("Image mouse over!", isEvent);
                         }}>
                             <text>This image is not yet rendered!</text>
                         </img>
