@@ -54,7 +54,7 @@ bool GUI_IsElement(JSContext *ctx, JSValueConst element)
         return false;
     }
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    if (!JS_IsArray(props))
+    if (!JS_IsObject(props))
     {
         JS_FreeValue(ctx, key);
         JS_FreeValue(ctx, props);
@@ -91,11 +91,16 @@ int GUI_GetLength(JSContext *ctx, JSValueConst element)
     return length;
 }
 
-int GUI_GetKey(JSContext *ctx, JSValueConst element)
+uint32_t GUI_GetKey(JSContext *ctx, JSValueConst element)
 {
     JSValue keyValue = JS_GetPropertyStr(ctx, element, "key");
     int key;
-    JS_ToInt32(ctx, &key, keyValue);
+    int status = JS_ToUint32(ctx, &key, keyValue);
+    if (status < 0)
+    {
+        printf("[GUI_GetKey] Element did not have a key property\n");
+        return -1;
+    }
 
     JS_FreeValue(ctx, keyValue);
     return key;
@@ -109,7 +114,7 @@ JSValue GUI_GetChildren(JSContext *ctx, JSValueConst element)
 {
     if (!JS_IsObject(element))
     {
-        fprintf(stderr, "[GUI_GetChildren] Element is not an object");
+        fprintf(stderr, "[GUI_GetChildren] Element is not an object\n");
         exit(3);
         return JS_UNDEFINED;
     }
@@ -192,6 +197,7 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
 
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 {
+    int key = GUI_GetKey(ctx, element);
     // Determine layout direction.
     Clay_Sizing sizing;
     int dir;
@@ -217,6 +223,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
 
     CLAY((Clay_ElementDeclaration){
+        .id = CLAY_IDI("", key),
         .layout = {
             .layoutDirection = dir,
             .childAlignment = {
@@ -231,18 +238,18 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
         .cornerRadius = cornerRadius,
     })
     {
-        EVENT_HandleMouseEvents(ctx, element);
         renderChildren(ctx, element);
     }
 }
 
 void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
 {
+    int key = GUI_GetKey(ctx, element);
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
-    printf("width %d, height %d\n", width, height);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
+        .id = CLAY_IDI("", key),
         .layout = {
             .sizing = {
                 .height = height != -1 ? CLAY_SIZING_FIXED(height) : CLAY_SIZING_FIT(),
@@ -322,7 +329,10 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     else if (width == -1)
         width = height * aspectRatio;
 
+    int key = GUI_GetKey(ctx, element);
+
     CLAY((Clay_ElementDeclaration){
+        .id = CLAY_IDI("", key),
         .image = {
             .imageData = texture,
         },
@@ -429,6 +439,7 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
 
 void GUI_RenderText(JSContext *ctx, JSValue element)
 {
+    int key = GUI_GetKey(ctx, element);
     GUI_ApplyPropToChild(ctx, element, "$color");
     GUI_ApplyPropToChild(ctx, element, "$fontSize");
     GUI_ApplyPropToChild(ctx, element, "$letterSpacing");
@@ -438,6 +449,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
     CLAY((Clay_ElementDeclaration){
+        .id = CLAY_IDI("", key),
         .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,
@@ -445,7 +457,6 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
         .cornerRadius = cornerRadius,
     })
     {
-        EVENT_HandleMouseEvents(ctx, element);
         renderChildren(ctx, element);
     }
 }

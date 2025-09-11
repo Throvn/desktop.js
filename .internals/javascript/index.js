@@ -85,7 +85,6 @@ var GBText = /** @class */ (function () {
         return GUI.createElement("group", { "$color": "#333960", "$lineHeight": 24 * 2, onMouseOver: this.onMouseOver },
             GUI.createElement("text", null, "Throvn's"),
             GUI.createElement("text", { "$fontSize": 24, "$color": this.color, onMouseDown: (function (e) {
-                    console.log(e);
                     clearInterval(_this.interval);
                 }) }, this.name),
             GUI.createElement("text", { "$fontSize": 8 }, "TM"));
@@ -93,26 +92,18 @@ var GBText = /** @class */ (function () {
     return GBText;
 }());
 function fetchImage() {
-    var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var r, b, blob;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    console.log("fetching image");
-                    return [4 /*yield*/, fetch('https://picsum.photos/200/300.jpg')];
-                case 1:
-                    r = _b.sent();
-                    console.log(r);
-                    return [4 /*yield*/, r.blob()];
-                case 2:
-                    b = _b.sent();
-                    blob = new Blob([b], {
-                        type: (_a = r.headers.get('content-type')) !== null && _a !== void 0 ? _a : ''
-                    });
-                    console.log(blob.type);
-                    return [2 /*return*/, blob];
-            }
+        var b, blob;
+        return __generator(this, function (_a) {
+            console.log("fetching image");
+            b = new Blob([], {
+                type: "text/plain"
+            });
+            blob = new Blob([b], {
+            //     type: r.headers.get('content-type') ?? '',
+            });
+            console.log(blob.type);
+            return [2 /*return*/, blob];
         });
     });
 }
@@ -140,6 +131,7 @@ var GameBoard = /** @class */ (function () {
             }
         };
         this.handleMouseMove = function (event) {
+            console.log("test", event);
             var mouseX = event.layerX;
             var mouseY = event.layerY;
             var dx = mouseX - _this.lastMousePos.x;
@@ -227,10 +219,20 @@ var GameBoard = /** @class */ (function () {
                         bottomRight: 32
                     } },
                     GUI.createElement("vStack", { "$borderRadius": 10.5 }, grid)),
-                GUI.createElement("hStack", { "$gap": 5, onMouseUp: function () { return _this.hideText = !_this.hideText; } },
+                GUI.createElement("hStack", { "$gap": 5, onMouseUp: function () {
+                        _this.hideText = !_this.hideText;
+                        console.log("hStack Mouse Up");
+                    } },
                     !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
                     GUI.createElement("spacer", null),
-                    GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData },
+                    GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData, onMouseUp: function (e) {
+                            // e.stopPropagation();
+                            console.log("Hidden Text Mouse Up");
+                        }, onMouseOver: function (e) {
+                            // e.stopPropagation();
+                            var isEvent = e instanceof Event;
+                            console.log("Image mouse over!", isEvent);
+                        } },
                         GUI.createElement("text", null, "This image is not yet rendered!")))),
             GUI.createElement("spacer", null),
             GUI.createElement("spacer", null),
