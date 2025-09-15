@@ -92,18 +92,25 @@ var GBText = /** @class */ (function () {
     return GBText;
 }());
 function fetchImage() {
+    var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var b, blob;
-        return __generator(this, function (_a) {
-            console.log("fetching image");
-            b = new Blob([], {
-                type: "text/plain"
-            });
-            blob = new Blob([b], {
-            //     type: r.headers.get('content-type') ?? '',
-            });
-            console.log(blob.type);
-            return [2 /*return*/, blob];
+        var r, b, blob;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    console.log("fetching image");
+                    return [4 /*yield*/, fetch('https://picsum.photos/200/300.jpg')];
+                case 1:
+                    r = _b.sent();
+                    return [4 /*yield*/, r.blob()];
+                case 2:
+                    b = _b.sent();
+                    blob = new Blob([b], {
+                        type: (_a = r.headers.get('content-type')) !== null && _a !== void 0 ? _a : ''
+                    });
+                    console.log(blob.type);
+                    return [2 /*return*/, blob];
+            }
         });
     });
 }
@@ -154,18 +161,14 @@ var GameBoard = /** @class */ (function () {
         fetchImage()
             .then(function (b) { return __awaiter(_this, void 0, void 0, function () {
             var arrayBuffer, buffer;
-            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, b.arrayBuffer()];
                     case 1:
                         arrayBuffer = _a.sent();
                         buffer = new Uint8Array(arrayBuffer);
-                        this.imageType = b.type;
-                        // this.imageData = buffer;
-                        setTimeout(function () {
-                            _this.imageData = b;
-                        }, 3000);
+                        // setTimeout(() => {
+                        this.imageData = b;
                         return [2 /*return*/];
                 }
             });
@@ -206,7 +209,7 @@ var GameBoard = /** @class */ (function () {
         }
         return (GUI.createElement("vStack", { "$backgroundColor": "#dbd8cc", "$padding": 8, "$borderRadius": {
                 top: 10
-            }, onMouseOver: this.handleMouseMove },
+            }, onMouseOver: this.handleMouseMove, "$height": 'grow' },
             GUI.createElement("spacer", null),
             GUI.createElement("vStack", null,
                 "" + this.tick,
@@ -225,7 +228,7 @@ var GameBoard = /** @class */ (function () {
                     } },
                     !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
                     GUI.createElement("spacer", null),
-                    GUI.createElement("img", { "$width": 150, "$height": 150, data: this.imageData, onMouseUp: function (e) {
+                    GUI.createElement("img", { "$width": 'fit', "$height": 'fit', data: this.imageData, onMouseUp: function (e) {
                             // e.stopPropagation();
                             console.log("Hidden Text Mouse Up");
                         }, onMouseOver: function (e) {

@@ -52,14 +52,11 @@ class GBText {
 async function fetchImage() {
     console.log("fetching image")
     // const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
-    // const r = await fetch('https://picsum.photos/200/300.jpg');
+    const r = await fetch('https://picsum.photos/200/300.jpg');
     // console.log(r)
-    // const b = await r.blob();
-    const b = new Blob([], {
-        type: "text/plain"
-    });
+    const b = await r.blob();
     const blob = new Blob([b], {
-    //     type: r.headers.get('content-type') ?? '',
+        type: r.headers.get('content-type') ?? '',
     });
     console.log(blob.type);
     return blob;
@@ -81,11 +78,9 @@ class GameBoard {
             .then(async b => {
                 const arrayBuffer = await b.arrayBuffer();
                 const buffer = new Uint8Array(arrayBuffer);
-                this.imageType = b.type;
-                // this.imageData = buffer;
-                setTimeout(() => {
+                // setTimeout(() => {
                 this.imageData = b;
-                }, 3000);
+                // }, 3000);
             });
     }
 
@@ -173,6 +168,7 @@ class GameBoard {
                         top: 10,
                     }}
                     onMouseOver={this.handleMouseMove}
+                    $height='grow'
                 >
                     <spacer />
                     <vStack>
