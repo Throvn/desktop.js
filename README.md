@@ -199,7 +199,7 @@ It tries to mimic the [MouseUp JS event](https://developer.mozilla.org/en-US/doc
 ```jsx
 <text
   onMouseUp={(event) => {
-    console.log("Mouse DOWN Event Called!");
+    console.log("Mouse UP Event Called!");
   }}
 ></text>
 ```
