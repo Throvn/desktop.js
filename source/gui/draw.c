@@ -231,8 +231,8 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
             .padding = padding,
             .childGap = childGap,
             .sizing = {
-                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
-                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
             },
         },
         .backgroundColor = backgroundColor,
@@ -253,8 +253,8 @@ void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
         .id = CLAY_IDI("", key),
         .layout = {
             .sizing = {
-                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
-                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
             },
         },
         .backgroundColor = backgroundColor,
@@ -320,14 +320,14 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 
     float aspectRatio = (float)img->width / (float)img->height;
     // If both values are not set (aka. -1)
-    if (width == -1 && height == -1)
+    if (width < 0 && height < 0)
     {
         width = img->width;
         height = img->height;
     }
-    else if (height == -1)
+    else if (height < 0)
         height = width / aspectRatio;
-    else if (width == -1)
+    else if (width < 0)
         width = height * aspectRatio;
 
     int key = GUI_GetKey(ctx, element);
