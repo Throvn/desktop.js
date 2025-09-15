@@ -198,17 +198,13 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 {
     int key = GUI_GetKey(ctx, element);
-    // Determine layout direction.
-    Clay_Sizing sizing;
     int dir;
     switch (direction)
     {
     case 'v':
-        sizing = (Clay_Sizing){CLAY_SIZING_GROW(), CLAY_SIZING_GROW()};
         dir = CLAY_TOP_TO_BOTTOM;
         break;
     case 'h':
-        sizing = (Clay_Sizing){CLAY_SIZING_GROW(), CLAY_SIZING_GROW()};
         dir = CLAY_LEFT_TO_RIGHT;
         break;
     default:
@@ -221,6 +217,8 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     uint16_t childGap = STYLES_GetGap(ctx, element);
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
+    int width = STYLES_GetWidth(ctx, element);
+    int height = STYLES_GetHeight(ctx, element);
 
     CLAY((Clay_ElementDeclaration){
         .id = CLAY_IDI("", key),
@@ -231,8 +229,11 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
                 CLAY_ALIGN_Y_CENTER,
             },
             .padding = padding,
-            .sizing = sizing,
             .childGap = childGap,
+            .sizing = {
+                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+            },
         },
         .backgroundColor = backgroundColor,
         .cornerRadius = cornerRadius,
@@ -252,8 +253,8 @@ void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
         .id = CLAY_IDI("", key),
         .layout = {
             .sizing = {
-                .height = height != -1 ? CLAY_SIZING_FIXED(height) : CLAY_SIZING_FIT(),
-                .width = width != -1 ? CLAY_SIZING_FIXED(width) : CLAY_SIZING_FIT(),
+                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
             },
         },
         .backgroundColor = backgroundColor,
