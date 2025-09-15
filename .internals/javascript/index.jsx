@@ -194,7 +194,7 @@ class GameBoard {
                         }}>
                         {!this.hideText ? <GBText/> : <text>Hidden</text>}
                         <spacer />
-                        <img $width={150} $height={150} data={this.imageData} onMouseUp={(e) => {
+                        <img $height={100} data={this.imageData} onMouseUp={(e) => {
                             // e.stopPropagation();
                             console.log("Hidden Text Mouse Up");
                         }} onMouseOver={(e) => {

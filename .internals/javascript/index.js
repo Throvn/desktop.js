@@ -228,7 +228,7 @@ var GameBoard = /** @class */ (function () {
                     } },
                     !this.hideText ? GUI.createElement(GBText, null) : GUI.createElement("text", null, "Hidden"),
                     GUI.createElement("spacer", null),
-                    GUI.createElement("img", { "$width": 'fit', "$height": 'fit', data: this.imageData, onMouseUp: function (e) {
+                    GUI.createElement("img", { "$height": 100, data: this.imageData, onMouseUp: function (e) {
                             // e.stopPropagation();
                             console.log("Hidden Text Mouse Up");
                         }, onMouseOver: function (e) {
