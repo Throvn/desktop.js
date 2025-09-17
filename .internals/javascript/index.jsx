@@ -52,12 +52,12 @@ class GBText {
 async function fetchImage() {
     console.log("fetching image")
     // const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
-    // const r = await fetch('https://picsum.photos/200/300.jpg');
+    const r = await fetch('https://picsum.photos/200/300.jpg');
     // console.log(r)
-    // const b = await r.blob();
-    const b = new Blob([]);
+    const b = await r.blob();
+    // const b = new Blob([]);
     const blob = new Blob([b], {
-        // type: r.headers.get('content-type') ?? '',
+        type: r.headers.get('content-type') ?? '',
     });
     console.log(blob.type);
     return blob;
@@ -162,55 +162,66 @@ class GameBoard {
         }
 
         return (
-                <hStack
+                <vStack
                     $backgroundColor="#dbd8cc" 
                     $padding={8}
                     $borderRadius={{
                         top: 10,
                     }}
                     onMouseOver={this.handleMouseMove}
-                    $height='grow'
+                    $width={350}
                 >
                     <spacer />
-                    <hStack>
+                    <vStack>
                     {"" + this.tick}
-                    <hStack
-                        $backgroundColor="#4d4a55" 
-                        $padding={{
-                            horizontal: 48,
-                            vertical: 20,
-                        }}
-                        $borderRadius={{
-                            top: 8 + this.tick,
-                            bottomLeft: 8,
-                            bottomRight: 32,
-                        }}>
-                        <vStack $borderRadius={10.5}>
-                            {grid}
-                        </vStack>
-                    </hStack>
-                    <hStack $gap={5} onMouseUp={() => {
-                            this.hideText = !this.hideText;
-                            console.log("hStack Mouse Up");
-                        }}>
-                        {!this.hideText ? <GBText/> : <text>Hidden</text>}
-                        <spacer />
-                        <img $height={100} data={this.imageData} onMouseUp={(e) => {
-                            // e.stopPropagation();
-                            console.log("Hidden Text Mouse Up");
-                        }} onMouseOver={(e) => {
-                            // e.stopPropagation();
-                            const isEvent = e instanceof Event;
-                            console.log("Image mouse over!", isEvent);
-                        }}>
-                            <text $backgroundColor="green" $height={100}>This image is not yet rendered! Lorem ipsum dolor sit amet consectetur adipisicing elit. A sapiente quibusdam consequuntur quo explicabo vero blanditiis consectetur ratione laborum, sint dicta reprehenderit aliquam quia quod delectus illo perferendis ipsa debitis?</text>
-                        </img>
-                    </hStack>
-                    </hStack>
+                        <hStack
+                            $backgroundColor="#4d4a55" 
+                            $padding={{
+                                horizontal: 48,
+                                vertical: 20,
+                            }}
+                            $borderRadius={{
+                                top: 8 + this.tick,
+                                bottomLeft: 8,
+                                bottomRight: 32,
+                            }}>
+                            <vStack $borderRadius={10.5}>
+                                {grid}
+                            </vStack>
+                        </hStack>
+                        <hStack $gap={5} onMouseUp={() => {
+                                this.hideText = !this.hideText;
+                                console.log("hStack Mouse Up");
+                            }}>
+                            {!this.hideText ? <GBText/> : <text>Hidden</text>}
+                            <spacer />
+                            <img $height={100} data={this.imageData} onMouseUp={(e) => {
+                                // e.stopPropagation();
+                                console.log("Hidden Text Mouse Up");
+                            }} onMouseOver={(e) => {
+                                // e.stopPropagation();
+                                const isEvent = e instanceof Event;
+                                console.log("Image mouse over!", isEvent);
+                            }}>
+                                <text $backgroundColor="green" $height={100}>This image is not yet rendered! Lorem ipsum dolor sit amet consectetur adipisicing elit. A sapiente quibusdam consequuntur quo explicabo vero blanditiis consectetur ratione laborum, sint dicta reprehenderit aliquam quia quod delectus illo perferendis ipsa debitis?</text>
+                            </img>
+                            {this.hideText ? 'Hideen' : <img $height={100} data={this.imageData} onMouseUp={(e) => {
+                                // e.stopPropagation();
+                                console.log("Hidden Text Mouse Up");
+                            }} onMouseOver={(e) => {
+                                this.hideText = true;
+                                // e.stopPropagation();
+                                const isEvent = e instanceof Event;
+                                console.log("Image mouse over!", isEvent);
+                            }}>
+                                <text $backgroundColor="green" $height={100}>This image is not yet rendered! Lorem ipsum dolor sit amet consectetur adipisicing elit. A sapiente quibusdam consequuntur quo explicabo vero blanditiis consectetur ratione laborum, sint dicta reprehenderit aliquam quia quod delectus illo perferendis ipsa debitis?</text>
+                            </img>}
+                        </hStack>
+                    </vStack>
                     <spacer />
                     <spacer />
                     <spacer />
-                </hStack>
+                </vStack>
         );
     }
 }

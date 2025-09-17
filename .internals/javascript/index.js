@@ -92,16 +92,25 @@ var GBText = /** @class */ (function () {
     return GBText;
 }());
 function fetchImage() {
+    var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var b, blob;
-        return __generator(this, function (_a) {
-            console.log("fetching image");
-            b = new Blob([]);
-            blob = new Blob([b], {
-            // type: r.headers.get('content-type') ?? '',
-            });
-            console.log(blob.type);
-            return [2 /*return*/, blob];
+        var r, b, blob;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    console.log("fetching image");
+                    return [4 /*yield*/, fetch('https://picsum.photos/200/300.jpg')];
+                case 1:
+                    r = _b.sent();
+                    return [4 /*yield*/, r.blob()];
+                case 2:
+                    b = _b.sent();
+                    blob = new Blob([b], {
+                        type: (_a = r.headers.get('content-type')) !== null && _a !== void 0 ? _a : ''
+                    });
+                    console.log(blob.type);
+                    return [2 /*return*/, blob];
+            }
         });
     });
 }
@@ -198,11 +207,11 @@ var GameBoard = /** @class */ (function () {
         for (var i = 0; i < SIZE; i++) {
             _loop_1(i);
         }
-        return (GUI.createElement("hStack", { "$backgroundColor": "#dbd8cc", "$padding": 8, "$borderRadius": {
+        return (GUI.createElement("vStack", { "$backgroundColor": "#dbd8cc", "$padding": 8, "$borderRadius": {
                 top: 10
-            }, onMouseOver: this.handleMouseMove, "$height": 'grow' },
+            }, onMouseOver: this.handleMouseMove, "$width": 350 },
             GUI.createElement("spacer", null),
-            GUI.createElement("hStack", null,
+            GUI.createElement("vStack", null,
                 "" + this.tick,
                 GUI.createElement("hStack", { "$backgroundColor": "#4d4a55", "$padding": {
                         horizontal: 48,
@@ -223,6 +232,16 @@ var GameBoard = /** @class */ (function () {
                             // e.stopPropagation();
                             console.log("Hidden Text Mouse Up");
                         }, onMouseOver: function (e) {
+                            // e.stopPropagation();
+                            var isEvent = e instanceof Event;
+                            console.log("Image mouse over!", isEvent);
+                        } },
+                        GUI.createElement("text", { "$backgroundColor": "green", "$height": 100 }, "This image is not yet rendered! Lorem ipsum dolor sit amet consectetur adipisicing elit. A sapiente quibusdam consequuntur quo explicabo vero blanditiis consectetur ratione laborum, sint dicta reprehenderit aliquam quia quod delectus illo perferendis ipsa debitis?")),
+                    this.hideText ? 'Hideen' : GUI.createElement("img", { "$height": 100, data: this.imageData, onMouseUp: function (e) {
+                            // e.stopPropagation();
+                            console.log("Hidden Text Mouse Up");
+                        }, onMouseOver: function (e) {
+                            _this.hideText = true;
                             // e.stopPropagation();
                             var isEvent = e instanceof Event;
                             console.log("Image mouse over!", isEvent);

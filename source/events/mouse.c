@@ -37,7 +37,7 @@ static JSValue createMouseEvent(JSContext *ctx, const char *type)
 
     JSValue eventType = JS_NewString(ctx, type);
     JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 1, &eventType);
-    int status = JS_SetPrototype(ctx, mouseEvent, event);
+    JS_SetPrototype(ctx, mouseEvent, event);
 
     JS_FreeValue(ctx, global);
     JS_FreeValue(ctx, eventConstructorFunc);

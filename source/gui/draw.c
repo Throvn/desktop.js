@@ -197,7 +197,7 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
 
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 {
-    int key = GUI_GetKey(ctx, element);
+    uint32_t key = GUI_GetKey(ctx, element);
     int dir;
     switch (direction)
     {
@@ -245,7 +245,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 
 void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
 {
-    int key = GUI_GetKey(ctx, element);
+    uint32_t key = GUI_GetKey(ctx, element);
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
@@ -330,7 +330,7 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     else if (width < 0)
         width = height * aspectRatio;
 
-    int key = GUI_GetKey(ctx, element);
+    uint32_t key = GUI_GetKey(ctx, element);
 
     CLAY((Clay_ElementDeclaration){
         .id = CLAY_IDI("Image", key),
@@ -440,7 +440,7 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
 
 void GUI_RenderText(JSContext *ctx, JSValue element)
 {
-    int key = GUI_GetKey(ctx, element);
+    uint32_t key = GUI_GetKey(ctx, element);
     GUI_ApplyPropToChild(ctx, element, "$color");
     GUI_ApplyPropToChild(ctx, element, "$fontSize");
     GUI_ApplyPropToChild(ctx, element, "$letterSpacing");
@@ -452,7 +452,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
     CLAY((Clay_ElementDeclaration){
-        // .id = CLAY_IDI("Text", key),
+        .id = CLAY_IDI("Text", key),
         .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,
