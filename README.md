@@ -78,8 +78,8 @@ This has two advantages:
 | $gap             | `unsigned integer`                                                                                                                                           | `0` \| `8`                                      | Adds x `px` of spacing between the child elements of a stack.                                                                                                                                                             |
 | $borderRadius    | `number` \| `{top?: number, bottom?: number, left?: number, right?: number, topLeft?: number, topRight?: number, bottomLeft?: number, bottomRight?: number}` | `{top: 12, bottomRight: 8, topLeft: 2}` \| `12` | Determines how rounded the corners of a component are. Union radii (like top or bottom) are evaluated first, which makes it possible to overwrite part of the values through more fine grained properties like `topLeft`. |
 | $lineHeight      | `unsigned integer`                                                                                                                                           | `12` \| `15`                                    | Determines how tall the text should be. Default is 12 (just like the font size).                                                                                                                                          |
-| $width           | `number`                                                                                                                                                     | `24` \| `7` \| `2`                              | Give the component a **fixed** width.                                                                                                                                                                                     |
-| $height          | `number`                                                                                                                                                     | `24` \| `7` \| `2`                              | Give the component a **fixed** height.                                                                                                                                                                                    |
+| $width           | `unsigned integer` \| `string`                                                                                                                               | `24` \| `7` \| `2` \| `"grow"` \| `"fit"`       | Give the component a **fixed** width.                                                                                                                                                                                     |
+| $height          | `unsigned integer` \| `string`                                                                                                                               | `24` \| `7` \| `2` \| `"grow"` \| `"fit"`       | Give the component a **fixed** height.                                                                                                                                                                                    |
 
 ### Built in Components
 
@@ -124,6 +124,8 @@ Each child is centered automatically. To change the position of children use [`<
 - `$borderRadius`
 - `$padding`
 - `$gap`
+- `$width` Additionally to pixel values, you can supply `"grow"` or `"fit"`.
+- `$height` Additionally to pixel values, you can supply `"grow"` or `"fit"`.
 
 #### `<hStack>`
 
@@ -182,8 +184,8 @@ const blob = await r.blob();
 ##### Style Props
 
 - `$backgroundColor` Only applied to the children.
-- `$width`
-- `$height`
+- `$width` Only pixel values (numbers) have an effect.
+- `$height` Only pixel values (numbers) have an effect.
 
 ### Built in Event Listeners
 
@@ -197,7 +199,7 @@ It tries to mimic the [MouseUp JS event](https://developer.mozilla.org/en-US/doc
 ```jsx
 <text
   onMouseUp={(event) => {
-    console.log("Mouse DOWN Event Called!");
+    console.log("Mouse UP Event Called!");
   }}
 ></text>
 ```
@@ -257,3 +259,16 @@ It is called once per frame and tries to mimic the [MouseOver JS event](https://
 - `altKey` boolean indicating if the **alt key** was pressed.
 - `ctrlKey` boolean indicating if the **control key** was pressed.
 - `shiftKey` boolean indicating if the **shift key** was pressed.
+
+## Build & Run
+
+### Run
+
+If you are on macOS, you can use the run script.
+For this to work, you need to have the typescript compiler (`tsc`) and `clang` installed.
+The script will first look for a `.internals/javascript/index.jsx` file and compile this with the correct flags to an `index.js` file.
+It will then run the `make run` command, which creates a new binary, runs it and loads the code at `.internals/javascript/index.js`.
+
+```
+./run.sh
+```

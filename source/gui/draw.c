@@ -94,7 +94,7 @@ int GUI_GetLength(JSContext *ctx, JSValueConst element)
 uint32_t GUI_GetKey(JSContext *ctx, JSValueConst element)
 {
     JSValue keyValue = JS_GetPropertyStr(ctx, element, "key");
-    int key;
+    uint32_t key;
     int status = JS_ToUint32(ctx, &key, keyValue);
     if (status < 0)
     {
@@ -197,18 +197,14 @@ void GUI_RenderCustom(JSContext *ctx, JSValueConst element)
 
 void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 {
-    int key = GUI_GetKey(ctx, element);
-    // Determine layout direction.
-    Clay_Sizing sizing;
+    uint32_t key = GUI_GetKey(ctx, element);
     int dir;
     switch (direction)
     {
     case 'v':
-        sizing = (Clay_Sizing){CLAY_SIZING_GROW(), CLAY_SIZING_GROW()};
         dir = CLAY_TOP_TO_BOTTOM;
         break;
     case 'h':
-        sizing = (Clay_Sizing){CLAY_SIZING_GROW(), CLAY_SIZING_GROW()};
         dir = CLAY_LEFT_TO_RIGHT;
         break;
     default:
@@ -221,18 +217,23 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     uint16_t childGap = STYLES_GetGap(ctx, element);
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
+    int width = STYLES_GetWidth(ctx, element);
+    int height = STYLES_GetHeight(ctx, element);
 
     CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("", key),
+        .id = CLAY_IDI("Stack", key),
         .layout = {
             .layoutDirection = dir,
             .childAlignment = {
-                CLAY_ALIGN_X_CENTER,
-                CLAY_ALIGN_Y_CENTER,
+                .x = CLAY_ALIGN_X_CENTER,
+                .y = CLAY_ALIGN_Y_CENTER,
             },
             .padding = padding,
-            .sizing = sizing,
             .childGap = childGap,
+            .sizing = {
+                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+            },
         },
         .backgroundColor = backgroundColor,
         .cornerRadius = cornerRadius,
@@ -244,16 +245,16 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 
 void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
 {
-    int key = GUI_GetKey(ctx, element);
+    uint32_t key = GUI_GetKey(ctx, element);
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("", key),
+        .id = CLAY_IDI("Image Placeholder", key),
         .layout = {
             .sizing = {
-                .height = height != -1 ? CLAY_SIZING_FIXED(height) : CLAY_SIZING_FIT(),
-                .width = width != -1 ? CLAY_SIZING_FIXED(width) : CLAY_SIZING_FIT(),
+                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
             },
         },
         .backgroundColor = backgroundColor,
@@ -319,20 +320,20 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 
     float aspectRatio = (float)img->width / (float)img->height;
     // If both values are not set (aka. -1)
-    if (width == -1 && height == -1)
+    if (width < 0 && height < 0)
     {
         width = img->width;
         height = img->height;
     }
-    else if (height == -1)
+    else if (height < 0)
         height = width / aspectRatio;
-    else if (width == -1)
+    else if (width < 0)
         width = height * aspectRatio;
 
-    int key = GUI_GetKey(ctx, element);
+    uint32_t key = GUI_GetKey(ctx, element);
 
     CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("", key),
+        .id = CLAY_IDI("Image", key),
         .image = {
             .imageData = texture,
         },
@@ -439,7 +440,7 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
 
 void GUI_RenderText(JSContext *ctx, JSValue element)
 {
-    int key = GUI_GetKey(ctx, element);
+    uint32_t key = GUI_GetKey(ctx, element);
     GUI_ApplyPropToChild(ctx, element, "$color");
     GUI_ApplyPropToChild(ctx, element, "$fontSize");
     GUI_ApplyPropToChild(ctx, element, "$letterSpacing");
@@ -448,11 +449,17 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
+    int width = STYLES_GetWidth(ctx, element);
+    int height = STYLES_GetHeight(ctx, element);
     CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("", key),
+        .id = CLAY_IDI("Text", key),
         .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,
+            .sizing = {
+                .height = (height == -1 || height == -2) ? CLAY_SIZING_FIT() : (height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                .width = (width == -1 || width == -2) ? CLAY_SIZING_FIT() : (width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+            },
         },
         .cornerRadius = cornerRadius,
     })

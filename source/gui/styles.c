@@ -1,5 +1,6 @@
 #include "colors.h"
 #include "styles.h"
+#include "stdlib.h"
 
 static Clay_Padding parsePadding(JSContext *ctx, JSValueConst propValue)
 {
@@ -328,12 +329,62 @@ int STYLES_GetLineHeight(JSContext *ctx, JSValueConst element)
     return STYLES_GetPropValueAsInt32(ctx, element, "$lineHeight");
 }
 
+/// @brief Note: The return value needs to be freed using `JS_FreeCString()`!
+const char *STYLES_GetPropValueAsString(JSContext *ctx, JSValueConst element, const char *prop)
+{
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    JSValue value = JS_GetPropertyStr(ctx, props, prop);
+    const char *string = JS_ToCString(ctx, value);
+    JS_FreeValue(ctx, value);
+    JS_FreeValue(ctx, props);
+
+    return string;
+}
+
+/// @brief Retrieves the $width prop value.
+/// @param ctx
+/// @param element
+/// @return -1 = no value set (default) | -2 = fit | -3 = grow | other = px value
 int STYLES_GetWidth(JSContext *ctx, JSValueConst element)
 {
+    // First assume that it's a string
+    const char *string = STYLES_GetPropValueAsString(ctx, element, "$width");
+    if (!strcmp(string, "grow"))
+    {
+        JS_FreeCString(ctx, string);
+        return -3;
+    }
+    else if (!strcmp(string, "fit"))
+    {
+        JS_FreeCString(ctx, string);
+        return -2;
+    }
+    JS_FreeCString(ctx, string);
+
+    // If it's not a string treat it as a number.
+    // If it's also not a number -1 will be returned (which is the default) like grow.
     return STYLES_GetPropValueAsInt32(ctx, element, "$width");
 }
 
+/// @brief Retrieves the $height prop value.
+/// @param ctx
+/// @param element
+/// @return -1 = no value set (default) | -2 = fit | -3 = grow | other = px value
 int STYLES_GetHeight(JSContext *ctx, JSValueConst element)
 {
+    // First assume that it's a string
+    const char *string = STYLES_GetPropValueAsString(ctx, element, "$height");
+    if (!strcmp(string, "grow"))
+    {
+        JS_FreeCString(ctx, string);
+        return -3;
+    }
+    else if (!strcmp(string, "fit"))
+    {
+        JS_FreeCString(ctx, string);
+        return -2;
+    }
+    JS_FreeCString(ctx, string);
+
     return STYLES_GetPropValueAsInt32(ctx, element, "$height");
 }

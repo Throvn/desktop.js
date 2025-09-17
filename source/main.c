@@ -26,8 +26,11 @@ void idleCallback(uv_idle_t *handle)
         return;
     }
 
-    Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
     Clay_SetPointerState((Clay_Vector2){GetMouseX(), GetMouseY()}, IsMouseButtonDown(MOUSE_BUTTON_LEFT));
+    Clay_SetLayoutDimensions((Clay_Dimensions){GetRenderWidth(), GetRenderHeight()});
+
+    Vector2 mouseWheelMove = GetMouseWheelMoveV();
+    Clay_UpdateScrollContainers(true, (Clay_Vector2){.x = mouseWheelMove.x, .y = mouseWheelMove.y}, GetFrameTime());
 
     a_free();
 
@@ -47,11 +50,11 @@ void idleCallback(uv_idle_t *handle)
 void HandleClayErrors(Clay_ErrorData errorData)
 {
     // See the Clay_ErrorData struct for more information
-    printf("%s", errorData.errorText.chars);
+    printf("%s\n", errorData.errorText.chars);
     exit(1);
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
     srand(123);
     // No need to free, because we need the result until shutdown.
@@ -72,7 +75,7 @@ int main(int argc, char **argv)
     Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, clayArenaMemory);
 
     SetTraceLogLevel(LOG_ERROR);
-    Clay_Raylib_Initialize(500, 300, "Desktop.js", FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
+    Clay_Raylib_Initialize(500, 300, "Desktop.js", FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
     SetWindowOpacity(0);
 
     // Note: screenWidth and screenHeight will need to come from your environment, Clay doesn't handle window related tasks

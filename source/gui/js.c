@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include "../debug.h"
 #include "raylib.h"
+#include "js.h"
 
+/// @brief Used to give js elements continuous ids
+uint32_t idCounter = 0;
 JSValue rootValue = JS_UNINITIALIZED;
 
 static void GUI_SetWindowOptions(JSContext *ctx, JSValueConst options)
@@ -162,7 +165,7 @@ static JSValue GUI_js_create_element(JSContext *ctx, JSValueConst this_val,
         fprintf(stderr, "[GUI] createElement()s first parameter has an unknown type\n");
 
     // Give each element a random key. (Needed for mouse events)
-    JS_SetPropertyStr(ctx, element, "key", JS_NewUint32(ctx, rand()));
+    JS_SetPropertyStr(ctx, element, "key", JS_NewUint32(ctx, idCounter++));
 
     return element;
 }
