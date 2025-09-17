@@ -54,7 +54,7 @@ void HandleClayErrors(Clay_ErrorData errorData)
     exit(1);
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
     srand(123);
     // No need to free, because we need the result until shutdown.
