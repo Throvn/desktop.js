@@ -259,3 +259,16 @@ It is called once per frame and tries to mimic the [MouseOver JS event](https://
 - `altKey` boolean indicating if the **alt key** was pressed.
 - `ctrlKey` boolean indicating if the **control key** was pressed.
 - `shiftKey` boolean indicating if the **shift key** was pressed.
+
+## Build & Run
+
+### Run
+
+If you are on macOS, you can use the run script.
+For this to work, you need to have the typescript compiler (`tsc`) and `clang` installed.
+The script will first look for a `.internals/javascript/index.jsx` file and compile this with the correct flags to an `index.js` file.
+It will then run the `make run` command, which creates a new binary, runs it and loads the code at `.internals/javascript/index.js`.
+
+```
+./run.sh
+```
