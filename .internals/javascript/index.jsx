@@ -52,11 +52,12 @@ class GBText {
 async function fetchImage() {
     console.log("fetching image")
     // const r = await fetch('https://raw.githubusercontent.com/raysan5/raylib/master/examples/models/models_loading.png');
-    const r = await fetch('https://picsum.photos/200/300.jpg');
+    // const r = await fetch('https://picsum.photos/200/300.jpg');
     // console.log(r)
-    const b = await r.blob();
+    // const b = await r.blob();
+    const b = new Blob([]);
     const blob = new Blob([b], {
-        type: r.headers.get('content-type') ?? '',
+        // type: r.headers.get('content-type') ?? '',
     });
     console.log(blob.type);
     return blob;
@@ -161,7 +162,7 @@ class GameBoard {
         }
 
         return (
-                <vStack
+                <hStack
                     $backgroundColor="#dbd8cc" 
                     $padding={8}
                     $borderRadius={{
@@ -171,9 +172,9 @@ class GameBoard {
                     $height='grow'
                 >
                     <spacer />
-                    <vStack>
+                    <hStack>
                     {"" + this.tick}
-                    <vStack
+                    <hStack
                         $backgroundColor="#4d4a55" 
                         $padding={{
                             horizontal: 48,
@@ -187,7 +188,7 @@ class GameBoard {
                         <vStack $borderRadius={10.5}>
                             {grid}
                         </vStack>
-                    </vStack>
+                    </hStack>
                     <hStack $gap={5} onMouseUp={() => {
                             this.hideText = !this.hideText;
                             console.log("hStack Mouse Up");
@@ -202,14 +203,14 @@ class GameBoard {
                             const isEvent = e instanceof Event;
                             console.log("Image mouse over!", isEvent);
                         }}>
-                            <text>This image is not yet rendered!</text>
+                            <text $backgroundColor="green" $height={100}>This image is not yet rendered! Lorem ipsum dolor sit amet consectetur adipisicing elit. A sapiente quibusdam consequuntur quo explicabo vero blanditiis consectetur ratione laborum, sint dicta reprehenderit aliquam quia quod delectus illo perferendis ipsa debitis?</text>
                         </img>
                     </hStack>
-                    </vStack>
+                    </hStack>
                     <spacer />
                     <spacer />
                     <spacer />
-                </vStack>
+                </hStack>
         );
     }
 }

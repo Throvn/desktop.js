@@ -341,6 +341,10 @@ const char *STYLES_GetPropValueAsString(JSContext *ctx, JSValueConst element, co
     return string;
 }
 
+/// @brief Retrieves the $width prop value.
+/// @param ctx
+/// @param element
+/// @return -1 = no value set (default) | -2 = fit | -3 = grow | other = px value
 int STYLES_GetWidth(JSContext *ctx, JSValueConst element)
 {
     // First assume that it's a string
@@ -362,6 +366,10 @@ int STYLES_GetWidth(JSContext *ctx, JSValueConst element)
     return STYLES_GetPropValueAsInt32(ctx, element, "$width");
 }
 
+/// @brief Retrieves the $height prop value.
+/// @param ctx
+/// @param element
+/// @return -1 = no value set (default) | -2 = fit | -3 = grow | other = px value
 int STYLES_GetHeight(JSContext *ctx, JSValueConst element)
 {
     // First assume that it's a string

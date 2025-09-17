@@ -221,12 +221,12 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     int height = STYLES_GetHeight(ctx, element);
 
     CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("", key),
+        .id = CLAY_IDI("Stack", key),
         .layout = {
             .layoutDirection = dir,
             .childAlignment = {
-                CLAY_ALIGN_X_CENTER,
-                CLAY_ALIGN_Y_CENTER,
+                .x = CLAY_ALIGN_X_CENTER,
+                .y = CLAY_ALIGN_Y_CENTER,
             },
             .padding = padding,
             .childGap = childGap,
@@ -250,7 +250,7 @@ void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
     int height = STYLES_GetHeight(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("", key),
+        .id = CLAY_IDI("Image Placeholder", key),
         .layout = {
             .sizing = {
                 .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
@@ -333,7 +333,7 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     int key = GUI_GetKey(ctx, element);
 
     CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("", key),
+        .id = CLAY_IDI("Image", key),
         .image = {
             .imageData = texture,
         },
@@ -449,11 +449,17 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
+    int width = STYLES_GetWidth(ctx, element);
+    int height = STYLES_GetHeight(ctx, element);
     CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("", key),
+        // .id = CLAY_IDI("Text", key),
         .backgroundColor = backgroundColor,
         .layout = {
             .padding = padding,
+            .sizing = {
+                .height = (height == -1 || height == -2) ? CLAY_SIZING_FIT() : (height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                .width = (width == -1 || width == -2) ? CLAY_SIZING_FIT() : (width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+            },
         },
         .cornerRadius = cornerRadius,
     })
