@@ -3,10 +3,10 @@
 #include "draw.h"
 #include "../debug.h"
 
-size_t JS_GetBlobSize(JSContext *ctx, JSValueConst blob)
+int64_t JS_GetBlobSize(JSContext *ctx, JSValueConst blob)
 {
     JSValue sizeValue = JS_GetPropertyStr(ctx, blob, "size");
-    size_t size;
+    int64_t size;
     JS_ToInt64(ctx, &size, sizeValue);
     JS_FreeValue(ctx, sizeValue);
 
@@ -43,9 +43,9 @@ JSValue JS_GetBlobParts(JSContext *ctx, JSValueConst blob)
     return parts;
 }
 
-size_t JS_GetBlobUint8Array(JSContext *ctx, JSValueConst blob, uint8_t *out_buf)
+int64_t JS_GetBlobUint8Array(JSContext *ctx, JSValueConst blob, uint8_t *out_buf)
 {
-    size_t offset = 0;
+    int64_t offset = 0;
 
     JSValue partsArr = JS_GetBlobParts(ctx, blob);
     int partsArrLength = GUI_GetLength(ctx, partsArr);

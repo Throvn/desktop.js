@@ -94,7 +94,7 @@ int GUI_GetLength(JSContext *ctx, JSValueConst element)
 uint32_t GUI_GetKey(JSContext *ctx, JSValueConst element)
 {
     JSValue keyValue = JS_GetPropertyStr(ctx, element, "key");
-    int key;
+    uint32_t key;
     int status = JS_ToUint32(ctx, &key, keyValue);
     if (status < 0)
     {
