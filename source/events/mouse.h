@@ -15,4 +15,7 @@ typedef struct EventProps
 void EVENT_TriggerMouseEvents(JSContext *ctx, JSValueConst element, int *stopPropagations);
 void EVENT_HandleMouseEvents(JSContext *ctx);
 
+extern JSValue rootValue;
+extern JSValue focusValue;
+
 #endif

@@ -106,7 +106,6 @@ class GameBoard {
     }
 
     handleMouseMove = (event) => {
-        console.log("test", event);
         const mouseX = event.layerX;
         const mouseY = event.layerY;
 
@@ -172,7 +171,10 @@ class GameBoard {
                     $width={350}
                 >
                     <spacer />
-                    <vStack>
+                    <vStack onFocusIn={(e) => {
+                        console.log("Focused!");
+                        e.stopPropagation();
+                    }}>
                     {"" + this.tick}
                         <hStack
                             $backgroundColor="#4d4a55" 

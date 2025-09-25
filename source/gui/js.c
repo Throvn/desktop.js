@@ -6,7 +6,11 @@
 
 /// @brief Used to give js elements continuous ids
 uint32_t idCounter = 0;
+/// @brief Holds the value of the JSX root node.
 JSValue rootValue = JS_UNINITIALIZED;
+/// @brief Holds the value of the currently focused element.
+/// @brief This is also known as the `document.activeElement` property in browsers.
+JSValue focusValue = JS_UNINITIALIZED;
 
 static void GUI_SetWindowOptions(JSContext *ctx, JSValueConst options)
 {
@@ -69,6 +73,9 @@ static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
 
     printf("[GUI] render() called\n");
     rootValue = JS_DupValue(ctx, argv[0]);
+
+    // by default, always use the root element (aka. body)
+    focusValue = JS_DupValue(ctx, argv[0]);
 
     return JS_UNDEFINED;
 }

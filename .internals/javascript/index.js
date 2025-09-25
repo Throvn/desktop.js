@@ -138,7 +138,6 @@ var GameBoard = /** @class */ (function () {
             }
         };
         this.handleMouseMove = function (event) {
-            console.log("test", event);
             var mouseX = event.layerX;
             var mouseY = event.layerY;
             var dx = mouseX - _this.lastMousePos.x;
@@ -211,7 +210,10 @@ var GameBoard = /** @class */ (function () {
                 top: 10
             }, onMouseOver: this.handleMouseMove, "$width": 350 },
             GUI.createElement("spacer", null),
-            GUI.createElement("vStack", null,
+            GUI.createElement("vStack", { onFocusIn: function (e) {
+                    console.log("Focused!");
+                    e.stopPropagation();
+                } },
                 "" + this.tick,
                 GUI.createElement("hStack", { "$backgroundColor": "#4d4a55", "$padding": {
                         horizontal: 48,
