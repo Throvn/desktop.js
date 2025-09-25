@@ -2,38 +2,18 @@
 #include <stdlib.h>
 #include "../debug.h"
 
-#define STOP_PROPAGATION_NONE 0
-#define STOP_PROPAGATION_MOUSE_UP 1 << 0
-#define STOP_PROPAGATION_MOUSE_OVER 1 << 1
-#define STOP_PROPAGATION_MOUSE_DOWN 1 << 2
-#define STOP_PROPAGATION_FOCUS_IN 1 << 3
-#define STOP_PROPAGATION_FOCUS_OUT 1 << 4
-
 static JSValue createMouseEvent(JSContext *ctx, const char *type)
 {
+    JSValue mouseEvent = createEvent(ctx);
     JSValue global = JS_GetGlobalObject(ctx);
     JSValue eventConstructorFunc = JS_GetPropertyStr(ctx, global, "Event");
-    JSValue mouseEvent = JS_NewObject(ctx);
-
-    // Add altKey property
-    int isAltKeyPressed = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
-    JSValue isAltKeyPressedJSValue = JS_NewBool(ctx, isAltKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "altKey", isAltKeyPressedJSValue);
-
-    int isShiftKeyPressed = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
-    JSValue isShiftKeyPressedJSValue = JS_NewBool(ctx, isShiftKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "shiftKey", isShiftKeyPressedJSValue);
-
-    int isCtrlKeyPressed = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
-    JSValue isCtrlKeyPressedJSValue = JS_NewBool(ctx, isCtrlKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "ctrlKey", isCtrlKeyPressedJSValue);
 
     // Add coordinates
     Vector2 screenMousePosition = GetMousePosition();
     JSValue xScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.x);
-    JS_SetPropertyStr(ctx, mouseEvent, "layerX", xScreenCoordinate);
+    JS_DefinePropertyValueStr(ctx, mouseEvent, "layerX", xScreenCoordinate, 0);
     JSValue yScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.y);
-    JS_SetPropertyStr(ctx, mouseEvent, "layerY", yScreenCoordinate);
+    JS_DefinePropertyValueStr(ctx, mouseEvent, "layerY", yScreenCoordinate, 0);
 
     JSValue eventType = JS_NewString(ctx, type);
     JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 1, &eventType);
