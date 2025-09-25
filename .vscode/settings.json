@@ -28,7 +28,9 @@
     "map": "c",
     "set": "c",
     "unordered_set": "c",
-    "ios": "c"
+    "ios": "c",
+    "events.h": "c",
+    "keyboard.h": "c"
   },
   "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }

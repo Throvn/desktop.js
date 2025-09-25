@@ -4,4 +4,7 @@
 
 JSModuleDef *GUI_js_init_module(JSContext *ctx);
 
+extern JSValue rootValue;
+extern JSValue focusValue;
+
 #endif
