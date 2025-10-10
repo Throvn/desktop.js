@@ -171,9 +171,9 @@ class GameBoard {
                     $width={350}
                 >
                     <spacer />
-                    <vStack onFocusIn={(e) => {
-                        console.log("Focused!");
-                        e.stopPropagation();
+                    <vStack
+                    onKeyPress={(e) => {
+                        console.log(e);
                     }}>
                     {"" + this.tick}
                         <hStack
@@ -200,10 +200,6 @@ class GameBoard {
                             <img $height={100} data={this.imageData} onMouseUp={(e) => {
                                 // e.stopPropagation();
                                 console.log("Hidden Text Mouse Up");
-                            }} onMouseOver={(e) => {
-                                // e.stopPropagation();
-                                const isEvent = e instanceof Event;
-                                console.log("Image mouse over!", isEvent);
                             }}>
                                 <text $backgroundColor="green" $height={100}>This image is not yet rendered! Lorem ipsum dolor sit amet consectetur adipisicing elit. A sapiente quibusdam consequuntur quo explicabo vero blanditiis consectetur ratione laborum, sint dicta reprehenderit aliquam quia quod delectus illo perferendis ipsa debitis?</text>
                             </img>

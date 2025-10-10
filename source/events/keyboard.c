@@ -1,30 +1,6 @@
 #include "events.h"
 #include "keyboard.h"
-
-static JSValue createKeypressEvent(JSContext *ctx, const char *type)
-{
-    JSValue mouseEvent = createEvent(ctx);
-    JSValue global = JS_GetGlobalObject(ctx);
-    JSValue eventConstructorFunc = JS_GetPropertyStr(ctx, global, "Event");
-
-    // Add coordinates
-    Vector2 screenMousePosition = GetMousePosition();
-    JSValue xScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.x);
-    JS_SetPropertyStr(ctx, mouseEvent, "layerX", xScreenCoordinate);
-    JSValue yScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.y);
-    JS_SetPropertyStr(ctx, mouseEvent, "layerY", yScreenCoordinate);
-
-    JSValue eventType = JS_NewString(ctx, type);
-    JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 1, &eventType);
-    JS_SetPrototype(ctx, mouseEvent, event);
-
-    JS_FreeValue(ctx, global);
-    JS_FreeValue(ctx, eventConstructorFunc);
-    JS_FreeValue(ctx, eventType);
-    JS_FreeValue(ctx, event);
-
-    return mouseEvent;
-}
+#include "../gui/draw.h"
 
 void EVENT_HandleKeypresses(JSContext *ctx)
 {
@@ -38,14 +14,22 @@ void EVENT_HandleKeypresses(JSContext *ctx)
     if (!GUI_IsElement(ctx, focusValue))
         return;
 
-    JSValue keyPressFunc = JS_GetPropertyStr(ctx, focusValue, "onKeyPress");
+    JSValue props = JS_GetPropertyStr(ctx, focusValue, "props");
+    JSValue keyPressFunc = JS_GetPropertyStr(ctx, props, "onKeyPress");
+    JS_FreeValue(ctx, props);
     if (!JS_IsFunction(ctx, keyPressFunc))
     {
         JS_FreeValue(ctx, keyPressFunc);
         return;
     }
 
-    JS_Call(ctx, keyPressFunc, JS_UNDEFINED, 0, &JS_UNDEFINED);
+    JSValue event = createEvent(ctx);
+
+    JSValue keyCodeValue = JS_NewInt32(ctx, keyCode);
+    JS_DefinePropertyValueStr(ctx, event, "code", keyCodeValue, 0);
+
+    JSValue ret = JS_Call(ctx, keyPressFunc, JS_UNDEFINED, 1, &event);
 
     JS_FreeValue(ctx, keyPressFunc);
+    JS_FreeValue(ctx, ret);
 }
