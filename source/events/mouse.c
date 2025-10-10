@@ -16,13 +16,12 @@ static JSValue createMouseEvent(JSContext *ctx, const char *type)
     JS_DefinePropertyValueStr(ctx, mouseEvent, "layerY", yScreenCoordinate, 0);
 
     JSValue eventType = JS_NewString(ctx, type);
-    JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 1, &eventType);
-    JS_SetPrototype(ctx, mouseEvent, event);
+    JSValue eventPrototype = JS_GetPropertyStr(ctx, eventConstructorFunc, "prototype");
+    JS_SetPrototype(ctx, mouseEvent, eventPrototype);
 
     JS_FreeValue(ctx, global);
     JS_FreeValue(ctx, eventConstructorFunc);
     JS_FreeValue(ctx, eventType);
-    JS_FreeValue(ctx, event);
 
     return mouseEvent;
 }
@@ -167,25 +166,6 @@ static void EVENT_OnMouseDown(JSContext *ctx, JSValueConst element, int *stopPro
     JS_FreeValue(ctx, mouseDownFunc);
 }
 
-static void EVENT_OnFocusOut(JSContext *ctx, JSValueConst element, int *stopPropagations)
-{
-    if (*stopPropagations == STOP_PROPAGATION_FOCUS_IN)
-        return;
-
-    JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    JSValue focusOutFunc = JS_GetPropertyStr(ctx, props, "onFocusOut");
-    JS_FreeValue(ctx, props);
-
-    if (!JS_IsFunction(ctx, focusOutFunc))
-    {
-        JS_FreeValue(ctx, focusOutFunc);
-        return;
-    }
-
-    EVENT_InvokeCallback(ctx, element, focusOutFunc, STOP_PROPAGATION_FOCUS_OUT, stopPropagations);
-    JS_FreeValue(ctx, focusOutFunc);
-}
-
 static void EVENT_OnFocusIn(JSContext *ctx, JSValueConst element, int *stopPropagations)
 {
     if (*stopPropagations == STOP_PROPAGATION_FOCUS_IN)
@@ -208,10 +188,6 @@ static void EVENT_OnFocusIn(JSContext *ctx, JSValueConst element, int *stopPropa
         JS_FreeValue(ctx, focusInFunc);
         return;
     }
-    // Replace focus value.
-    EVENT_OnFocusOut(ctx, focusValue, stopPropagations);
-    JS_FreeValue(ctx, focusValue);
-    focusValue = JS_DupValue(ctx, element);
 
     // Call focusIn event (after focusOut of old element).
     EVENT_InvokeCallback(ctx, element, focusInFunc, STOP_PROPAGATION_FOCUS_IN, stopPropagations);
@@ -247,73 +223,4 @@ void EVENT_TriggerMouseEvents(JSContext *ctx, JSValueConst element, int *stopPro
     EVENT_OnMouseDown(ctx, element, stopPropagations);
     EVENT_OnFocusIn(ctx, element, stopPropagations);
     EVENT_OnMouseUp(ctx, element, stopPropagations);
-}
-
-JSValue findElementByKey(JSContext *ctx, JSValueConst element, uint32_t id)
-{
-    uint32_t key = GUI_GetKey(ctx, element);
-    if (key == id)
-        return JS_DupValue(ctx, element);
-
-    JSValue renderChild = JS_GetPropertyStr(ctx, element, "_renderChild");
-    if (GUI_IsElement(ctx, renderChild))
-    {
-        JSValue found = findElementByKey(ctx, renderChild, id);
-        JS_FreeValue(ctx, renderChild);
-        return found;
-    }
-    JS_FreeValue(ctx, renderChild);
-
-    JSValue children = GUI_GetChildren(ctx, element);
-    int childrenLength = GUI_GetLength(ctx, children);
-    for (int i = 0; i < childrenLength; i++)
-    {
-        JSValue child = JS_GetPropertyUint32(ctx, children, i);
-        JSValue found = findElementByKey(ctx, child, id);
-        if (!JS_IsUndefined(found))
-        {
-            JS_FreeValue(ctx, children);
-            JS_FreeValue(ctx, child);
-            return found;
-        }
-        JS_FreeValue(ctx, child);
-    }
-    JS_FreeValue(ctx, children);
-
-    return JS_UNDEFINED;
-}
-
-/// Call once per c event loop execution.
-/// Gets all Clay_ElementId s and calls the correct JS callbacks for the elements.
-void EVENT_HandleMouseEvents(JSContext *ctx)
-{
-    if (!GUI_IsElement(ctx, rootValue))
-        return;
-
-    Clay_ElementIdArray ids = Clay_GetPointerOverIds();
-
-    JSValue *elementChain = calloc(ids.length + 1, sizeof(JSValue));
-    elementChain[0] = JS_DupValue(ctx, rootValue);
-    int elementChainLength = 1;
-    for (int32_t i = 0; i < ids.length; i++)
-    {
-        uint32_t id = ids.internalArray[i].offset;
-        JSValue element = findElementByKey(ctx, elementChain[elementChainLength - 1], id);
-        if (GUI_IsElement(ctx, element))
-        {
-            elementChain[elementChainLength] = element;
-            elementChainLength += 1;
-            continue;
-        }
-        JS_FreeValue(ctx, element);
-    }
-
-    int stopPropagations = STOP_PROPAGATION_NONE;
-    for (int32_t i = elementChainLength - 1; i >= 0; i--)
-    {
-        EVENT_TriggerMouseEvents(ctx, elementChain[i], &stopPropagations);
-        JS_FreeValue(ctx, elementChain[i]);
-    }
-
-    free(elementChain);
 }

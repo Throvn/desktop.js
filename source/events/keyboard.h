@@ -3,6 +3,7 @@
 
 #include "quickjs.h"
 #include "raylib.h"
-#include "js.h"
+
+void EVENT_HandleKeypresses(JSContext *ctx);
 
 #endif

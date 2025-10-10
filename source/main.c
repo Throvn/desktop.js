@@ -9,6 +9,7 @@
 #include "gui/js.h"
 #include "gui/draw.h"
 #include "events/mouse.h"
+#include "events/keyboard.h"
 #include "debug.h"
 #include "platform.h"
 
@@ -44,7 +45,7 @@ void idleCallback(uv_idle_t *handle)
     DrawFPS(10, 10);
     EndDrawing();
 
-    EVENT_HandleMouseEvents(ctx);
+    EVENT_HandleEvents(ctx);
 }
 
 void HandleClayErrors(Clay_ErrorData errorData)

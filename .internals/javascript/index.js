@@ -210,9 +210,8 @@ var GameBoard = /** @class */ (function () {
                 top: 10
             }, onMouseOver: this.handleMouseMove, "$width": 350 },
             GUI.createElement("spacer", null),
-            GUI.createElement("vStack", { onFocusIn: function (e) {
-                    console.log("Focused!");
-                    e.stopPropagation();
+            GUI.createElement("vStack", { onKeyPress: function (e) {
+                    console.log(e);
                 } },
                 "" + this.tick,
                 GUI.createElement("hStack", { "$backgroundColor": "#4d4a55", "$padding": {
@@ -233,10 +232,6 @@ var GameBoard = /** @class */ (function () {
                     GUI.createElement("img", { "$height": 100, data: this.imageData, onMouseUp: function (e) {
                             // e.stopPropagation();
                             console.log("Hidden Text Mouse Up");
-                        }, onMouseOver: function (e) {
-                            // e.stopPropagation();
-                            var isEvent = e instanceof Event;
-                            console.log("Image mouse over!", isEvent);
                         } },
                         GUI.createElement("text", { "$backgroundColor": "green", "$height": 100 }, "This image is not yet rendered! Lorem ipsum dolor sit amet consectetur adipisicing elit. A sapiente quibusdam consequuntur quo explicabo vero blanditiis consectetur ratione laborum, sint dicta reprehenderit aliquam quia quod delectus illo perferendis ipsa debitis?")),
                     this.hideText ? 'Hideen' : GUI.createElement("img", { "$height": 100, data: this.imageData, onMouseUp: function (e) {
