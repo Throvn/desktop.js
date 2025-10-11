@@ -9,6 +9,7 @@
 #include "gui/js.h"
 #include "gui/draw.h"
 #include "events/mouse.h"
+#include "events/keyboard.h"
 #include "debug.h"
 #include "platform.h"
 
@@ -44,7 +45,7 @@ void idleCallback(uv_idle_t *handle)
     DrawFPS(10, 10);
     EndDrawing();
 
-    EVENT_HandleMouseEvents(ctx);
+    EVENT_HandleEvents(ctx);
 }
 
 void HandleClayErrors(Clay_ErrorData errorData)
@@ -75,13 +76,16 @@ int main(int argc, const char **argv)
     Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, clayArenaMemory);
 
     SetTraceLogLevel(LOG_ERROR);
-    Clay_Raylib_Initialize(500, 300, "Desktop.js", FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
+    Clay_Raylib_Initialize(500, 300, "Desktop.js", FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
     SetWindowOpacity(0);
 
     // Note: screenWidth and screenHeight will need to come from your environment, Clay doesn't handle window related tasks
     Clay_Initialize(arena, (Clay_Dimensions){GetScreenWidth(), GetScreenHeight()}, (Clay_ErrorHandler){HandleClayErrors});
     Font font = GetFontDefault();
     Clay_SetMeasureTextFunction(Raylib_MeasureText, &font);
+
+    SetWindowSize(GetScreenWidth() - 1, GetScreenHeight() - 1);
+    SetWindowSize(GetScreenWidth() + 1, GetScreenHeight() + 1);
 
     TJS_RunWithIdleCallback(qrt, idleCallback);
 
