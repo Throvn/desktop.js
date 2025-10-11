@@ -15,9 +15,11 @@ class RedBox {
         return <vStack
             $backgroundColor={this.hasFocus ? "blue" : "gray"} 
             onFocusIn={(e) => {
+                console.log("JS: Focus In")
                 this.hasFocus = true
             }}
             onFocusOut={(e) => {
+                console.log("JS: Focus Out")
                 this.hasFocus = false
             }}
             onKeyPress={(e) => {
