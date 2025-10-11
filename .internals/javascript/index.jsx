@@ -173,7 +173,7 @@ class GameBoard {
                     <spacer />
                     <vStack
                     onKeyPress={(e) => {
-                        console.log(e);
+                        console.log(e.key, e.code);
                     }}>
                     {"" + this.tick}
                         <hStack

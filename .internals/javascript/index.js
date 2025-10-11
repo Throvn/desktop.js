@@ -211,7 +211,7 @@ var GameBoard = /** @class */ (function () {
             }, onMouseOver: this.handleMouseMove, "$width": 350 },
             GUI.createElement("spacer", null),
             GUI.createElement("vStack", { onKeyPress: function (e) {
-                    console.log(e);
+                    console.log(e.key, e.code);
                 } },
                 "" + this.tick,
                 GUI.createElement("hStack", { "$backgroundColor": "#4d4a55", "$padding": {
