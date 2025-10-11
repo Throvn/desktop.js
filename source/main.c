@@ -84,6 +84,9 @@ int main(int argc, const char **argv)
     Font font = GetFontDefault();
     Clay_SetMeasureTextFunction(Raylib_MeasureText, &font);
 
+    SetWindowSize(GetScreenWidth() - 1, GetScreenHeight() - 1);
+    SetWindowSize(GetScreenWidth() + 1, GetScreenHeight() + 1);
+
     TJS_RunWithIdleCallback(qrt, idleCallback);
 
     JSRuntime *rt = JS_GetRuntime(ctx);
