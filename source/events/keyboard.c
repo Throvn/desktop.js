@@ -4,7 +4,7 @@
 
 void EVENT_HandleKeypresses(JSContext *ctx)
 {
-    int keyCode = GetKeyPressed();
+    int keyCode = GetCharPressed();
 
     // If no key was pressed
     if (!keyCode)
@@ -28,8 +28,14 @@ void EVENT_HandleKeypresses(JSContext *ctx)
     JSValue keyCodeValue = JS_NewInt32(ctx, keyCode);
     JS_DefinePropertyValueStr(ctx, event, "code", keyCodeValue, 0);
 
+    char keyC = (char)keyCode;
+    char str[] = {keyC, '\0'};
+    JSValue keyValue = JS_NewString(ctx, &str);
+    JS_DefinePropertyValueStr(ctx, event, "key", keyValue, 0);
+
     JSValue ret = JS_Call(ctx, keyPressFunc, JS_UNDEFINED, 1, &event);
 
+    JS_FreeValue(ctx, event);
     JS_FreeValue(ctx, keyPressFunc);
     JS_FreeValue(ctx, ret);
 }
