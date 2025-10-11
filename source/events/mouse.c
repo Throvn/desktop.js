@@ -163,6 +163,13 @@ static void EVENT_OnMouseDown(JSContext *ctx, JSValueConst element, int *stopPro
 
     EVENT_InvokeCallback(ctx, element, mouseDownFunc, STOP_PROPAGATION_MOUSE_DOWN, stopPropagations);
 
+    // make this the new focused element.
+    if (EVENT_IsElementFocusable(ctx, element))
+    {
+        JS_FreeValue(ctx, focusValue);
+        focusValue = JS_DupValue(ctx, element);
+    }
+
     JS_FreeValue(ctx, mouseDownFunc);
 }
 

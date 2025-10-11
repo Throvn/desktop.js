@@ -3,6 +3,8 @@
 #include "keyboard.h"
 #include "mouse.h"
 
+int EVENT_CYCLE = 0;
+
 /// @brief Creates a plain JS object with alt, shift & ctrl pressed properties (which is needed as a base for lots of events)
 /// @param ctx
 JSValue createEvent(JSContext *ctx)
@@ -75,7 +77,7 @@ void EVENT_HandleEvents(JSContext *ctx)
     for (int32_t i = 0; i < ids.length; i++)
     {
         uint32_t id = ids.internalArray[i].offset;
-        JSValue element = findElementByKey(ctx, elementChain[elementChainLength - 1], id);
+        JSValue element = findElementByKey(ctx, rootValue, id);
         if (GUI_IsElement(ctx, element))
         {
             elementChain[elementChainLength] = element;
@@ -91,13 +93,6 @@ void EVENT_HandleEvents(JSContext *ctx)
         JSValue element = elementChain[i];
         EVENT_TriggerMouseEvents(ctx, element, &stopPropagations);
 
-        // Replace focus value.
-        if (EVENT_IsElementFocusable(ctx, element))
-        {
-            JS_FreeValue(ctx, focusValue);
-            focusValue = JS_DupValue(ctx, element);
-        }
-
         JS_FreeValue(ctx, elementChain[i]);
     }
     EVENT_HandleKeypresses(ctx);
@@ -107,12 +102,15 @@ void EVENT_HandleEvents(JSContext *ctx)
 
 /// @brief Determines if the given element can be stored as the current focus element.
 /// @brief An element CAN be focused (but is not limited to) if e.g. it listens for keyboard events or has a onFocus* callback.
+/// @todo Check if this function has still a good purpose.
 bool EVENT_IsElementFocusable(JSContext *ctx, JSValue element)
 {
     char *neededProps[] = {
         "onKeyPress",
         "onFocusIn",
         "onFocusOut",
+        "onMouseUp",
+        "onMouseDown",
     };
     int neededPropsLength = sizeof(neededProps) / sizeof(neededProps[0]);
 
