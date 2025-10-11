@@ -14,11 +14,11 @@ class RedBox {
     render() {
         return <vStack
             $backgroundColor={this.hasFocus ? "blue" : "gray"} 
-            onFocusIn={(e) => {
+            onFocus={(e) => {
                 this.hasFocus = true
                 console.log("Focus In", this.props.children)
             }}
-            onFocusOut={(e) => {
+            onBlur={(e) => {
                 this.hasFocus = false
                 console.log("Focus Out",this.props.children)
             }}

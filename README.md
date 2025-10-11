@@ -252,6 +252,41 @@ It is called once per frame and tries to mimic the [MouseOver JS event](https://
 ></text>
 ```
 
+#### `onFocus`
+
+The focus event is called when an element **gains** focus. This predominantly happens when the element is clicked. A focused element can receive e.g. keyboard input.
+
+The event does **not** bubble.
+
+If the focused element loses focus, the `onBlur` will tell you.
+
+##### Example
+
+```jsx
+<vStack
+  onFocus={() => {
+    console.log("This element received focus!");
+  }}
+></vStack>
+```
+
+#### `onBlur`
+
+Think of this event as the opposite to `onFocus`.
+The blur event is called when an element **loses** focus.
+
+The event does **not** bubble.
+
+##### Example
+
+```jsx
+<vStack
+  onBlur={() => {
+    console.log("ANOTHER element just received focus!");
+  }}
+></vStack>
+```
+
 ##### Event Props
 
 - `layerX` x position in pixels relative to the window.
