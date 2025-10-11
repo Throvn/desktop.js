@@ -252,6 +252,36 @@ It is called once per frame and tries to mimic the [MouseOver JS event](https://
 ></text>
 ```
 
+#### `onKeyPress`
+
+This event fires when the element is the current focus and a key was pressed.
+
+The values of the `key` property are a subset of the list you can find [here](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values#browser_control_keys).
+
+##### Event Props
+
+- `code` integer determining the pressed key code
+- `key` string representation of the pressed key. E.g. 'a' or 'A' or 'Backspace'...
+- `altKey` boolean indicating if the **alt key** was pressed.
+- `ctrlKey` boolean indicating if the **control key** was pressed.
+- `shiftKey` boolean indicating if the **shift key** was pressed.
+
+##### Example
+
+```jsx
+<vStack
+  onKeyPress={(event) => {
+    console.log(
+      "The key '" +
+        event.key +
+        "' with the code '" +
+        event.code +
+        "' was pressed!"
+    );
+  }}
+></vStack>
+```
+
 #### `onFocus`
 
 The focus event is called when an element **gains** focus. This predominantly happens when the element is clicked. A focused element can receive e.g. keyboard input.
