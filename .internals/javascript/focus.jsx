@@ -1,6 +1,6 @@
 /**
  * This program should display two boxes (left to right). If you click on the first one, it should have a red border, because it's focused. If you click on the second one, it should have a red border and the first one shouldn't have a border anymore.
- * The boxes also capture keyboard input.
+ * The boxes also capture keyboard input and display it.
  */
 
 import * as GUI from "GUI"
@@ -12,10 +12,21 @@ class RedBox {
     }
 
     render() {
-        return <vStack $backgroundColor={this.color} onKeyPress={(e) => {
-            this.text += e.key
-            this.color = "tomato"
-        }}>{this.text || this.props.children}</vStack>
+        return <vStack
+            $backgroundColor={this.hasFocus ? "blue" : "gray"} 
+            onFocusIn={(e) => {
+                this.hasFocus = true
+            }}
+            onFocusOut={(e) => {
+                this.hasFocus = false
+            }}
+            onKeyPress={(e) => {
+                this.text += e.key
+                this.color = "tomato"
+            }}
+            >
+            {this.text || this.props.children}
+        </vStack>
     }
 }
 
