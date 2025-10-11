@@ -126,6 +126,11 @@ static void EVENT_InvokeCallback(JSContext *ctx, JSValueConst element, JSValueCo
 
 static void EVENT_OnBlur(JSContext *ctx, JSValueConst element, int *stopPropagations)
 {
+    int elementKey = GUI_GetKey(ctx, element);
+    int focusKey = GUI_GetKey(ctx, focusValue);
+    if (elementKey != focusKey)
+        return;
+
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
     JSValue focusOutFunc = JS_GetPropertyStr(ctx, props, "onFocusOut");
     JS_FreeValue(ctx, props);
@@ -172,9 +177,6 @@ static void EVENT_OnMouseDown(JSContext *ctx, JSValueConst element, int *stopPro
 
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
 
-    // Make the current focused element blur.
-    EVENT_OnBlur(ctx, focusValue, stopPropagations);
-
     JSValue mouseDownFunc = JS_GetPropertyStr(ctx, props, "onMouseDown");
     JS_FreeValue(ctx, props);
     if (!JS_IsFunction(ctx, mouseDownFunc))
@@ -199,7 +201,6 @@ static void EVENT_OnFocus(JSContext *ctx, JSValueConst element, int *stopPropaga
 
     int elementKey = GUI_GetKey(ctx, element);
     int focusKey = GUI_GetKey(ctx, focusValue);
-    printf("a %d, b %d\n", elementKey, focusKey);
     *stopPropagations |= STOP_PROPAGATION_FOCUS;
     if (elementKey == focusKey)
         return;
@@ -207,6 +208,7 @@ static void EVENT_OnFocus(JSContext *ctx, JSValueConst element, int *stopPropaga
     // make this the new focused element.
     if (EVENT_IsElementFocusable(ctx, element))
     {
+        EVENT_OnBlur(ctx, focusValue, stopPropagations);
         JS_FreeValue(ctx, focusValue);
         focusValue = JS_DupValue(ctx, element);
     }
