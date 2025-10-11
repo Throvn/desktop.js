@@ -132,7 +132,7 @@ static void EVENT_OnBlur(JSContext *ctx, JSValueConst element, int *stopPropagat
         return;
 
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    JSValue focusOutFunc = JS_GetPropertyStr(ctx, props, "onFocusOut");
+    JSValue focusOutFunc = JS_GetPropertyStr(ctx, props, "onBlur");
     JS_FreeValue(ctx, props);
 
     if (!JS_IsFunction(ctx, focusOutFunc))
@@ -143,6 +143,43 @@ static void EVENT_OnBlur(JSContext *ctx, JSValueConst element, int *stopPropagat
 
     EVENT_InvokeCallback(ctx, element, focusOutFunc, STOP_PROPAGATION_BLUR, stopPropagations);
     JS_FreeValue(ctx, focusOutFunc);
+}
+
+static void EVENT_OnFocus(JSContext *ctx, JSValueConst element, int *stopPropagations)
+{
+    if (*stopPropagations & STOP_PROPAGATION_FOCUS)
+        return;
+
+    int releasedButton = EVENT_GetButtonReleased();
+    if (releasedButton == -1)
+        return;
+
+    int elementKey = GUI_GetKey(ctx, element);
+    int focusKey = GUI_GetKey(ctx, focusValue);
+    *stopPropagations |= STOP_PROPAGATION_FOCUS;
+    if (elementKey == focusKey)
+        return;
+
+    // make this the new focused element.
+    if (EVENT_IsElementFocusable(ctx, element))
+    {
+        EVENT_OnBlur(ctx, focusValue, stopPropagations);
+        JS_FreeValue(ctx, focusValue);
+        focusValue = JS_DupValue(ctx, element);
+    }
+
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    JSValue focusInFunc = JS_GetPropertyStr(ctx, props, "onFocus");
+    JS_FreeValue(ctx, props);
+    if (!JS_IsFunction(ctx, focusInFunc))
+    {
+        JS_FreeValue(ctx, focusInFunc);
+        return;
+    }
+
+    // Call focusIn event (after focusOut of old element).
+    JS_Call(ctx, focusInFunc, JS_UNDEFINED, 0, &JS_UNDEFINED);
+    JS_FreeValue(ctx, focusInFunc);
 }
 
 static void EVENT_OnMouseOver(JSContext *ctx, JSValueConst element, int *stopPropagations)
@@ -188,43 +225,6 @@ static void EVENT_OnMouseDown(JSContext *ctx, JSValueConst element, int *stopPro
     EVENT_InvokeCallback(ctx, element, mouseDownFunc, STOP_PROPAGATION_MOUSE_DOWN, stopPropagations);
 
     JS_FreeValue(ctx, mouseDownFunc);
-}
-
-static void EVENT_OnFocus(JSContext *ctx, JSValueConst element, int *stopPropagations)
-{
-    if (*stopPropagations & STOP_PROPAGATION_FOCUS)
-        return;
-
-    int releasedButton = EVENT_GetButtonReleased();
-    if (releasedButton == -1)
-        return;
-
-    int elementKey = GUI_GetKey(ctx, element);
-    int focusKey = GUI_GetKey(ctx, focusValue);
-    *stopPropagations |= STOP_PROPAGATION_FOCUS;
-    if (elementKey == focusKey)
-        return;
-
-    // make this the new focused element.
-    if (EVENT_IsElementFocusable(ctx, element))
-    {
-        EVENT_OnBlur(ctx, focusValue, stopPropagations);
-        JS_FreeValue(ctx, focusValue);
-        focusValue = JS_DupValue(ctx, element);
-    }
-
-    JSValue props = JS_GetPropertyStr(ctx, element, "props");
-    JSValue focusInFunc = JS_GetPropertyStr(ctx, props, "onFocusIn");
-    JS_FreeValue(ctx, props);
-    if (!JS_IsFunction(ctx, focusInFunc))
-    {
-        JS_FreeValue(ctx, focusInFunc);
-        return;
-    }
-
-    // Call focusIn event (after focusOut of old element).
-    EVENT_InvokeCallback(ctx, element, focusInFunc, STOP_PROPAGATION_FOCUS, stopPropagations);
-    JS_FreeValue(ctx, focusInFunc);
 }
 
 static void EVENT_OnMouseUp(JSContext *ctx, JSValueConst element, int *stopPropagations)

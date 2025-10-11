@@ -107,8 +107,8 @@ bool EVENT_IsElementFocusable(JSContext *ctx, JSValue element)
 {
     char *neededProps[] = {
         "onKeyPress",
-        "onFocusIn",
-        "onFocusOut",
+        "onFocus",
+        "onBlur",
         "onMouseUp",
         "onMouseDown",
     };

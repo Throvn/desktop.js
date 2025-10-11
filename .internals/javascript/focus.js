@@ -10,10 +10,10 @@ var RedBox = /** @class */ (function () {
     }
     RedBox.prototype.render = function () {
         var _this = this;
-        return GUI.createElement("vStack", { "$backgroundColor": this.hasFocus ? "blue" : "gray", onFocusIn: function (e) {
+        return GUI.createElement("vStack", { "$backgroundColor": this.hasFocus ? "blue" : "gray", onFocus: function (e) {
                 _this.hasFocus = true;
                 console.log("Focus In", _this.props.children);
-            }, onFocusOut: function (e) {
+            }, onBlur: function (e) {
                 _this.hasFocus = false;
                 console.log("Focus Out", _this.props.children);
             }, onKeyPress: function (e) {
