@@ -2,47 +2,26 @@
 #include <stdlib.h>
 #include "../debug.h"
 
-#define STOP_PROPAGATION_NONE 0
-#define STOP_PROPAGATION_MOUSE_UP 1 << 0
-#define STOP_PROPAGATION_MOUSE_OVER 1 << 1
-#define STOP_PROPAGATION_MOUSE_DOWN 1 << 2
-
-extern JSValue rootValue;
-
 static JSValue createMouseEvent(JSContext *ctx, const char *type)
 {
+    JSValue mouseEvent = createEvent(ctx);
     JSValue global = JS_GetGlobalObject(ctx);
     JSValue eventConstructorFunc = JS_GetPropertyStr(ctx, global, "Event");
-    JSValue mouseEvent = JS_NewObject(ctx);
-
-    // Add altKey property
-    int isAltKeyPressed = IsKeyDown(KEY_LEFT_ALT) || IsKeyDown(KEY_RIGHT_ALT);
-    JSValue isAltKeyPressedJSValue = JS_NewBool(ctx, isAltKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "altKey", isAltKeyPressedJSValue);
-
-    int isShiftKeyPressed = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
-    JSValue isShiftKeyPressedJSValue = JS_NewBool(ctx, isShiftKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "shiftKey", isShiftKeyPressedJSValue);
-
-    int isCtrlKeyPressed = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
-    JSValue isCtrlKeyPressedJSValue = JS_NewBool(ctx, isCtrlKeyPressed);
-    JS_SetPropertyStr(ctx, mouseEvent, "ctrlKey", isCtrlKeyPressedJSValue);
 
     // Add coordinates
     Vector2 screenMousePosition = GetMousePosition();
     JSValue xScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.x);
-    JS_SetPropertyStr(ctx, mouseEvent, "layerX", xScreenCoordinate);
+    JS_DefinePropertyValueStr(ctx, mouseEvent, "layerX", xScreenCoordinate, 0);
     JSValue yScreenCoordinate = JS_NewInt32(ctx, screenMousePosition.y);
-    JS_SetPropertyStr(ctx, mouseEvent, "layerY", yScreenCoordinate);
+    JS_DefinePropertyValueStr(ctx, mouseEvent, "layerY", yScreenCoordinate, 0);
 
     JSValue eventType = JS_NewString(ctx, type);
-    JSValue event = JS_CallConstructor(ctx, eventConstructorFunc, 1, &eventType);
-    JS_SetPrototype(ctx, mouseEvent, event);
+    JSValue eventPrototype = JS_GetPropertyStr(ctx, eventConstructorFunc, "prototype");
+    JS_SetPrototype(ctx, mouseEvent, eventPrototype);
 
     JS_FreeValue(ctx, global);
     JS_FreeValue(ctx, eventConstructorFunc);
     JS_FreeValue(ctx, eventType);
-    JS_FreeValue(ctx, event);
 
     return mouseEvent;
 }
@@ -104,6 +83,12 @@ static void EVENT_InvokeCallback(JSContext *ctx, JSValueConst element, JSValueCo
         eventType = "mouseup";
         pressedButton = EVENT_GetButtonReleased();
         break;
+    case STOP_PROPAGATION_FOCUS:
+        eventType = "focus";
+        break;
+    case STOP_PROPAGATION_BLUR:
+        eventType = "blur";
+        break;
     default:
         fprintf(stderr, "[Event_HandleStopPropagation] Unknown stop propagation state");
         exit(7);
@@ -137,6 +122,64 @@ static void EVENT_InvokeCallback(JSContext *ctx, JSValueConst element, JSValueCo
     JS_FreeValue(ctx, event);
     JS_FreeValue(ctx, ret);
     JS_FreeValue(ctx, stoppedValue);
+}
+
+static void EVENT_OnBlur(JSContext *ctx, JSValueConst element, int *stopPropagations)
+{
+    int elementKey = GUI_GetKey(ctx, element);
+    int focusKey = GUI_GetKey(ctx, focusValue);
+    if (elementKey != focusKey)
+        return;
+
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    JSValue focusOutFunc = JS_GetPropertyStr(ctx, props, "onBlur");
+    JS_FreeValue(ctx, props);
+
+    if (!JS_IsFunction(ctx, focusOutFunc))
+    {
+        JS_FreeValue(ctx, focusOutFunc);
+        return;
+    }
+
+    EVENT_InvokeCallback(ctx, element, focusOutFunc, STOP_PROPAGATION_BLUR, stopPropagations);
+    JS_FreeValue(ctx, focusOutFunc);
+}
+
+static void EVENT_OnFocus(JSContext *ctx, JSValueConst element, int *stopPropagations)
+{
+    if (*stopPropagations & STOP_PROPAGATION_FOCUS)
+        return;
+
+    int releasedButton = EVENT_GetButtonReleased();
+    if (releasedButton == -1)
+        return;
+
+    int elementKey = GUI_GetKey(ctx, element);
+    int focusKey = GUI_GetKey(ctx, focusValue);
+    *stopPropagations |= STOP_PROPAGATION_FOCUS;
+    if (elementKey == focusKey)
+        return;
+
+    // make this the new focused element.
+    if (EVENT_IsElementFocusable(ctx, element))
+    {
+        EVENT_OnBlur(ctx, focusValue, stopPropagations);
+        JS_FreeValue(ctx, focusValue);
+        focusValue = JS_DupValue(ctx, element);
+    }
+
+    JSValue props = JS_GetPropertyStr(ctx, element, "props");
+    JSValue focusInFunc = JS_GetPropertyStr(ctx, props, "onFocus");
+    JS_FreeValue(ctx, props);
+    if (!JS_IsFunction(ctx, focusInFunc))
+    {
+        JS_FreeValue(ctx, focusInFunc);
+        return;
+    }
+
+    // Call focusIn event (after focusOut of old element).
+    JS_Call(ctx, focusInFunc, JS_UNDEFINED, 0, &JS_UNDEFINED);
+    JS_FreeValue(ctx, focusInFunc);
 }
 
 static void EVENT_OnMouseOver(JSContext *ctx, JSValueConst element, int *stopPropagations)
@@ -186,7 +229,7 @@ static void EVENT_OnMouseDown(JSContext *ctx, JSValueConst element, int *stopPro
 
 static void EVENT_OnMouseUp(JSContext *ctx, JSValueConst element, int *stopPropagations)
 {
-    if (*stopPropagations == STOP_PROPAGATION_MOUSE_UP)
+    if (*stopPropagations & STOP_PROPAGATION_MOUSE_UP)
         return;
 
     int releasedButton = EVENT_GetButtonReleased();
@@ -211,74 +254,6 @@ void EVENT_TriggerMouseEvents(JSContext *ctx, JSValueConst element, int *stopPro
 {
     EVENT_OnMouseOver(ctx, element, stopPropagations);
     EVENT_OnMouseDown(ctx, element, stopPropagations);
+    EVENT_OnFocus(ctx, element, stopPropagations);
     EVENT_OnMouseUp(ctx, element, stopPropagations);
-}
-
-JSValue findElementByKey(JSContext *ctx, JSValueConst element, uint32_t id)
-{
-    uint32_t key = GUI_GetKey(ctx, element);
-    if (key == id)
-        return JS_DupValue(ctx, element);
-
-    JSValue renderChild = JS_GetPropertyStr(ctx, element, "_renderChild");
-    if (GUI_IsElement(ctx, renderChild))
-    {
-        JSValue found = findElementByKey(ctx, renderChild, id);
-        JS_FreeValue(ctx, renderChild);
-        return found;
-    }
-    JS_FreeValue(ctx, renderChild);
-
-    JSValue children = GUI_GetChildren(ctx, element);
-    int childrenLength = GUI_GetLength(ctx, children);
-    for (int i = 0; i < childrenLength; i++)
-    {
-        JSValue child = JS_GetPropertyUint32(ctx, children, i);
-        JSValue found = findElementByKey(ctx, child, id);
-        if (!JS_IsUndefined(found))
-        {
-            JS_FreeValue(ctx, children);
-            JS_FreeValue(ctx, child);
-            return found;
-        }
-        JS_FreeValue(ctx, child);
-    }
-    JS_FreeValue(ctx, children);
-
-    return JS_UNDEFINED;
-}
-
-/// Call once per c event loop execution.
-/// Gets all Clay_ElementId s and calls the correct JS callbacks for the elements.
-void EVENT_HandleMouseEvents(JSContext *ctx)
-{
-    if (!GUI_IsElement(ctx, rootValue))
-        return;
-
-    Clay_ElementIdArray ids = Clay_GetPointerOverIds();
-
-    JSValue *elementChain = calloc(ids.length + 1, sizeof(JSValue));
-    elementChain[0] = JS_DupValue(ctx, rootValue);
-    int elementChainLength = 1;
-    for (int32_t i = 0; i < ids.length; i++)
-    {
-        uint32_t id = ids.internalArray[i].offset;
-        JSValue element = findElementByKey(ctx, elementChain[elementChainLength - 1], id);
-        if (GUI_IsElement(ctx, element))
-        {
-            elementChain[elementChainLength] = element;
-            elementChainLength += 1;
-            continue;
-        }
-        JS_FreeValue(ctx, element);
-    }
-
-    int stopPropagations = STOP_PROPAGATION_NONE;
-    for (int32_t i = elementChainLength - 1; i >= 0; i--)
-    {
-        EVENT_TriggerMouseEvents(ctx, elementChain[i], &stopPropagations);
-        JS_FreeValue(ctx, elementChain[i]);
-    }
-
-    free(elementChain);
 }

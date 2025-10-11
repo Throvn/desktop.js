@@ -106,7 +106,6 @@ class GameBoard {
     }
 
     handleMouseMove = (event) => {
-        console.log("test", event);
         const mouseX = event.layerX;
         const mouseY = event.layerY;
 
@@ -172,7 +171,10 @@ class GameBoard {
                     $width={350}
                 >
                     <spacer />
-                    <vStack>
+                    <vStack
+                    onKeyPress={(e) => {
+                        console.log(e.key, e.code);
+                    }}>
                     {"" + this.tick}
                         <hStack
                             $backgroundColor="#4d4a55" 
@@ -198,10 +200,6 @@ class GameBoard {
                             <img $height={100} data={this.imageData} onMouseUp={(e) => {
                                 // e.stopPropagation();
                                 console.log("Hidden Text Mouse Up");
-                            }} onMouseOver={(e) => {
-                                // e.stopPropagation();
-                                const isEvent = e instanceof Event;
-                                console.log("Image mouse over!", isEvent);
                             }}>
                                 <text $backgroundColor="green" $height={100}>This image is not yet rendered! Lorem ipsum dolor sit amet consectetur adipisicing elit. A sapiente quibusdam consequuntur quo explicabo vero blanditiis consectetur ratione laborum, sint dicta reprehenderit aliquam quia quod delectus illo perferendis ipsa debitis?</text>
                             </img>

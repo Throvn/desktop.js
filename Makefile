@@ -15,7 +15,9 @@ SOURCE_FILES = source/debug.c \
 			source/gui/styles.c \
 			source/renderer/reconcile.c \
 			source/gui/draw.c \
+			source/events/events.c \
 			source/events/mouse.c \
+			source/events/keyboard.c \
 			source/platform.c \
 			source/main.c
 
