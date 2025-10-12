@@ -82,8 +82,9 @@ static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
 
 static JSValue GUI_ToStringElement(JSContext *ctx, JSValue string)
 {
-    if (!JS_IsString(string) && !JS_IsUndefined(string))
+    if (!JS_IsString(string) && !JS_IsUndefined(string) && !JS_IsNull(string) && !JS_IsNumber(string))
     {
+        printf("Cannot turn '%s' to string\n", JS_ToCString(ctx, string));
         exit(6);
     }
 
@@ -107,7 +108,7 @@ static JSValue GUI_CreateBuiltInElement(JSContext *ctx, int argc, JSValueConst *
     for (int i = 0; i < argc - 2; i++)
     {
         JSValue child = JS_DupValue(ctx, argv[2 + i]);
-        if (JS_IsString(argv[2 + i]) || JS_IsUndefined(argv[2 + i]))
+        if (JS_IsString(argv[2 + i]) || JS_IsUndefined(argv[2 + i]) || JS_IsNull(argv[2 + i]) || JS_IsNumber(argv[2 + i]))
         {
             child = GUI_ToStringElement(ctx, child);
         }

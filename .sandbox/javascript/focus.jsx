@@ -30,7 +30,6 @@ class RedBox {
                 this.color = "tomato"
             }}
             >
-            <text $fontFace="Roboto-Regular.ttf">{undefined}</text>
             <text>{this.text || this.props.children}</text>
         </vStack>
     }
