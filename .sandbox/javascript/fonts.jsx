@@ -6,8 +6,10 @@ import * as GUI from "GUI"
 
 GUI.render(<vStack>
     <spacer />
-    <text>This is the default font!</text>
+    <text $fontFace="default">This is the default font!</text>
     <spacer />
-    <text>This is Roboto Regular!</text>
+    <text $fontFace="Roboto-Regular.ttf">This is Roboto Regular!</text>
+    <spacer />
+    <text $fontFace="Monaspace-Krypton.ttf">This is the Krypton font!</text>
     <spacer />
 </vStack>)

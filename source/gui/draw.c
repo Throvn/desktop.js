@@ -383,6 +383,8 @@ void GUI_RenderString(JSContext *ctx, JSValueConst element)
     if (lineHeight == -1)
         lineHeight = fontSize;
 
+    int fontId = STYLES_GetFontFace(ctx, element);
+
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .backgroundColor = backgroundColor,
@@ -393,6 +395,7 @@ void GUI_RenderString(JSContext *ctx, JSValueConst element)
                                   .fontSize = fontSize,
                                   .letterSpacing = letterSpacing,
                                   .lineHeight = lineHeight,
+                                  .fontId = fontId,
                               }));
     }
 }
@@ -445,6 +448,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     GUI_ApplyPropToChild(ctx, element, "$fontSize");
     GUI_ApplyPropToChild(ctx, element, "$letterSpacing");
     GUI_ApplyPropToChild(ctx, element, "$lineHeight");
+    GUI_ApplyPropToChild(ctx, element, "$fontFace");
 
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
