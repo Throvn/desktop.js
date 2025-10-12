@@ -5,3 +5,4 @@
 *.plist/
 build/**
 memtest.js
+.sandbox/javascript/**.js
