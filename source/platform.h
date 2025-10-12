@@ -10,6 +10,7 @@ typedef struct CliArgs
 } CliArgs;
 
 char *getJavaScriptSourcePath();
+char *getFontSourcePath();
 
 CliArgs *prepareArgs(int argc, const char **argv);
 #endif
