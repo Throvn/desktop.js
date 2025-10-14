@@ -14,4 +14,5 @@ Clay_CornerRadius STYLES_GetBorderRadius(JSContext *ctx, JSValueConst element);
 int STYLES_GetLineHeight(JSContext *ctx, JSValueConst element);
 int STYLES_GetWidth(JSContext *ctx, JSValueConst element);
 int STYLES_GetHeight(JSContext *ctx, JSValueConst element);
+int STYLES_GetFontFace(JSContext *ctx, JSValueConst element);
 #endif

@@ -1,3 +1,6 @@
+#include "../platform.h"
+#include "fonts.h"
+#include "raylib.h"
 #include "colors.h"
 #include "styles.h"
 #include "stdlib.h"
@@ -387,4 +390,44 @@ int STYLES_GetHeight(JSContext *ctx, JSValueConst element)
     JS_FreeCString(ctx, string);
 
     return STYLES_GetPropValueAsInt32(ctx, element, "$height");
+}
+
+/// @brief Retrieves the $fontFace prop value and turns it into the correct (raylib) font id.
+/// @param ctx
+/// @param element
+/// @return 0 by default or error, id otherwise.
+int STYLES_GetFontFace(JSContext *ctx, JSValueConst element)
+{
+    const char *string = STYLES_GetPropValueAsString(ctx, element, "$fontFace");
+
+    // value was not set.
+    if (!strcmp(string, "undefined"))
+    {
+        JS_FreeCString(ctx, string);
+        return 0;
+    }
+
+    // Check if font already loaded.
+    int fontId = FONTS_GetFontId(string);
+    if (fontId >= 0)
+    {
+        JS_FreeCString(ctx, string);
+        return fontId;
+    }
+
+    char *fontPath = getFontSourcePath();
+    strncat(fontPath, string, strlen(fontPath) - 1);
+    printf("String: %s\n", fontPath);
+    Font font = LoadFont(fontPath);
+    if (!IsFontValid(font))
+    {
+        JS_FreeCString(ctx, string);
+        return 0;
+    }
+    FONTS_Add(string, font);
+    fontId = FONTS_GetFontId(string);
+
+    free(fontPath);
+    JS_FreeCString(ctx, string);
+    return fontId;
 }

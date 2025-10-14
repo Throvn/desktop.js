@@ -80,18 +80,24 @@ static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
-static JSValue GUI_ToStringElement(JSContext *ctx, JSValue string)
+/// @brief Turns any element to a GUI String element by using the string representation of the given element.
+/// @param ctx
+/// @param string Any JSValue you want to represent as a string in the GUI.
+/// @return GUI Element (JS Object)
+static JSValue GUI_ToStringElement(JSContext *ctx, JSValueConst string)
 {
-    if (!JS_IsString(string))
-    {
-        exit(6);
-    }
-
     JSValue element = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, element, "type", JS_NewString(ctx, "string"));
     JSValue props = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, element, "props", props);
-    JS_SetPropertyStr(ctx, props, "children", string);
+
+    JSValue child;
+    if (JS_IsString(string) || JS_IsNumber(string))
+        child = JS_ToString(ctx, string);
+    else
+        child = JS_NewString(ctx, ""); // don't show stuff like booleans, null and so on.
+    JS_SetPropertyStr(ctx, props, "children", child);
+
     return element;
 }
 
@@ -107,7 +113,7 @@ static JSValue GUI_CreateBuiltInElement(JSContext *ctx, int argc, JSValueConst *
     for (int i = 0; i < argc - 2; i++)
     {
         JSValue child = JS_DupValue(ctx, argv[2 + i]);
-        if (JS_IsString(argv[2 + i]))
+        if (!JS_IsObject(argv[2 + i]))
         {
             child = GUI_ToStringElement(ctx, child);
         }
