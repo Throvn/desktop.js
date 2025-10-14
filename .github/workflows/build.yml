@@ -61,13 +61,11 @@ jobs:
           if [ -d patches ]; then
                 for patch in patches/*.patch; do
                   echo "Applying patch: $patch"
-                  for p in 0 1 2; do
-                    if patch -p$p --batch --forward < "$patch"; then
-                      echo "Applied with -p$p"
-                      break
-                    fi
-                  done || { echo "Failed to apply $patch"; exit 1; }
-                done
+                  if patch -p1 --batch --forward < "$patch"; then
+                    echo "Applied with -p$p"
+                    break
+                  fi
+                done || { echo "Failed to apply $patch"; exit 1; }
               fi
 
       # ---------------------------------------------------------
