@@ -402,7 +402,10 @@ int STYLES_GetFontFace(JSContext *ctx, JSValueConst element)
 
     // value was not set.
     if (!strcmp(string, "undefined"))
+    {
+        JS_FreeCString(ctx, string);
         return 0;
+    }
 
     // Check if font already loaded.
     int fontId = FONTS_GetFontId(string);
@@ -413,8 +416,14 @@ int STYLES_GetFontFace(JSContext *ctx, JSValueConst element)
     strncat(fontPath, string, sizeof(fontPath) - strlen(fontPath) - 1);
     Font font = LoadFont(fontPath);
     if (!IsFontValid(font))
+    {
+        JS_FreeCString(ctx, string);
         return 0;
+    }
     FONTS_Add(string, font);
+    fontId = FONTS_GetFontId(string);
+
     free(fontPath);
-    return FONTS_GetFontId(string);
+    JS_FreeCString(ctx, string);
+    return fontId;
 }

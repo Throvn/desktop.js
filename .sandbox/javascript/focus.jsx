@@ -15,6 +15,7 @@ class RedBox {
     }
 
     render() {
+        console.log(this.props.children);
         return <vStack
             $backgroundColor={this.hasFocus ? "blue" : "gray"} 
             onFocus={(e) => {
@@ -30,7 +31,7 @@ class RedBox {
                 this.color = "tomato"
             }}
             >
-            <text> {null} {1.1} {undefined} {this.hasFocus ? "Has Focus" : "No Focus"} {this.text || this.props.children}</text>
+            <text $fontFace="Roboto-Regular.ttf">{this.text || this.props.children}</text>
         </vStack>
     }
 }
