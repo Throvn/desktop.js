@@ -77,6 +77,8 @@ static char *getKeyName(int keyCode)
     case KEY_F3:
         return "F3";
     case KEY_F4:
+        return "F4";
+    case KEY_F5:
         return "F5";
     case KEY_F6:
         return "F6";
