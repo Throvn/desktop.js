@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          brew install cmake pkg-config clang git raylib
+          brew install cmake pkg-config git raylib
           clang --version
 
       - name: Install dependencies (Windows)
@@ -59,11 +59,16 @@ jobs:
       - name: Apply patches
         run: |
           if [ -d patches ]; then
-            for patch in patches/*.patch; do
-              echo "Applying patch: $patch"
-              git apply "$patch" || { echo "Failed to apply $patch"; exit 1; }
-            done
-          fi
+                for patch in patches/*.patch; do
+                  echo "Applying patch: $patch"
+                  for p in 0 1 2; do
+                    if patch -p$p --batch --forward < "$patch"; then
+                      echo "Applied with -p$p"
+                      break
+                    fi
+                  done || { echo "Failed to apply $patch"; exit 1; }
+                done
+              fi
 
       # ---------------------------------------------------------
       # 4. Build dependencies (txiki.js and raylib)
