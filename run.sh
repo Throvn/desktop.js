@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-JSXPATH=./.sandbox/javascript/focus.jsx
+JSXPATH=./.sandbox/javascript/fonts.jsx
 
 if [[ $OSTYPE != "darwin"* ]]; then
     printf "Script only works on macOS for now.\nPlease open an issue (or better PR) if you want to use this script from another platform."
