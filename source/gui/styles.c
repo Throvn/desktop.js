@@ -410,10 +410,14 @@ int STYLES_GetFontFace(JSContext *ctx, JSValueConst element)
     // Check if font already loaded.
     int fontId = FONTS_GetFontId(string);
     if (fontId >= 0)
+    {
+        JS_FreeCString(ctx, string);
         return fontId;
+    }
 
     char *fontPath = getFontSourcePath();
-    strncat(fontPath, string, sizeof(fontPath) - strlen(fontPath) - 1);
+    strncat(fontPath, string, strlen(fontPath) - 1);
+    printf("String: %s\n", fontPath);
     Font font = LoadFont(fontPath);
     if (!IsFontValid(font))
     {
