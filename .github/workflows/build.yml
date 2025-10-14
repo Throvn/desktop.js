@@ -77,8 +77,7 @@ jobs:
       - name: Build txiki.js
         working-directory: lib/txiki.js
         run: |
-          cmake -B build -S .
-          cmake --build build --config Release
+          make
 
       - name: Build raylib
         working-directory: lib/raylib
