@@ -1,0 +1,9 @@
+[submodule "raylib"]
+	path = lib/raylib
+	url = https://github.com/raysan5/raylib/
+[submodule "txiki.js"]
+	path = lib/txiki.js
+	url = https://github.com/saghul/txiki.js/
+[submodule "clay"]
+	path = lib/clay
+	url = https://github.com/nicbarker/clay/
