@@ -423,20 +423,18 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
     for (int i = 0; i < length; i++)
     {
         JSValue child = JS_GetPropertyUint32(ctx, children, i);
-        if (GUI_IsElement(ctx, child))
+        JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
+
+        if (JS_IsObject(childProps))
         {
-            JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
-
-            // Never overwrite a prop on the child
             JSValue childProp = JS_GetPropertyStr(ctx, childProps, prop);
+            // Never overwrite a prop on the child
             if (JS_IsUndefined(childProp))
-            {
                 JS_SetPropertyStr(ctx, childProps, prop, JS_DupValue(ctx, givenProp));
-            }
 
-            JS_FreeValue(ctx, childProps);
             JS_FreeValue(ctx, childProp);
         }
+        JS_FreeValue(ctx, childProps);
         JS_FreeValue(ctx, child);
     }
 
