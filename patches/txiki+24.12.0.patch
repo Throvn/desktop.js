@@ -1,7 +1,7 @@
-diff --git a/./lib/txiki.js/src/vm.c b/./lib/txiki.js/src/vm.c
+diff --git a/lib/txiki.js/src/vm.c b/lib/txiki.js/src/vm.c
 index e78b9ce..6db877c 100644
---- a/./lib/txiki.js/src/vm.c
-+++ b/./lib/txiki.js/src/vm.c
+--- a/lib/txiki.js/src/vm.c
++++ b/lib/txiki.js/src/vm.c
 @@ -405,15 +405,19 @@ TJSRuntime *TJS_GetRuntime(JSContext *ctx) {
      return JS_GetContextOpaque(ctx);
  }

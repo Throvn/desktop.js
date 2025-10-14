@@ -1,7 +1,7 @@
-diff --git a/./lib/clay/renderers/raylib/clay_renderer_raylib.orig.c b/./lib/clay/renderers/raylib/clay_renderer_raylib.c
+diff --git a/lib/clay/renderers/raylib/clay_renderer_raylib.c b/lib/clay/renderers/raylib/clay_renderer_raylib.c
 index 910a2ae..15c1a65 100644
---- a/./lib/clay/renderers/raylib/clay_renderer_raylib.c
-+++ b/./lib/clay/renderers/raylib/clay_renderer_raylib.c
+--- a/lib/clay/renderers/raylib/clay_renderer_raylib.c
++++ b/lib/clay/renderers/raylib/clay_renderer_raylib.c
 @@ -4,6 +4,7 @@
  #include "string.h"
  #include "stdio.h"
