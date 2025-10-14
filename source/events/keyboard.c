@@ -2,6 +2,9 @@
 #include "keyboard.h"
 #include "../gui/draw.h"
 
+/// @brief Turns the raylib key code into a human readable string
+/// @param keyCode
+/// @return static string, or string allocated in the arena. (Don't worry about clearing)
 static char *getKeyName(int keyCode)
 {
     bool isAsciiPrintable = keyCode >= 65 && keyCode <= 125;
@@ -9,7 +12,9 @@ static char *getKeyName(int keyCode)
     {
         char keyC = (char)keyCode;
         char str[] = {keyC, '\0'};
-        return str;
+        char *heapStr = a_alloc(2);
+        strcpy(heapStr, str);
+        return heapStr;
     }
 
     switch (keyCode)
@@ -72,6 +77,8 @@ static char *getKeyName(int keyCode)
     case KEY_F3:
         return "F3";
     case KEY_F4:
+        return "F4";
+    case KEY_F5:
         return "F5";
     case KEY_F6:
         return "F6";

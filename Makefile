@@ -1,13 +1,14 @@
 run: main
 	DYLD_LIBRARY_PATH=build \
-	./djs-aarch64-macos run ./.internals/javascript/index.js
+	./djs-aarch64-macos run ./.sandbox/javascript/index.js
 
 debug: main
 	DYLD_LIBRARY_PATH=build \
 	# lldb djs-aarch64-macos
-	leaks --list --atExit -- ./djs-aarch64-macos run ./.internals/javascript/index.js
+	leaks --list --atExit -- ./djs-aarch64-macos run ./.sandbox/javascript/index.js
 
 SOURCE_FILES = source/debug.c \
+			source/gui/fonts.c \
 			source/gui/blob.c \
 			source/gui/memory.c \
 			source/gui/colors.c \

@@ -12,6 +12,7 @@
 #include "events/keyboard.h"
 #include "debug.h"
 #include "platform.h"
+#include "gui/fonts.h"
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 
@@ -37,11 +38,10 @@ void idleCallback(uv_idle_t *handle)
 
     arenaIndex = (arenaIndex + 1) % 2;
     Clay_RenderCommandArray rc = GUI_RenderCommands(qrt);
-    Font font = GetFontDefault();
 
     BeginDrawing();
     ClearBackground(BLANK);
-    Clay_Raylib_Render(rc, &font);
+    Clay_Raylib_Render(rc, fonts);
     DrawFPS(10, 10);
     EndDrawing();
 
@@ -55,11 +55,12 @@ void HandleClayErrors(Clay_ErrorData errorData)
     exit(1);
 }
 
+CliArgs *args;
 int main(int argc, const char **argv)
 {
     srand(123);
     // No need to free, because we need the result until shutdown.
-    CliArgs *args = prepareArgs(argc, argv);
+    args = prepareArgs(argc, argv);
     // Init JS runtime
     TJS_Initialize(args->count, (char **)args->variables);
 
@@ -82,7 +83,8 @@ int main(int argc, const char **argv)
     // Note: screenWidth and screenHeight will need to come from your environment, Clay doesn't handle window related tasks
     Clay_Initialize(arena, (Clay_Dimensions){GetScreenWidth(), GetScreenHeight()}, (Clay_ErrorHandler){HandleClayErrors});
     Font font = GetFontDefault();
-    Clay_SetMeasureTextFunction(Raylib_MeasureText, &font);
+    FONTS_Add("default", font);
+    Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
 
     SetWindowSize(GetScreenWidth() - 1, GetScreenHeight() - 1);
     SetWindowSize(GetScreenWidth() + 1, GetScreenHeight() + 1);

@@ -383,6 +383,8 @@ void GUI_RenderString(JSContext *ctx, JSValueConst element)
     if (lineHeight == -1)
         lineHeight = fontSize;
 
+    int fontId = STYLES_GetFontFace(ctx, element);
+
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
     CLAY((Clay_ElementDeclaration){
         .backgroundColor = backgroundColor,
@@ -393,6 +395,7 @@ void GUI_RenderString(JSContext *ctx, JSValueConst element)
                                   .fontSize = fontSize,
                                   .letterSpacing = letterSpacing,
                                   .lineHeight = lineHeight,
+                                  .fontId = fontId,
                               }));
     }
 }
@@ -422,16 +425,17 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
         JSValue child = JS_GetPropertyUint32(ctx, children, i);
         JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
 
-        // Never overwrite a prop on the child
-        JSValue childProp = JS_GetPropertyStr(ctx, childProps, prop);
-        if (JS_IsUndefined(childProp))
+        if (JS_IsObject(childProps))
         {
-            JS_SetPropertyStr(ctx, childProps, prop, JS_DupValue(ctx, givenProp));
-        }
+            JSValue childProp = JS_GetPropertyStr(ctx, childProps, prop);
+            // Never overwrite a prop on the child
+            if (JS_IsUndefined(childProp))
+                JS_SetPropertyStr(ctx, childProps, prop, JS_DupValue(ctx, givenProp));
 
-        JS_FreeValue(ctx, child);
+            JS_FreeValue(ctx, childProp);
+        }
         JS_FreeValue(ctx, childProps);
-        JS_FreeValue(ctx, childProp);
+        JS_FreeValue(ctx, child);
     }
 
     JS_FreeValue(ctx, givenProp);
@@ -445,6 +449,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     GUI_ApplyPropToChild(ctx, element, "$fontSize");
     GUI_ApplyPropToChild(ctx, element, "$letterSpacing");
     GUI_ApplyPropToChild(ctx, element, "$lineHeight");
+    GUI_ApplyPropToChild(ctx, element, "$fontFace");
 
     Clay_Padding padding = STYLES_GetPadding(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
@@ -576,7 +581,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
         // Check if it could be an array.
         // JS_IsArray, somehow returns false, even if it is an array.
         int length = GUI_GetLength(ctx, element);
-        if (JS_IsObject(element) && length > 0)
+        if (JS_IsArray(element) || JS_IsObject(element) && length > 0)
         {
             GUI_RenderArray(ctx, element);
             JS_FreeValue(ctx, typeValue);
