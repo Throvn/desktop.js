@@ -53,20 +53,6 @@ jobs:
           clang --version
 
       # ---------------------------------------------------------
-      # 2. Clone Dependencies: txiki.js and raylib
-      # ---------------------------------------------------------
-
-      - name: Clone txiki.js
-        run: |
-          mkdir -p lib
-          git clone --recursive https://github.com/saghul/txiki.js.git lib/txiki.js
-
-      - name: Clone raylib
-        run: |
-          mkdir -p lib
-          git clone --recursive https://github.com/raysan5/raylib.git lib/raylib
-
-      # ---------------------------------------------------------
       # 3. Apply patches if any exist
       # ---------------------------------------------------------
 
