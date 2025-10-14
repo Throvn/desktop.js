@@ -30,7 +30,7 @@ class RedBox {
                 this.color = "tomato"
             }}
             >
-            <text>{this.text || this.props.children}</text>
+            <text> {null} {1.1} {undefined} {this.hasFocus ? "Has Focus" : "No Focus"} {this.text || this.props.children}</text>
         </vStack>
     }
 }
