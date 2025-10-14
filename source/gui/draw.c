@@ -423,18 +423,21 @@ void GUI_ApplyPropToChild(JSContext *ctx, JSValue element, char *prop)
     for (int i = 0; i < length; i++)
     {
         JSValue child = JS_GetPropertyUint32(ctx, children, i);
-        JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
-
-        // Never overwrite a prop on the child
-        JSValue childProp = JS_GetPropertyStr(ctx, childProps, prop);
-        if (JS_IsUndefined(childProp))
+        if (GUI_IsElement(ctx, child))
         {
-            JS_SetPropertyStr(ctx, childProps, prop, JS_DupValue(ctx, givenProp));
-        }
+            JSValue childProps = JS_GetPropertyStr(ctx, child, "props");
 
+            // Never overwrite a prop on the child
+            JSValue childProp = JS_GetPropertyStr(ctx, childProps, prop);
+            if (JS_IsUndefined(childProp))
+            {
+                JS_SetPropertyStr(ctx, childProps, prop, JS_DupValue(ctx, givenProp));
+            }
+
+            JS_FreeValue(ctx, childProps);
+            JS_FreeValue(ctx, childProp);
+        }
         JS_FreeValue(ctx, child);
-        JS_FreeValue(ctx, childProps);
-        JS_FreeValue(ctx, childProp);
     }
 
     JS_FreeValue(ctx, givenProp);
@@ -580,7 +583,7 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
         // Check if it could be an array.
         // JS_IsArray, somehow returns false, even if it is an array.
         int length = GUI_GetLength(ctx, element);
-        if (JS_IsObject(element) && length > 0)
+        if (JS_IsArray(element) || JS_IsObject(element) && length > 0)
         {
             GUI_RenderArray(ctx, element);
             JS_FreeValue(ctx, typeValue);
