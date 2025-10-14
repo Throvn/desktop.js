@@ -33,8 +33,6 @@ LIBRARY_FILES = lib/txiki.js/build/deps/quickjs/libqjs.a \
 main: $(LIBRARY_FILES) $(SOURCE_FILES)
 	clang -g -fsanitize=address $(CFLAGS) -O0 -rpath @executable_path/build $^ -o djs-aarch64-macos -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
 
-
-
 minified: $(LIBRARY_FILES) $(SOURCE_FILES)
 	zig cc -O4 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
 

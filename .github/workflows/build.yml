@@ -1,0 +1,126 @@
+name: Build DJS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            triplet: x86_64-linux
+          - os: macos-latest
+            triplet: aarch64-macos
+          - os: windows-latest
+            triplet: x86_64-windows
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize submodules (if any)
+        run: git submodule update --init --recursive
+
+      # ---------------------------------------------------------
+      # 1. Install Dependencies
+      # ---------------------------------------------------------
+
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake pkg-config git make \
+              libgl1-mesa-dev libx11-dev libxcursor-dev libxrandr-dev libxi-dev \
+              libasound2-dev libffi-dev libcurl4-openssl-dev
+          clang --version
+
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install cmake pkg-config clang git raylib
+          clang --version
+
+      - name: Install dependencies (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          choco install llvm cmake ninja git -y
+          clang --version
+
+      # ---------------------------------------------------------
+      # 2. Clone Dependencies: txiki.js and raylib
+      # ---------------------------------------------------------
+
+      - name: Clone txiki.js
+        run: |
+          mkdir -p lib
+          git clone --recursive https://github.com/saghul/txiki.js.git lib/txiki.js
+
+      - name: Clone raylib
+        run: |
+          mkdir -p lib
+          git clone --recursive https://github.com/raysan5/raylib.git lib/raylib
+
+      # ---------------------------------------------------------
+      # 3. Apply patches if any exist
+      # ---------------------------------------------------------
+
+      - name: Apply patches
+        run: |
+          if [ -d patches ]; then
+            for patch in patches/*.patch; do
+              echo "Applying patch: $patch"
+              git apply "$patch" || { echo "Failed to apply $patch"; exit 1; }
+            done
+          fi
+
+      # ---------------------------------------------------------
+      # 4. Build dependencies (txiki.js and raylib)
+      # ---------------------------------------------------------
+
+      - name: Build txiki.js
+        working-directory: lib/txiki.js
+        run: |
+          cmake -B build -S .
+          cmake --build build --config Release
+
+      - name: Build raylib
+        working-directory: lib/raylib
+        run: |
+          cmake -B build -S .
+          cmake --build build --config Release
+
+      # ---------------------------------------------------------
+      # 5. Build your project
+      # ---------------------------------------------------------
+
+      - name: Build project
+        env:
+          TARGET_TRIPLET: ${{ matrix.triplet }}
+        run: |
+          export CFLAGS="-DTARGET_${{ matrix.triplet }}"
+          make compile
+          mkdir -p build
+          # Rename executable for clarity
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            mv djs* build/djs-${{ matrix.triplet }}
+          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+            mv djs* build/djs-${{ matrix.triplet }}
+          else
+            mv djs*.exe build/djs-${{ matrix.triplet }}.exe
+          fi
+
+      # ---------------------------------------------------------
+      # 6. Upload build artifacts
+      # ---------------------------------------------------------
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.triplet }}
+          path: build/
