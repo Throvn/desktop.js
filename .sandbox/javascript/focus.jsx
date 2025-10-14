@@ -17,7 +17,7 @@ class RedBox {
     render() {
         console.log(this.props.children);
         return <vStack
-            $backgroundColor={this.hasFocus ? "blue" : "gray"} 
+            $backgroundColor={this.hasFocus ? "red" : "gray"} 
             onFocus={(e) => {
                 this.hasFocus = true
                 console.log("Focus In", this.props.children)
