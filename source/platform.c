@@ -1,3 +1,5 @@
+#include <limits.h>
+#include <string.h>
 #include "platform.h"
 
 /**
