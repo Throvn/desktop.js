@@ -38,18 +38,18 @@ jobs:
           sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
           clang --version
 
-      - name: Install dependencies (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew install cmake pkg-config git raylib
-          clang --version
+      # - name: Install dependencies (macOS)
+      #   if: matrix.os == 'macos-latest'
+      #   run: |
+      #     brew install cmake pkg-config git raylib
+      #     clang --version
 
-      - name: Install dependencies (Windows)
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
-        run: |
-          choco install llvm cmake ninja git -y
-          clang --version
+      # - name: Install dependencies (Windows)
+      #   if: matrix.os == 'windows-latest'
+      #   shell: pwsh
+      #   run: |
+      #     choco install llvm cmake ninja git -y
+      #     clang --version
 
       # ---------------------------------------------------------
       # 4. Build dependencies (txiki.js and raylib)
