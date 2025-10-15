@@ -34,7 +34,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake pkg-config git make \
+          sudo apt-get install -y autoconf automake libtool m4 clang cmake pkg-config git make \
               libgl1-mesa-dev libx11-dev libxcursor-dev libxrandr-dev libxi-dev \
               libasound2-dev libffi-dev libcurl4-openssl-dev
           clang --version
