@@ -34,9 +34,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y autoconf automake libtool m4 clang cmake pkg-config git make \
-              libgl1-mesa-dev libx11-dev libxcursor-dev libxrandr-dev libxi-dev \
-              libasound2-dev libffi-dev libcurl4-openssl-dev
+          sudo apt install -y libcurl4-openssl-dev build-essential cmake autoconf texinfo libtool libltdl-dev git clang pkg-config git make
           clang --version
 
       - name: Install dependencies (macOS)
@@ -76,7 +74,7 @@ jobs:
           TARGET_TRIPLET: ${{ matrix.triplet }}
         run: |
           export CFLAGS="-DTARGET_${{ matrix.triplet }}"
-          make compile
+          make minified
           mkdir -p build
           # Rename executable for clarity
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
