@@ -35,6 +35,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install -y libcurl4-openssl-dev build-essential cmake autoconf texinfo libtool libltdl-dev git clang pkg-config git make
+          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
           clang --version
 
       - name: Install dependencies (macOS)
