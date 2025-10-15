@@ -46,7 +46,7 @@ compile: $(LIBRARY_FILES) $(SOURCE_FILES)
 		-Ilib/txiki.js/deps/quickjs \
 		-Ilib/txiki.js/src \
 		-Ilib/txiki.js/deps/libuv/include \
-		-lffi -lcurl -lpthread -ldl -lm -lGL -lX11 -lXrandr -lXi -lXxf86vm -lXinerama -lXcursor -lrt
+		-lffi -lcurl -lpthread -ldl -lm -lGL -lX11 -lXrandr -lXi -lXinerama -lXcursor -lrt
 
 lib/quickjs/libquickjs.a:
 	cd lib/quickjs/ && $(MAKE)
