@@ -53,29 +53,6 @@ jobs:
           clang --version
 
       # ---------------------------------------------------------
-      # 3. Apply patches if any exist
-      # ---------------------------------------------------------
-
-      - name: Apply patches
-        run: |
-          if [ -d patches ]; then
-            for patch in patches/*.patch; do
-              echo "Applying patch: $patch"
-              # Try to apply patch; fail if any hunk can't be applied
-              if git apply --reject --whitespace=fix "$patch"; then
-                echo "Applied $patch successfully"
-              else
-                echo "Failed to apply $patch"
-                # Show rejects for debugging
-                echo "Rejected hunks:"
-                cat $(basename "$patch" .patch).rej || true
-                exit 1
-              fi
-            done
-          fi
-        shell: /usr/bin/bash
-
-      # ---------------------------------------------------------
       # 4. Build dependencies (txiki.js and raylib)
       # ---------------------------------------------------------
 
