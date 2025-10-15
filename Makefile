@@ -36,5 +36,14 @@ main: $(LIBRARY_FILES) $(SOURCE_FILES)
 minified: $(LIBRARY_FILES) $(SOURCE_FILES)
 	clang -O3 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/raylib/src -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
 
+compile: $(LIBRARY_FILES) $(SOURCE_FILES)
+	clang -O3 -Wall $^ -o djs-x86_64-linux \
+		-Ilib/raylib/raylib/include \
+		-Ilib/raylib/src \
+		-Ilib/txiki.js/deps/quickjs \
+		-Ilib/txiki.js/src \
+		-Ilib/txiki.js/deps/libuv/include \
+		-lffi -lcurl -lpthread -ldl -lm
+
 lib/quickjs/libquickjs.a:
 	cd lib/quickjs/ && $(MAKE)

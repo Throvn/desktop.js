@@ -75,7 +75,7 @@ jobs:
           TARGET_TRIPLET: ${{ matrix.triplet }}
         run: |
           export CFLAGS="-DTARGET_${{ matrix.triplet }}"
-          make minified
+          make compile
           mkdir -p build
           # Rename executable for clarity
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
