@@ -6,4 +6,4 @@
 	url = https://github.com/saghul/txiki.js/
 [submodule "clay"]
 	path = lib/clay
-	url = https://github.com/nicbarker/clay/
+	url = https://github.com/Throvn/clay/
