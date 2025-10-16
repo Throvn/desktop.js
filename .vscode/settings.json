@@ -30,7 +30,9 @@
     "unordered_set": "c",
     "ios": "c",
     "events.h": "c",
-    "keyboard.h": "c"
+    "keyboard.h": "c",
+    "platform.h": "c",
+    "string.h": "c"
   },
   "cmake.sourceDirectory": "/Users/throvn/Documents/desktop.js/lib/clay"
 }

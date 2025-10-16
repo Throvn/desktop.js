@@ -16,7 +16,7 @@
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 
-void idleCallback(uv_idle_t *handle)
+static void idleCallback(uv_idle_t *handle)
 {
     TJSRuntime *qrt = handle->data;
     JSContext *ctx = TJS_GetJSContext(qrt);

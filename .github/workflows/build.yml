@@ -1,0 +1,96 @@
+name: Build DJS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            triplet: x86_64-linux
+          # - os: macos-latest
+          #   triplet: aarch64-macos
+          # - os: windows-latest
+          #   triplet: x86_64-windows
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize submodules (if any)
+        run: git submodule update --init --recursive
+
+      # ---------------------------------------------------------
+      # 1. Install Dependencies
+      # ---------------------------------------------------------
+
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt install -y libcurl4-openssl-dev build-essential cmake autoconf texinfo libtool libltdl-dev git clang pkg-config git make
+          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+          clang --version
+
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install cmake pkg-config git raylib
+          clang --version
+
+      - name: Install dependencies (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          choco install llvm cmake ninja git -y
+          clang --version
+
+      # ---------------------------------------------------------
+      # 4. Build dependencies (txiki.js and raylib)
+      # ---------------------------------------------------------
+
+      - name: Build txiki.js
+        working-directory: lib/txiki.js
+        run: |
+          make
+
+      - name: Build raylib
+        working-directory: lib/raylib
+        run: |
+          cmake -B build -S .
+          cmake --build build --config Release
+
+      # ---------------------------------------------------------
+      # 5. Build your project
+      # ---------------------------------------------------------
+
+      - name: Build project
+        env:
+          TARGET_TRIPLET: ${{ matrix.triplet }}
+        run: |
+          export CFLAGS="-DTARGET_${{ matrix.triplet }}"
+          cd "$GITHUB_WORKSPACE"
+          make compile
+          mkdir -p "$GITHUB_WORKSPACE/build"
+          # Rename executable for clarity
+          if [ "${{ matrix.os }}" = "macos-latest" ]; then
+            mv djs* build/djs-${{ matrix.triplet }}
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            mv djs*.exe build/djs-${{ matrix.triplet }}.exe
+          fi
+
+      # ---------------------------------------------------------
+      # 6. Upload build artifacts
+      # ---------------------------------------------------------
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: djs-${{ matrix.triplet }}
+          path: djs-${{ matrix.triplet }}
