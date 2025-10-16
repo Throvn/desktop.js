@@ -79,11 +79,9 @@ jobs:
           make compile
           mkdir -p "$GITHUB_WORKSPACE/build"
           # Rename executable for clarity
-          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          if [ "${{ matrix.os }}" = "macos-latest" ]; then
             mv djs* build/djs-${{ matrix.triplet }}
-          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
-            mv djs* build/djs-${{ matrix.triplet }}
-          else
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
             mv djs*.exe build/djs-${{ matrix.triplet }}.exe
           fi
 
@@ -94,5 +92,5 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.triplet }}
-          path: build/
+          name: djs-${{ matrix.triplet }}
+          path: djs-${{ matrix.triplet }}
