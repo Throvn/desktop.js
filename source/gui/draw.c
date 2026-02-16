@@ -220,24 +220,23 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
 
-    CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("Stack", key),
-        .layout = {
-            .layoutDirection = dir,
-            .childAlignment = {
-                .x = CLAY_ALIGN_X_CENTER,
-                .y = CLAY_ALIGN_Y_CENTER,
-            },
-            .padding = padding,
-            .childGap = childGap,
-            .sizing = {
-                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
-                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
-            },
-        },
-        .backgroundColor = backgroundColor,
-        .cornerRadius = cornerRadius,
-    })
+    CLAY(CLAY_IDI("Stack", key), (Clay_ElementDeclaration){
+                                     .layout = {
+                                         .layoutDirection = dir,
+                                         .childAlignment = {
+                                             .x = CLAY_ALIGN_X_CENTER,
+                                             .y = CLAY_ALIGN_Y_CENTER,
+                                         },
+                                         .padding = padding,
+                                         .childGap = childGap,
+                                         .sizing = {
+                                             .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                                             .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+                                         },
+                                     },
+                                     .backgroundColor = backgroundColor,
+                                     .cornerRadius = cornerRadius,
+                                 })
     {
         renderChildren(ctx, element);
     }
@@ -249,16 +248,15 @@ void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
-    CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("Image Placeholder", key),
-        .layout = {
-            .sizing = {
-                .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
-                .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
-            },
-        },
-        .backgroundColor = backgroundColor,
-    })
+    CLAY(CLAY_IDI("Image Placeholder", key), (Clay_ElementDeclaration){
+                                                 .layout = {
+                                                     .sizing = {
+                                                         .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                                                         .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+                                                     },
+                                                 },
+                                                 .backgroundColor = backgroundColor,
+                                             })
     {
         renderChildren(ctx, element);
     }
@@ -332,18 +330,18 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 
     uint32_t key = GUI_GetKey(ctx, element);
 
-    CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("Image", key),
-        .image = {
-            .imageData = texture,
-        },
-        .layout = {
-            .sizing = {
-                .height = CLAY_SIZING_FIXED(height),
-                .width = CLAY_SIZING_FIXED(width),
-            },
-        },
-    })
+    CLAY(CLAY_IDI("Image", key), (Clay_ElementDeclaration){
+
+                                     .image = {
+                                         .imageData = texture,
+                                     },
+                                     .layout = {
+                                         .sizing = {
+                                             .height = CLAY_SIZING_FIXED(height),
+                                             .width = CLAY_SIZING_FIXED(width),
+                                         },
+                                     },
+                                 })
     {
     }
 
@@ -386,7 +384,7 @@ void GUI_RenderString(JSContext *ctx, JSValueConst element)
     int fontId = STYLES_GetFontFace(ctx, element);
 
     Clay_Color backgroundColor = STYLES_GetBackgroundColor(ctx, element);
-    CLAY((Clay_ElementDeclaration){
+    CLAY_AUTO_ID((Clay_ElementDeclaration){
         .backgroundColor = backgroundColor,
     })
     {
@@ -456,18 +454,17 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
     Clay_CornerRadius cornerRadius = STYLES_GetBorderRadius(ctx, element);
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
-    CLAY((Clay_ElementDeclaration){
-        .id = CLAY_IDI("Text", key),
-        .backgroundColor = backgroundColor,
-        .layout = {
-            .padding = padding,
-            .sizing = {
-                .height = (height == -1 || height == -2) ? CLAY_SIZING_FIT() : (height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
-                .width = (width == -1 || width == -2) ? CLAY_SIZING_FIT() : (width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
-            },
-        },
-        .cornerRadius = cornerRadius,
-    })
+    CLAY(CLAY_IDI("Text", key), (Clay_ElementDeclaration){
+                                    .backgroundColor = backgroundColor,
+                                    .layout = {
+                                        .padding = padding,
+                                        .sizing = {
+                                            .height = (height == -1 || height == -2) ? CLAY_SIZING_FIT() : (height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                                            .width = (width == -1 || width == -2) ? CLAY_SIZING_FIT() : (width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
+                                        },
+                                    },
+                                    .cornerRadius = cornerRadius,
+                                })
     {
         renderChildren(ctx, element);
     }
@@ -475,7 +472,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
 
 void GUI_RenderSpacer()
 {
-    CLAY((Clay_ElementDeclaration){
+    CLAY_AUTO_ID((Clay_ElementDeclaration){
         .layout = {
             .sizing = {CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0)},
         },
@@ -645,7 +642,7 @@ Clay_RenderCommandArray GUI_RenderCommands(TJSRuntime *qrt)
     JSContext *ctx = TJS_GetJSContext(qrt);
     Clay_BeginLayout();
 
-    CLAY((Clay_ElementDeclaration){
+    CLAY_AUTO_ID((Clay_ElementDeclaration){
         .backgroundColor = {255, 255, 255, 255},
         .layout = {
             .layoutDirection = CLAY_TOP_TO_BOTTOM,
