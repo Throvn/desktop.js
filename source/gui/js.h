@@ -3,6 +3,7 @@
 #include <quickjs.h>
 
 JSModuleDef *GUI_js_init_module(JSContext *ctx);
+JSValue GUI_CreateRootElement(JSContext *ctx);
 
 extern JSValue rootValue;
 extern JSValue focusValue;
