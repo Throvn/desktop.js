@@ -74,8 +74,7 @@ static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
     printf("[GUI] render() called\n");
     rootValue = JS_DupValue(ctx, argv[0]);
 
-    // by default, always use the root element (aka. body)
-    focusValue = JS_DupValue(ctx, argv[0]);
+    focusValue = GUI_CreateRootElement(ctx);
 
     return JS_UNDEFINED;
 }
@@ -202,4 +201,19 @@ JSModuleDef *GUI_js_init_module(JSContext *ctx)
     JS_AddModuleExport(ctx, m, "render");
     JS_AddModuleExport(ctx, m, "createElement");
     return m;
+}
+
+/**
+ * @brief Creates a dummy JSX element of type "root".
+ *
+ * @param ctx
+ * @return JSValue the "root" JSX object.
+ */
+JSValue GUI_CreateRootElement(JSContext *ctx)
+{
+    JSValue obj = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, obj, "type", JS_NewString(ctx, "root"));
+    JS_SetPropertyStr(ctx, obj, "props", JS_NewArray(ctx));
+
+    return obj;
 }
