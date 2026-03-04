@@ -73,7 +73,7 @@ void EVENT_HandleEvents(JSContext *ctx)
 
     JSValue *elementChain = calloc(ids.length + 1, sizeof(JSValue));
     elementChain[0] = JS_DupValue(ctx, rootValue);
-    int elementChainLength = 1;
+    int32_t elementChainLength = 1;
     for (int32_t i = 0; i < ids.length; i++)
     {
         uint32_t id = ids.internalArray[i].offset;
@@ -120,8 +120,8 @@ bool EVENT_IsElementFocusable(JSContext *ctx, JSValue element)
         JSValue ret = JS_GetPropertyStr(ctx, props, neededProps[i]);
         if (JS_IsFunction(ctx, ret))
         {
-            JS_FreeValue(ctx, props);
             JS_FreeValue(ctx, ret);
+            JS_FreeValue(ctx, props);
             return true;
         }
         JS_FreeValue(ctx, ret);

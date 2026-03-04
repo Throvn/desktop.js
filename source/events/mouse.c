@@ -156,13 +156,13 @@ static void EVENT_OnFocus(JSContext *ctx, JSValueConst element, int *stopPropaga
 
     int elementKey = GUI_GetKey(ctx, element);
     int focusKey = GUI_GetKey(ctx, focusValue);
-    *stopPropagations |= STOP_PROPAGATION_FOCUS;
     if (elementKey == focusKey)
         return;
 
     // make this the new focused element.
     if (EVENT_IsElementFocusable(ctx, element))
     {
+        *stopPropagations |= STOP_PROPAGATION_FOCUS;
         EVENT_OnBlur(ctx, focusValue, stopPropagations);
         JS_FreeValue(ctx, focusValue);
         focusValue = JS_DupValue(ctx, element);

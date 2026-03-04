@@ -17,18 +17,17 @@ class RedBox {
     render() {
         return <vStack
             $backgroundColor={this.hasFocus ? "red" : "gray"} 
-            onFocus={(e) => {
-                console.log(e);
+            onFocus={() => {
                 this.hasFocus = true
                 console.log("Focus In", this.props.children)
             }}
-            onBlur={(e) => {
+            onBlur={() => {
                 this.hasFocus = false
                 console.log("Focus Out",this.props.children)
             }}
             onKeyPress={(e) => {
                 this.text += e.key
-                this.color = "tomato"
+                this.color = "green"
             }}
             >
             <text $fontFace="Roboto-Regular.ttf">{this.text || this.props.children}</text>
@@ -37,7 +36,7 @@ class RedBox {
 }
 
 GUI.render(
-    <hStack $gap={5}>
+    <hStack $gap={5} onFocus={() => console.log("HSTACK")}>
         <RedBox>1</RedBox>
         <RedBox>2</RedBox>
     </hStack>
