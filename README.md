@@ -12,13 +12,10 @@ Unlike Tauri, it does not depend on platform specific quirks and you don't need 
 
 We translate your JSX into native draw calls, ensuring platform independent results.
 
-Also, to decrease bundle size, we don't rely on heavy runtimes like node, deno or bun but instead use QuickJS.
-This comes with its own list of pros and cons but as development progresses, we plan on getting more and more [WinterTC](https://min-common-api.proposal.wintertc.org/) compliant.
+Also, to decrease bundle size, we don't rely on heavy runtimes like node, deno or bun but instead use [Txiki.js](https://github.com/saghul/txiki.js).
+This comes with its own list of pros and cons but there is a 90% chance that the app you have in mind is a CRUD app anyway, you can already give it a try.
 
-Since there is a 90% chance that the app you have in mind is a CRUD app anyway, you can already give it a try.
-
-The plan is to start with exceptionally well filesystem support and a feature complete `fetch()` implementation.
-From there on we would like to focus on process interaction (spawning other programs, etc). If you have a function which is keeping you from using Desktop.js, let me know by opening an issue. If you have the ability to solve it, even better, as contributions are very welcome!
+Not having to worry about JS Engine features is a huge relief and [txiki.js](https://github.com/saghul/txiki.js) covers the most essential features already. If you have a function which is keeping you from using Desktop.js, let me know by opening an issue. If you have the ability to solve it, even better, as contributions are very welcome!
 
 ## Documentation
 
@@ -276,7 +273,7 @@ The values of the `key` property are a subset of the list you can find [here](ht
         event.key +
         "' with the code '" +
         event.code +
-        "' was pressed!"
+        "' was pressed!",
     );
   }}
 ></vStack>
