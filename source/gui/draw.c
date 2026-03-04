@@ -130,7 +130,7 @@ JSValue GUI_GetChildren(JSContext *ctx, JSValueConst element)
     return children;
 }
 
-static void renderChildren(JSContext *ctx, JSValueConst element)
+static void renderChildren(JSContext *ctx, JSValueConst element, bool isFloating)
 {
     JSValue children = GUI_GetChildren(ctx, element);
 
@@ -139,7 +139,16 @@ static void renderChildren(JSContext *ctx, JSValueConst element)
     for (int i = 0; i < length; i++)
     {
         JSValue child = JS_GetPropertyUint32(ctx, children, i);
-        GUI_RenderValue(ctx, child);
+        CLAY_AUTO_ID((Clay_ElementDeclaration){
+            .floating = {
+                .attachTo = isFloating ? CLAY_ATTACH_TO_PARENT : CLAY_ATTACH_TO_NONE,
+                .attachPoints = CLAY_ATTACH_POINT_CENTER_CENTER,
+                .offset = {0, 0},
+            },
+        })
+        {
+            GUI_RenderValue(ctx, child);
+        }
         JS_FreeValue(ctx, child);
     }
     JS_FreeValue(ctx, children);
@@ -199,6 +208,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
 {
     uint32_t key = GUI_GetKey(ctx, element);
     int dir;
+    bool isFloating = false;
     switch (direction)
     {
     case 'v':
@@ -206,6 +216,10 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
         break;
     case 'h':
         dir = CLAY_LEFT_TO_RIGHT;
+        break;
+    case 'z':
+        dir = CLAY_LEFT_TO_RIGHT;
+        isFloating = true;
         break;
     default:
         fprintf(stderr, "[GUI_RenderStack] Stack direction '%c' unknown", direction);
@@ -238,7 +252,7 @@ void GUI_RenderStack(JSContext *ctx, JSValue element, char direction)
                                      .cornerRadius = cornerRadius,
                                  })
     {
-        renderChildren(ctx, element);
+        renderChildren(ctx, element, isFloating);
     }
 }
 
@@ -258,7 +272,7 @@ void GUI_RenderImagePlaceholder(JSContext *ctx, JSValueConst element)
                                                  .backgroundColor = backgroundColor,
                                              })
     {
-        renderChildren(ctx, element);
+        renderChildren(ctx, element, false);
     }
 }
 void GUI_RenderImage(JSContext *ctx, JSValueConst element)
@@ -466,7 +480,7 @@ void GUI_RenderText(JSContext *ctx, JSValue element)
                                     .cornerRadius = cornerRadius,
                                 })
     {
-        renderChildren(ctx, element);
+        renderChildren(ctx, element, false);
     }
 }
 
@@ -542,7 +556,7 @@ void GUI_RenderGroup(JSContext *ctx, JSValueConst element)
     JS_FreeValue(ctx, props);
     JS_FreeValue(ctx, children);
 
-    renderChildren(ctx, element);
+    renderChildren(ctx, element, false);
 }
 
 void GUI_RenderArray(JSContext *ctx, JSValueConst element)
@@ -611,6 +625,10 @@ void GUI_RenderValue(JSContext *ctx, JSValue element)
     else if (0 == strcmp(type, "vStack"))
     {
         GUI_RenderStack(ctx, element, 'v');
+    }
+    else if (0 == strcmp(type, "zStack"))
+    {
+        GUI_RenderStack(ctx, element, 'z');
     }
     else if (0 == strcmp(type, "text"))
     {
