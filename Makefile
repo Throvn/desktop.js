@@ -22,24 +22,44 @@ SOURCE_FILES = source/debug.c \
 			source/platform.c \
 			source/main.c
 
-LIBRARY_FILES = lib/txiki.js/deps/quickjs/libqjs.a \
+LIBRARY_FILES = lib/txiki.js/libtjs.a \
+				lib/txiki.js/deps/quickjs/libqjs.a \
 				lib/txiki.js/deps/wasm3/source/libm3.a \
 				lib/txiki.js/deps/libuv/libuv.a \
 				lib/txiki.js/deps/sqlite3/libsqlite3.a \
 				lib/txiki.js/deps/mimalloc/libmimalloc.a \
-				lib/txiki.js/libtjs.a \
 				lib/raylib/raylib/libraylib.a
 
-main: $(LIBRARY_FILES) $(SOURCE_FILES)
-	clang -g -fsanitize=address $(CFLAGS) -O0 -rpath @executable_path/build $^ -o djs-aarch64-macos -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
+
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+    OS_FLAGS = -rpath @executable_path/build -framework IOKit -framework Cocoa -lffi -lcurl
+elif ($(UNAME_S))
+    OS_FLAGS = -lffi -Wl,-rpath,\$$ORIGIN/build
+endif
+
+CFLAGS = -Ilib/raylib/raylib/include \
+		 -Ilib/txiki.js/deps/quickjs \
+		 -Ilib/txiki.js/src \
+		 -Ilib/txiki.js/deps/libuv/include
 
 
+OBJS = $(SOURCE_FILES:.c=.o)
+%.o: %.c
+	clang -g -fsanitize=address -O0 $(CFLAGS) -c $< -o $@
+
+main: $(OBJS) $(LIBRARY_FILES)
+	clang -g -fsanitize=address -O0 $(CFLAGS) -o djs-aarch64-linux \
+        $(OBJS) \
+        $(LIBRARY_FILES) \
+        $(OS_FLAGS)
 
 minified: $(LIBRARY_FILES) $(SOURCE_FILES)
-	zig cc -O4 -Wall -rpath @executable_path/build $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl -framework IOKit -framework Cocoa
+	zig cc -O4 -Wall $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl $(OS_FLAGS)
 
 lib/txiki.js/build/deps/quickjs/libqjs.a:
-	cd lib/txiki.js/ && $(MAKE)
+	cd lib/txiki.js/ && $(MAKE) .
 
 lib/raylib/raylib/libraylib.a:
 	cd lib/raylib && $(MAKE) install
