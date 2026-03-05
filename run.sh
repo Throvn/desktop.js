@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-JSXPATH=./.sandbox/javascript/focus.jsx
+JSXPATH=./.sandbox/javascript/index.jsx
 
 # Only allow macOS and linux for now
 if [[ $OSTYPE != "darwin"* && $OSTYPE != "linux"* ]]; then
@@ -12,11 +12,13 @@ else
 fi
 
 # stat has different arguments on different platforms
-if [[ $OSTYPE == "darwin"* ]]; then
-    LASTTIME=`stat -f %m $JSXPATH`
-elif [[ $OSTYPE == "linux"* ]]; then
-    LASTTIME=`stat -c %Y $JSXPATH`
-fi
+setLastTime() {
+    if [[ $OSTYPE == "darwin"* ]]; then
+        LASTTIME=`stat -f %m $JSXPATH`
+    elif [[ $OSTYPE == "linux"* ]]; then
+        LASTTIME=`stat -c %Y $JSXPATH`
+    fi
+}
 
 # Check if tsc or npx tsc is available and choose accordingly.
 if command -v tsc >/dev/null 2>&1; then
@@ -42,11 +44,16 @@ while true; do
     if read -t 1 -n 1 key; then
         printf "\e[0;33m[run.sh] Key pressed, rerunning...\e[0m\n"
         runTypescriptAndCompile
-        LASTTIME=`stat -f %m "$JSXPATH"`
+        setLastTime
         continue
     fi
 
-    MODIFIEDTIME=`stat -f %m $JSXPATH`
+    if [[ $OSTYPE == "darwin"* ]]; then
+        MODIFIEDTIME=`stat -f %m $JSXPATH`
+    elif [[ $OSTYPE == "linux"* ]]; then
+        MODIFIEDTIME=`stat -c %Y $JSXPATH`
+    fi
+
     if [[ $LASTTIME != $MODIFIEDTIME ]]; then
         runTypescriptAndCompile
 
