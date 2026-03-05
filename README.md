@@ -324,6 +324,12 @@ The event does **not** bubble.
 
 ## Build & Run
 
+### Run on linux
+
+You need to have `tsc` the typescript compiler installed and available globally.
+if you have missing root permissions, install tsc locally run `npm install typescript --save-dev`.
+The `run.sh` script will check for `tsc` or `npx tsc` and choose accordingly.
+
 ### Run
 
 If you are on macOS, you can use the run script.

@@ -6,3 +6,8 @@
 build/**
 memtest.js
 .sandbox/javascript/**.js
+
+# For tsc on linux (in case of missing root permissions)
+package.json
+package-lock.json
+node_modules/
