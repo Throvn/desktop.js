@@ -3,6 +3,7 @@ set -e
 
 JSXPATH=./.sandbox/javascript/focus.jsx
 
+# Only allow macOS and linux for now
 if [[ $OSTYPE != "darwin"* && $OSTYPE != "linux"* ]]; then
     printf "Script only works on macOS for now.\nPlease open an issue (or better PR) if you want to use this script from another platform."
     exit 1
@@ -10,6 +11,7 @@ else
     printf "\e[0;32m[run.sh] Running script on supported OS... $OSTYPE.\e[0m\n"
 fi
 
+# stat has different arguments on different platforms
 if [[ $OSTYPE == "darwin"* ]]; then
     LASTTIME=`stat -f %m $JSXPATH`
 elif [[ $OSTYPE == "linux"* ]]; then
@@ -17,6 +19,7 @@ elif [[ $OSTYPE == "linux"* ]]; then
 fi
 
 
+# Check if tsc or npx tsc is available and choose accordingly.
 if command -v tsc >/dev/null 2>&1; then
     TSC=tsc
 elif command -v `npx tsc` >/dev/null 2>&1; then
