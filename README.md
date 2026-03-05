@@ -324,23 +324,32 @@ The event does **not** bubble.
 
 ## Build & Run
 
-### Run on linux
+## Build on MacOS or Linux
 
-You need to have `tsc` the typescript compiler installed and available globally.
-if you have missing root permissions, install tsc locally run `npm install typescript --save-dev`.
-The `run.sh` script will check for `tsc` or `npx tsc` and choose accordingly.
+First, clone this repo.
 
-Also make sure that all of the submodules are resolved. (Clay, Raylib, and txiki.js)
-```shell
-git submodule update --init --recursive
+```
+git clone https://github.com/Throvn/desktop.js
 ```
 
-### Run
+In the root of the cloned repo, run:
 
-If you are on macOS, you can use the run script.
+```shell
+make install
+```
+
+That' should be it!
+
+### Run on MacOS or Linux
+
+If you are on macOS or Linux, you can use the run script.
 For this to work, you need to have the typescript compiler (`tsc`) and `clang` installed.
 The script will first look for a `.internals/javascript/index.jsx` file and compile this with the correct flags to an `index.js` file.
 It will then run the `make run` command, which creates a new binary, runs it and loads the code at `.internals/javascript/index.js`.
+
+You need to have `tsc` the typescript compiler installed and available globally.
+If you have missing root permissions, install tsc locally run `npm install typescript --save-dev`.
+The `run.sh` script will check for `tsc` or `npx tsc` and choose accordingly.
 
 ```shell
 ./run.sh
