@@ -58,8 +58,8 @@ main: $(OBJS) $(LIBRARY_FILES)
 minified: $(LIBRARY_FILES) $(SOURCE_FILES)
 	zig cc -O4 -Wall $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl $(OS_FLAGS)
 
-lib/txiki.js/build/deps/quickjs/libqjs.a:
-	cd lib/txiki.js/ && $(MAKE) .
+lib/txiki.js/libtjs.a:
+	cd lib/txiki.js/ && cmake . && make
 
 lib/raylib/raylib/libraylib.a:
-	cd lib/raylib && $(MAKE) install
+	cd lib/raylib && cmake . && make
