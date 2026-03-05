@@ -32,6 +32,9 @@ LIBRARY_FILES = lib/txiki.js/libtjs.a \
 
 
 UNAME_S := $(shell uname -s)
+ARCH := $(shell uname -m)
+
+TARGET := djs-$(ARCH)-$(shell echo $(UNAME_S) | tr A-Z a-z)
 
 ifeq ($(UNAME_S),Darwin)
     OS_FLAGS = -rpath @executable_path/build -framework IOKit -framework Cocoa -lffi -lcurl
@@ -51,16 +54,19 @@ OBJS = $(SOURCE_FILES:.c=.o)
 	clang -g -fsanitize=address -O0 $(CFLAGS) -c $< -o $@
 
 main: $(OBJS) $(LIBRARY_FILES)
-	clang -g -fsanitize=address -O0 $(CFLAGS) -o djs-aarch64-macos \
+	clang -g -fsanitize=address -O0 $(CFLAGS) -o $(TARGET) \
         $(OBJS) \
         $(LIBRARY_FILES) \
         $(OS_FLAGS)
 
 minified: $(LIBRARY_FILES) $(SOURCE_FILES)
-	zig cc -O4 -Wall $^ -o djs-aarch64-macos-mini -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl $(OS_FLAGS)
+	zig cc -O4 -Wall $^ -o $(TARGET)-mini -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl $(OS_FLAGS)
 
 lib/txiki.js/libtjs.a:
 	cd lib/txiki.js/ && cmake . && make
 
 lib/raylib/raylib/libraylib.a:
 	cd lib/raylib && cmake . && make
+
+clean:
+	rm -f $(OBJS) $(TARGET) $(TARGET)-mini
