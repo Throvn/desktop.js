@@ -330,6 +330,11 @@ You need to have `tsc` the typescript compiler installed and available globally.
 if you have missing root permissions, install tsc locally run `npm install typescript --save-dev`.
 The `run.sh` script will check for `tsc` or `npx tsc` and choose accordingly.
 
+Also make sure that all of the submodules are resolved. (Clay, Raylib, and txiki.js)
+```shell
+git submodule update --init --recursive
+```
+
 ### Run
 
 If you are on macOS, you can use the run script.
@@ -337,6 +342,6 @@ For this to work, you need to have the typescript compiler (`tsc`) and `clang` i
 The script will first look for a `.internals/javascript/index.jsx` file and compile this with the correct flags to an `index.js` file.
 It will then run the `make run` command, which creates a new binary, runs it and loads the code at `.internals/javascript/index.js`.
 
-```
+```shell
 ./run.sh
 ```
