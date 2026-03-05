@@ -35,8 +35,9 @@ UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Darwin)
     OS_FLAGS = -rpath @executable_path/build -framework IOKit -framework Cocoa -lffi -lcurl
-elif ($(UNAME_S))
-    OS_FLAGS = -lffi -Wl,-rpath,\$$ORIGIN/build
+else
+    # Fixed the elif syntax and ensured curl/ffi are ready for Linux
+    OS_FLAGS = -lffi -lcurl -lpthread -Wl,-rpath,\$$ORIGIN/build
 endif
 
 CFLAGS = -Ilib/raylib/raylib/include \
@@ -50,7 +51,7 @@ OBJS = $(SOURCE_FILES:.c=.o)
 	clang -g -fsanitize=address -O0 $(CFLAGS) -c $< -o $@
 
 main: $(OBJS) $(LIBRARY_FILES)
-	clang -g -fsanitize=address -O0 $(CFLAGS) -o djs-aarch64-linux \
+	clang -g -fsanitize=address -O0 $(CFLAGS) -o djs-aarch64-macos \
         $(OBJS) \
         $(LIBRARY_FILES) \
         $(OS_FLAGS)
