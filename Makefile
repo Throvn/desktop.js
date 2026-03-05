@@ -1,11 +1,16 @@
+UNAME_S := $(shell uname -s)
+ARCH := $(shell uname -m)
+
+TARGET := djs-$(ARCH)-$(shell echo $(UNAME_S) | tr A-Z a-z)
+
 run: main
 	DYLD_LIBRARY_PATH=build \
-	./djs-aarch64-macos run ./.sandbox/javascript/index.js
+	./$(TARGET) run ./.sandbox/javascript/index.js
 
 debug: main
 	DYLD_LIBRARY_PATH=build \
 	# lldb djs-aarch64-macos
-	leaks --list --atExit -- ./djs-aarch64-macos run ./.sandbox/javascript/index.js
+	leaks --list --atExit -- ./$(TARGET) run ./.sandbox/javascript/index.js
 
 SOURCE_FILES = source/debug.c \
 			source/gui/fonts.c \
@@ -30,11 +35,6 @@ LIBRARY_FILES = lib/txiki.js/libtjs.a \
 				lib/txiki.js/deps/mimalloc/libmimalloc.a \
 				lib/raylib/raylib/libraylib.a
 
-
-UNAME_S := $(shell uname -s)
-ARCH := $(shell uname -m)
-
-TARGET := djs-$(ARCH)-$(shell echo $(UNAME_S) | tr A-Z a-z)
 
 ifeq ($(UNAME_S),Darwin)
     OS_FLAGS = -rpath @executable_path/build -framework IOKit -framework Cocoa -lffi -lcurl
