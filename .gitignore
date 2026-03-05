@@ -11,4 +11,4 @@ memtest.js
 package.json
 package-lock.json
 node_modules/
-source/*.o
+source/**/*.o
