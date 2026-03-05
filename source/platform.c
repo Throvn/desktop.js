@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <string.h>
+#ifdef __linux__
+#include <linux/limits.h>
+#endif
 #include "platform.h"
 
 /**
