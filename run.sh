@@ -18,14 +18,13 @@ elif [[ $OSTYPE == "linux"* ]]; then
     LASTTIME=`stat -c %Y $JSXPATH`
 fi
 
-
 # Check if tsc or npx tsc is available and choose accordingly.
 if command -v tsc >/dev/null 2>&1; then
     TSC=tsc
-elif command -v `npx tsc` >/dev/null 2>&1; then
+elif npx tsc --version >/dev/null; then
     TSC="npx tsc"
 else
-    printf "Could not find global or local tsc command. Needed for compiling tsx to js."
+    printf "Could not find global or local tsc command. Needed for compiling tsx to js.\nRun:\tnpm install typescript --save-dev\nThen try again...\n"
     exit 1
 fi
 
