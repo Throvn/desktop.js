@@ -70,3 +70,10 @@ lib/raylib/raylib/libraylib.a:
 
 clean:
 	rm -f $(OBJS) $(TARGET) $(TARGET)-mini
+
+install: main
+	git submodule update --init --recursive; \
+	cd lib/raylib && cmake .; \
+	cd ../..; \
+	$(MAKE) main
+	echo "Project setup successful: $(TARGET) was built."
