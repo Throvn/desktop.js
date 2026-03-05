@@ -71,7 +71,7 @@ lib/raylib/raylib/libraylib.a:
 clean:
 	rm -f $(OBJS) $(TARGET) $(TARGET)-mini
 
-install: main
+install:
 	git submodule update --init --recursive; \
 	cd lib/raylib && cmake .; \
 	cd ../..; \
