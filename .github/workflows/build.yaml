@@ -1,0 +1,45 @@
+name: Build Desktop.js binaries
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            triplet: x86_64-linux
+          # - os: macos-latest
+          #   triplet: aarch64-macos
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt install -y libcurl4-openssl-dev build-essential cmake autoconf texinfo libtool libltdl-dev git clang pkg-config git make
+          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+          clang --version
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          make install
+
+      - name: Build project (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          TARGET_TRIPLET: ${{ matrix.triplet }}
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          make main
+          mkdir -p "$GITHUB_WORKSPACE/build"
+          mv djs-* build/
