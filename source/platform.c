@@ -98,6 +98,7 @@ char *getFontSourcePath()
 
     char *path = calloc(1, PATH_MAX);
     strlcpy(path, jsPath, resourcePathLength);
+    strncpy(path, jsPath, resourcePathLength - 1);
 
     strcat(path, "/assets/fonts/");
 
