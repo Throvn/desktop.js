@@ -3,8 +3,12 @@ name: Build Desktop.js binaries
 on:
   push:
     branches: [main]
+    tags:
+      - "v*"
   pull_request:
     branches: [main]
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -68,9 +72,19 @@ jobs:
       - name: Show files (debug)
         run: ls -R artifacts
 
-      - name: Create GitHub Release
+      - name: Get latest release tag
+        if: startsWith(github.ref, 'refs/tags/') == false
+        id: latest
+        run: |
+          TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName')
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.latest.outputs.tag }}
           files: artifacts/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
