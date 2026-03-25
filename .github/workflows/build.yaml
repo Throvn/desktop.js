@@ -78,6 +78,12 @@ jobs:
         id: latest
         run: |
           TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName')
+
+          if [ -z "$TAG" ]; then
+            TAG="nightly"
+            echo "No releases found, using fallback tag: $TAG"
+          fi
+
           echo "tag=$TAG" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
