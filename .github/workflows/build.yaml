@@ -7,8 +7,6 @@ on:
       - "v*"
   pull_request:
     branches: [main]
-    tags:
-      - "v*"
 
 jobs:
   build:
@@ -31,11 +29,16 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
           sudo apt-get update
-          sudo apt install -y libcurl4-openssl-dev build-essential cmake autoconf texinfo libtool libltdl-dev git clang pkg-config git make
-          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
-          sudo apt install -y build-essential cmake libffi-dev
+          sudo apt install -y \
+            libcurl4-openssl-dev build-essential cmake autoconf texinfo \
+            libtool libltdl-dev git clang pkg-config make \
+            libasound2-dev libx11-dev libxrandr-dev libxi-dev \
+            libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev \
+            libxinerama-dev libwayland-dev libxkbcommon-dev \
+            libffi-dev
           clang --version
-      - name: Install dependencies (Linux)
+
+      - name: Build dependencies (Linux)
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
           cd "$GITHUB_WORKSPACE"
@@ -48,8 +51,9 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE"
           make main
-          mkdir -p "$GITHUB_WORKSPACE/build"
-          mv djs-* build/
+
+          mkdir -p build/
+          mv djs-${{ matrix.triplet }} build/
 
       - name: Upload artifacts (per platform)
         uses: actions/upload-artifact@v4
@@ -60,6 +64,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
     steps:
       - name: Checkout repository
@@ -73,26 +78,11 @@ jobs:
       - name: Show files (debug)
         run: ls -R artifacts
 
-      - name: Get latest release tag
-        if: startsWith(github.ref, 'refs/tags/') == false
-        id: latest
-        run: |
-          TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName')
-
-          if [ -z "$TAG" ]; then
-            TAG="nightly"
-            echo "No releases found, using fallback tag: $TAG"
-          fi
-
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
-        if: github.event_name != 'pull_request'
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || steps.latest.outputs.tag }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'nightly' }}
           files: artifacts/**/*
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
