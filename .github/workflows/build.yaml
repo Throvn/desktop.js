@@ -65,6 +65,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    contents: write
 
     steps:
       - name: Checkout repository
