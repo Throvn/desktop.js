@@ -17,7 +17,7 @@ jobs:
           - os: ubuntu-latest
             triplet: x86_64-linux
           - os: ubuntu-22.04-arm
-            triplet: arm64-linux
+            triplet: aarch64-linux
           # - os: macos-latest
           #   triplet: aarch64-macos
 
