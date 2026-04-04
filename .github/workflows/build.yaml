@@ -15,11 +15,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            triplet: x86_64-linux
+            triplet: linux-x86_64
           - os: ubuntu-22.04-arm
-            triplet: aarch64-linux
-          # - os: macos-latest
-          #   triplet: aarch64-macos
+            triplet: linux-aarch64
+          - os: macos-latest
+            triplet: darwin-arm64
+          - os: macos-26-intel
+            triplet: darwin-x86_64
 
     steps:
       - name: Checkout repository
@@ -38,14 +40,12 @@ jobs:
             libffi-dev
           clang --version
 
-      - name: Build dependencies (Linux)
-        if: startsWith(matrix.os, 'ubuntu-')
+      - name: Build dependencies
         run: |
           cd "$GITHUB_WORKSPACE"
           make install
 
-      - name: Build project (Linux)
-        if: startsWith(matrix.os, 'ubuntu-')
+      - name: Build project
         env:
           TARGET_TRIPLET: ${{ matrix.triplet }}
         run: |

@@ -72,6 +72,7 @@ int main(int argc, const char **argv)
     JSContext *ctx = TJS_GetJSContext(qrt);
     GUI_js_init_module(ctx);
 
+    Clay_SetMaxElementCount(Clay__defaultMaxElementCount * 3);
     uint64_t totalMemorySize = Clay_MinMemorySize();
     void *clayArenaMemory = malloc(totalMemorySize);
     Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, clayArenaMemory);
