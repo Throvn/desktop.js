@@ -1,7 +1,7 @@
 UNAME_S := $(shell uname -s)
 ARCH := $(shell uname -m)
 
-TARGET := djs-$(ARCH)-$(shell echo $(UNAME_S) | tr A-Z a-z)
+TARGET := djs-$(shell echo $(UNAME_S) | tr A-Z a-z)-$(ARCH)
 
 run: main
 	DYLD_LIBRARY_PATH=build \
@@ -9,7 +9,7 @@ run: main
 
 debug: main
 	DYLD_LIBRARY_PATH=build \
-	# lldb djs-aarch64-macos
+	# lldb djs-darwin-arm64
 	leaks --list --atExit -- ./$(TARGET) run ./.sandbox/javascript/index.js
 
 SOURCE_FILES = source/debug.c \
