@@ -1,31 +1,26 @@
-UNAME_S := $(shell uname -s)
+# Get system info
+# Darwin, Linux
+OS := $(strip $(shell uname -s))
+# amd64, arm64, x86_64, aarch64
 ARCH := $(shell uname -m)
 
-TARGET := djs-$(shell echo $(UNAME_S) | tr A-Z a-z)-$(ARCH)
+# Name of the Desktop.js Runtime file
+EXE_NAME := djs-$(shell echo $(OS) | tr A-Z a-z)-$(ARCH) # e.g. djs-darwin-arm64
 
-run: main
-	DYLD_LIBRARY_PATH=build \
-	./$(TARGET) run ./.sandbox/javascript/index.js
-
-debug: main
-	DYLD_LIBRARY_PATH=build \
-	# lldb djs-darwin-arm64
-	leaks --list --atExit -- ./$(TARGET) run ./.sandbox/javascript/index.js
-
-SOURCE_FILES = source/debug.c \
-			source/gui/fonts.c \
-			source/gui/blob.c \
-			source/gui/memory.c \
-			source/gui/colors.c \
-			source/gui/js.c \
-			source/gui/styles.c \
-			source/renderer/reconcile.c \
-			source/gui/draw.c \
-			source/events/events.c \
-			source/events/mouse.c \
-			source/events/keyboard.c \
-			source/platform.c \
-			source/main.c
+SOURCE_FILES = debug.c \
+			gui/fonts.c \
+			gui/blob.c \
+			gui/memory.c \
+			gui/colors.c \
+			gui/js.c \
+			gui/styles.c \
+			renderer/reconcile.c \
+			gui/draw.c \
+			events/events.c \
+			events/mouse.c \
+			events/keyboard.c \
+			platform.c \
+			main.c
 
 LIBRARY_FILES = lib/txiki.js/libtjs.a \
 				lib/txiki.js/deps/quickjs/libqjs.a \
@@ -36,8 +31,10 @@ LIBRARY_FILES = lib/txiki.js/libtjs.a \
 				lib/raylib/raylib/libraylib.a
 
 
-ifeq ($(UNAME_S),Darwin)
-    OS_FLAGS = -rpath @executable_path/build -framework IOKit -framework Cocoa -lffi -lcurl
+# If this Makefile is run on macOS, include OS specific flags.
+# Else if it's run on Linux, include their respective flags.
+ifeq ($(OS),Darwin)
+    OS_FLAGS = -lffi -lcurl -rpath @executable_path/build -framework IOKit -framework Cocoa 
 else
     # Fixed the elif syntax and ensured curl/ffi are ready for Linux
     OS_FLAGS = -lffi -lcurl -lpthread -Wl,-rpath,\$$ORIGIN/build
@@ -49,31 +46,74 @@ CFLAGS = -Ilib/raylib/raylib/include \
 		 -Ilib/txiki.js/deps/libuv/include
 
 
-OBJS = $(SOURCE_FILES:.c=.o)
-%.o: %.c
-	clang -g -fsanitize=address -O0 $(CFLAGS) -c $< -o $@
+# Read all source files in source/ and turn them into .o files in build/.
+# This we need because we want to build the .o files with a different amount of optimization and debug information.
+# Create the build/ folder first, as otherwise the path doesn't exist and the .o files cannot be created there.
+SOURCE_DIR = source
+BUILD_DIR = build
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
+	mkdir -p $(dir $@)
+	clang $(CFLAGS) -c $< -o $@
 
-main: $(OBJS) $(LIBRARY_FILES)
-	clang -g -fsanitize=address -O0 $(CFLAGS) -o $(TARGET) \
+# Map the .c source file to the correct .o file.
+# This is needed for the linking step down below.
+OBJS = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
+
+
+# We want to:
+#	-g Generate 	source-level debug information
+#	-fsanitize 		Turn on runtime checks for various forms of undefined or suspicious behavior.
+# 	-O0				Disable optimization passes
+#	-Wall -Wextra	Enable all error messages
+DEBUG_FLAGS = -g -fsanitize=address,undefined -O0 -Wall -Wextra
+
+RELEASE_FLAGS = -O3
+
+.PHONY: debug
+debug: CFLAGS += $(DEBUG_FLAGS)
+
+.PHONY: release
+release: CFLAGS += $(RELEASE_FLAGS)
+
+# Link the source .o files.
+# Link all the static libraries.
+# Assemble all of that together.
+# Create the final executable.
+# No matter which OS we are on (Max/Linux)
+debug release: clean $(OBJS) $(LIBRARY_FILES)
+	clang $(CFLAGS) -o $(EXE_NAME) \
         $(OBJS) \
         $(LIBRARY_FILES) \
         $(OS_FLAGS)
 
-minified: $(LIBRARY_FILES) $(SOURCE_FILES)
-	zig cc -O4 -Wall $^ -o $(TARGET)-mini -Ilib/raylib/raylib/include -Ilib/txiki.js/deps/quickjs -Ilib/txiki.js/src -Ilib/txiki.js/deps/libuv/include -lffi -lcurl $(OS_FLAGS)
-
+# If we don't have the static library for txiki yet,
+# build the entire library first.
 lib/txiki.js/libtjs.a:
 	cd lib/txiki.js/ && cmake . && make
 
+# If we don't have the static library for raylib yet,
+# build the entire library first.
 lib/raylib/raylib/libraylib.a:
 	cd lib/raylib && cmake . && make
 
-clean:
-	rm -f $(OBJS) $(TARGET) $(TARGET)-mini
+# Runs DEBUG executable with default JS debug path
+# Needed by the ./run.sh script in project root.
+.PHONY: run
+run: debug
+	DYLD_LIBRARY_PATH=build \
+	./$(EXE_NAME) run ./.sandbox/javascript/index.js
 
+# PHONY is a target which is always out of date 
+# (so it will always update all of its dependencies)
+.PHONY: clean
+clean:
+	rm -f $(OBJS) $(EXE_NAME)
+	rm -rf $(BUILD_DIR)
+
+.PHONY: install
 install:
 	git submodule update --init --recursive; \
 	cd lib/raylib && cmake .; \
 	cd ../..; \
-	$(MAKE) main
-	echo "Project setup successful: $(TARGET) was built."
+	$(MAKE) debug
+	echo "Project setup successful: $(EXE_NAME) was built."
