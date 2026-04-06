@@ -34,13 +34,13 @@ LIBRARY_FILES = lib/txiki.js/libtjs.a \
 # If this Makefile is run on macOS, include OS specific flags.
 # Else if it's run on Linux, include their respective flags.
 ifeq ($(OS),Darwin)
-    OS_FLAGS = -lffi -lcurl -rpath @executable_path/build -framework IOKit -framework Cocoa 
+    OS_FLAGS = -rpath @executable_path/build -framework IOKit -framework Cocoa -lffi -lcurl 
 else
     # Fixed the elif syntax and ensured curl/ffi are ready for Linux
-    OS_FLAGS = -lffi -lcurl -lpthread -Wl,-rpath,\$$ORIGIN/build
+    OS_FLAGS = -lpthread -Wl,-rpath,\$$ORIGIN/build -lffi -lcurl -lm
 endif
 
-CFLAGS = -Ilib/raylib/raylib/include \
+CFLAGS = -Ilib/raylib/src \
 		 -Ilib/txiki.js/deps/quickjs \
 		 -Ilib/txiki.js/src \
 		 -Ilib/txiki.js/deps/libuv/include
