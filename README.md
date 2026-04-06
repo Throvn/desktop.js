@@ -343,7 +343,7 @@ That' should be it!
 ### Run on MacOS or Linux
 
 If you are on macOS or Linux, you can use the run script.
-For this to work, you need to have the typescript compiler (`tsc`) and `clang` installed.
+For this to work, you need to have the typescript compiler (`tsc`) and a c compiler (cc) installed.
 The script will first look for a `.internals/javascript/index.jsx` file and compile this with the correct flags to an `index.js` file.
 It will then run the `make run` command, which creates a new binary, runs it and loads the code at `.internals/javascript/index.js`.
 

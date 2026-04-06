@@ -32,12 +32,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install -y \
-            libcurl4-openssl-dev build-essential cmake autoconf texinfo \
-            libtool libltdl-dev git clang pkg-config make \
-            libasound2-dev libx11-dev libxrandr-dev libxi-dev \
-            libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev \
-            libxinerama-dev libwayland-dev libxkbcommon-dev \
-            libffi-dev
+          libcurl4-openssl-dev build-essential cmake autoconf texinfo \
+          libtool libltdl-dev git clang pkg-config make \
+          libasound2-dev libx11-dev libxrandr-dev libxi-dev \
+          libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev \
+          libxinerama-dev libwayland-dev libxkbcommon-dev \
+          libffi-dev
           clang --version
 
       - name: Build dependencies
@@ -50,7 +50,7 @@ jobs:
           TARGET_TRIPLET: ${{ matrix.triplet }}
         run: |
           cd "$GITHUB_WORKSPACE"
-          make main
+          make release
 
           mkdir -p build/
           mv djs-${{ matrix.triplet }} build/

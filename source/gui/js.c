@@ -20,6 +20,7 @@ static void GUI_SetWindowOptions(JSContext *ctx, JSValueConst options)
     if (JS_IsNumber(widthValue))
         JS_ToInt32(ctx, &width, widthValue);
     JS_FreeValue(ctx, widthValue);
+
     JSValue heightValue = JS_GetPropertyStr(ctx, options, "height");
     int height = 300;
     if (JS_IsNumber(heightValue))
@@ -46,8 +47,6 @@ static void GUI_SetWindowOptions(JSContext *ctx, JSValueConst options)
     SetWindowOpacity(1);
 
     JS_FreeValue(ctx, titleValue);
-    JS_FreeValue(ctx, heightValue);
-    JS_FreeValue(ctx, widthValue);
 }
 
 // GUI.render()
@@ -69,7 +68,10 @@ static JSValue GUI_js_render(JSContext *ctx, JSValueConst this_val,
         JS_ThrowTypeError(ctx, "GUI.render() did not receive an options object as a second parameter");
         return JS_UNDEFINED;
     }
-    GUI_SetWindowOptions(ctx, argv[1]);
+
+    // Only set window options if the options were supplied.
+    if (argc == 2)
+        GUI_SetWindowOptions(ctx, argv[1]);
 
     printf("[GUI] render() called\n");
     rootValue = JS_DupValue(ctx, argv[0]);

@@ -33,13 +33,13 @@ fi
 UNAME_S=`uname -s`
 ARCH=`uname -m`
 
-TARGET=djs-$ARCH-`echo $UNAME_S | tr A-Z a-z`
+TARGET=djs-`echo $UNAME_S | tr A-Z a-z`-$ARCH
 
 runTypescriptAndCompile() {
     printf "\e[0;32m[run.sh] Transpiling ${JSXPATH##*/} using the typescript compiler... \e[0m\n"
     $TSC $JSXPATH --jsx react --allowJs --module es2022 --jsx react --jsxFactory GUI.createElement --jsxFragmentFactory GUI.Fragment
     printf "\e[0;32m[run.sh] Compiling Desktop.js application... \e[0m\n"
-    make main
+    make debug
     (DYLD_LIBRARY_PATH=build \
 	./$TARGET run ${JSXPATH%.jsx}.js) || printf "\e[0;31m[run.sh] make run failed... \e[0m\n"
 }
