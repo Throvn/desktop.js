@@ -32,9 +32,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install -y \
-          cmake \
-          autoconf automake libtool pkg-config build-essential \
-          libcurl4-openssl-dev libffi-dev libx11-dev \
+          build-essential cmake autoconf automake m4 \
+          libcurl4-openssl-dev libffi-dev libtool libx11-dev \
           libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev
           cc --version
 
