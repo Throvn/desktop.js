@@ -32,10 +32,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install -y \
-          clang make cmake autoconf build-essential \
+          build-essential cmake autoconf automake \
           libcurl4-openssl-dev libffi-dev libtool libx11-dev \
           libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev
-          clang --version
+          cc --version
 
       - name: Build dependencies
         run: |

@@ -53,7 +53,7 @@ SOURCE_DIR = source
 BUILD_DIR = build
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
 	mkdir -p $(dir $@)
-	clang $(CFLAGS) -c $< -o $@
+	cc $(CFLAGS) -c $< -o $@
 
 # Map the .c source file to the correct .o file.
 # This is needed for the linking step down below.
@@ -81,7 +81,7 @@ release: CFLAGS += $(RELEASE_FLAGS)
 # Create the final executable.
 # No matter which OS we are on (Max/Linux)
 debug release: clean $(OBJS) $(LIBRARY_FILES)
-	clang $(CFLAGS) -o $(EXE_NAME) \
+	cc $(CFLAGS) -o $(EXE_NAME) \
         $(OBJS) \
         $(LIBRARY_FILES) \
         $(OS_FLAGS)
