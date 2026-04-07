@@ -21,6 +21,14 @@ CliArgs *prepareArgs(int argc, const char **argv)
         args->count = 3;
         // Heap allocated
         char *path = getJavaScriptSourcePath();
+        if (!path)
+        {
+            args->count = 1;
+            const char **nargv = calloc(1, sizeof(char *));
+            nargv[0] = strdup(argv[0]);
+            args->variables = nargv;
+            return args;
+        }
         const char **nargv = calloc(3, sizeof(char *));
         nargv[0] = strdup(argv[0]);
         nargv[1] = "run";
@@ -34,7 +42,7 @@ CliArgs *prepareArgs(int argc, const char **argv)
 /**
  * @brief Get the Java Script Source Path object
  * @brief Only works on Apple platforms currently.
- * @return char* c string of path.
+ * @return char* c string of path or NULL if none was found.
  */
 char *getJavaScriptSourcePath()
 {
