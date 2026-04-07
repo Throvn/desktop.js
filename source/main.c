@@ -61,6 +61,14 @@ int main(int argc, const char **argv)
     srand(123);
     // No need to free, because we need the result until shutdown.
     args = prepareArgs(argc, argv);
+
+    // Handle the case that no arguments were given AND
+    // the js entrypoint cannot be located automatically
+    if (args->count == 1)
+    {
+        printf("Usage: %s run FILE\n", args->variables[0]);
+        return 1;
+    }
     // Init JS runtime
     TJS_Initialize(args->count, (char **)args->variables);
 
