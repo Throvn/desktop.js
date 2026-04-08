@@ -311,7 +311,25 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 
     Texture2D *texture = tex_alloc();
     *texture = LoadTextureFromImage(*img);
-    SetTextureFilter(*texture, TEXTURE_FILTER_TRILINEAR);
+
+    // Set filter value given by props.filter
+    // default to trilinear (somehow looks the best for normal photos)
+    JSValue filterValue = JS_GetPropertyStr(ctx, props, "filter");
+    const char *filter = JS_ToCString(ctx, filterValue);
+    JS_FreeValue(ctx, filterValue);
+    if (0 == strcmp(filter, "nearestNeighbor"))
+    {
+        SetTextureFilter(*texture, TEXTURE_FILTER_POINT);
+    }
+    else if (0 == strcmp(filter, "bilinear"))
+    {
+        SetTextureFilter(*texture, TEXTURE_FILTER_BILINEAR);
+    }
+    else
+    {
+        SetTextureFilter(*texture, TEXTURE_FILTER_TRILINEAR);
+    }
+    JS_FreeCString(ctx, filter);
 
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
@@ -344,14 +362,6 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
                                      },
                                  })
     {
-        CLAY_AUTO_ID((Clay_ElementDeclaration){
-            .layout = {
-                .sizing = {
-                    .height = CLAY_SIZING_GROW(),
-                    .width = CLAY_SIZING_GROW(),
-                },
-            },
-        }){};
     }
 
     UnloadImage(*img);

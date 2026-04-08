@@ -1,6 +1,6 @@
 /**
- * This program will render an image which will grow based on the parent.
- * Aka, it will always take up the same space as the window and scale accordingly.
+ * This program will render 3 images with a different filter.
+ * It will display them side by side. Differences are minimal, but noticable.
  */
 import * as GUI from "GUI"
 
@@ -14,11 +14,15 @@ class MyImage {
     }
 
     render() {
-        return <img data={this.data} $width="grow" $height="grow" />;
+        return <hStack $gap={5}>
+            <img data={this.data} filter="nearestNeighbor" />
+            <img data={this.data} filter="bilinear" />
+            <img data={this.data} />
+        </hStack>
     }
 }
 
 GUI.render(<MyImage />, {
-    height: 200,
-    width: 200,
+    width: 620,
+    height: 210,
 })
