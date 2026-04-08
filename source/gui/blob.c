@@ -1,6 +1,6 @@
 #include "blob.h"
 #include "memory.h"
-#include "draw.h"
+#include "draw/draw.h"
 #include "../debug.h"
 
 int64_t JS_GetBlobSize(JSContext *ctx, JSValueConst blob)

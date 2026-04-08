@@ -1,6 +1,7 @@
 #include "events.h"
 #include "keyboard.h"
-#include "../gui/draw.h"
+#include "../gui/memory.h"
+#include "../gui/draw/draw.h"
 
 /// @brief Turns the raylib key code into a human readable string
 /// @param keyCode

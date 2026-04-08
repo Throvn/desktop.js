@@ -7,7 +7,8 @@
 
 #include "../lib/clay/renderers/raylib/clay_renderer_raylib.c"
 #include "gui/js.h"
-#include "gui/draw.h"
+#include "gui/draw/draw.h"
+#include "gui/memory.h"
 #include "events/mouse.h"
 #include "events/keyboard.h"
 #include "debug.h"

@@ -15,7 +15,8 @@ SOURCE_FILES = debug.c \
 			gui/js.c \
 			gui/styles.c \
 			renderer/reconcile.c \
-			gui/draw.c \
+			gui/draw/draw.c \
+			gui/draw/image.c \
 			events/events.c \
 			events/mouse.c \
 			events/keyboard.c \

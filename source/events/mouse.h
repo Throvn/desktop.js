@@ -3,7 +3,7 @@
 
 #include "../../lib/clay/clay.h"
 #include "../../lib/txiki.js/src/tjs.h"
-#include "../gui/draw.h"
+#include "../gui/draw/draw.h"
 #include "../../lib/raylib/src/raylib.h"
 #include "events.h"
 

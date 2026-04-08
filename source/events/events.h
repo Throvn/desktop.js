@@ -2,7 +2,7 @@
 #define EVENTS_H
 #include "quickjs.h"
 #include "raylib.h"
-#include "../gui/draw.h"
+#include "../gui/draw/draw.h"
 #include "../gui/js.h"
 
 #define STOP_PROPAGATION_NONE 0
