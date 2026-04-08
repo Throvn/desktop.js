@@ -317,15 +317,16 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     int height = STYLES_GetHeight(ctx, element);
 
     float aspectRatio = (float)img->width / (float)img->height;
+
     // If both values are not set (aka. -1)
-    if (width < 0 && height < 0)
+    if (width == -1 && height == -1)
     {
         width = img->width;
         height = img->height;
     }
-    else if (height < 0)
+    else if (height < 0 && width > 0)
         height = width / aspectRatio;
-    else if (width < 0)
+    else if (width < 0 && height > 0)
         width = height * aspectRatio;
 
     uint32_t key = GUI_GetKey(ctx, element);
@@ -337,12 +338,20 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
                                      },
                                      .layout = {
                                          .sizing = {
-                                             .height = CLAY_SIZING_FIXED(height),
-                                             .width = CLAY_SIZING_FIXED(width),
+                                             .height = height == -2 ? CLAY_SIZING_FIT() : (height == -1 || height == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(height)),
+                                             .width = width == -2 ? CLAY_SIZING_FIT() : (width == -1 || width == -3 ? CLAY_SIZING_GROW() : CLAY_SIZING_FIXED(width)),
                                          },
                                      },
                                  })
     {
+        CLAY_AUTO_ID((Clay_ElementDeclaration){
+            .layout = {
+                .sizing = {
+                    .height = CLAY_SIZING_GROW(),
+                    .width = CLAY_SIZING_GROW(),
+                },
+            },
+        }){};
     }
 
     UnloadImage(*img);

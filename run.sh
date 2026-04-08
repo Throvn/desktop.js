@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-JSXPATH=./.sandbox/javascript/index.jsx
+JSXPATH=./.sandbox/javascript/image.jsx
 
 # Only allow macOS and linux for now
 if [[ $OSTYPE != "darwin"* && $OSTYPE != "linux"* ]]; then
