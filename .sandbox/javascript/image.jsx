@@ -6,15 +6,19 @@ import * as GUI from "GUI"
 
 class MyImage {
     data;
-    constructor() {
+    fetchImage() {
         fetch("https://picsum.photos/200")
             .then(res => res.blob())
             .then(data => { this.data = data })
             .catch(console.error)
     }
 
+    constructor() {
+        this.fetchImage()
+    }
+
     render() {
-        return <hStack $gap={5}>
+        return <hStack $gap={5} onMouseUp={() => this.fetchImage()}>
             <img data={this.data} filter="nearestNeighbor" />
             <img data={this.data} filter="bilinear" />
             <img data={this.data} />

@@ -9,4 +9,7 @@ void a_free();
 Texture2D *tex_alloc();
 void tex_free();
 
+// Is increased at the end of every TJS idle callback, after the tree was drawn.
+uint64_t FRAME_COUNT;
+
 #endif

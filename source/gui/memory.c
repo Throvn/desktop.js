@@ -13,16 +13,17 @@ void *a_alloc(size_t size)
 Arena textureArena = {0};
 void a_free()
 {
-    tex_free();
     arena_free(&arenas[arenaIndex]);
 }
 
+// Currently unused (use for texture allocation of one frame)
 Texture2D *tex_alloc()
 {
     void *ptr = arena_alloc(&textureArena, sizeof(Texture2D));
     return ptr;
 }
 
+// Currently unused (use for texture allocation of one frame)
 void tex_free()
 {
     size_t texSize = (sizeof(Texture2D) + sizeof(uintptr_t) - 1) / sizeof(uintptr_t);

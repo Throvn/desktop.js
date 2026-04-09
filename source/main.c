@@ -9,15 +9,15 @@
 #include "gui/js.h"
 #include "gui/draw/draw.h"
 #include "gui/memory.h"
+#include "gui/fonts.h"
 #include "events/mouse.h"
 #include "events/keyboard.h"
 #include "debug.h"
 #include "platform.h"
-#include "gui/fonts.h"
 
 extern void Clay_Raylib_Render(Clay_RenderCommandArray renderCommands, Font *fonts);
 
-void idleCallback(uv_idle_t *handle)
+void idleCallback(uv_timer_t *handle)
 {
     TJSRuntime *qrt = handle->data;
     JSContext *ctx = TJS_GetJSContext(qrt);
@@ -47,6 +47,8 @@ void idleCallback(uv_idle_t *handle)
     EndDrawing();
 
     EVENT_HandleEvents(ctx);
+
+    FRAME_COUNT++;
 }
 
 void HandleClayErrors(Clay_ErrorData errorData)
@@ -81,7 +83,7 @@ int main(int argc, const char **argv)
     JSContext *ctx = TJS_GetJSContext(qrt);
     GUI_js_init_module(ctx);
 
-    Clay_SetMaxElementCount(Clay__defaultMaxElementCount * 3);
+    Clay_SetMaxElementCount(Clay__defaultMaxElementCount * 2);
     uint64_t totalMemorySize = Clay_MinMemorySize();
     void *clayArenaMemory = malloc(totalMemorySize);
     Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, clayArenaMemory);
@@ -98,6 +100,8 @@ int main(int argc, const char **argv)
 
     SetWindowSize(GetScreenWidth() - 1, GetScreenHeight() - 1);
     SetWindowSize(GetScreenWidth() + 1, GetScreenHeight() + 1);
+
+    FRAME_COUNT = 0;
 
     TJS_RunWithIdleCallback(qrt, idleCallback);
 

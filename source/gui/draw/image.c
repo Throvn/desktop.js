@@ -8,6 +8,114 @@
 #include "image.h"
 #include <stdlib.h>
 
+#define MAX_TEXTURES 2 // 64
+
+typedef struct TextureEntry
+{
+    uint64_t lastUsedFrame;
+    Texture2D texture;
+    JSValueUnion key;
+} TextureEntry;
+
+TextureEntry textureCache[MAX_TEXTURES];
+int textureCount = 0;
+
+Texture2D *FindTexture(JSValueConst data)
+{
+    for (int i = 0; i < textureCount; i++)
+    {
+        if (textureCache[i].key.ptr == data.u.ptr)
+        {
+            textureCache[i].lastUsedFrame = FRAME_COUNT;
+            return &textureCache[i].texture;
+        }
+    }
+    return NULL;
+}
+
+void AddTexture(JSValueConst data, Texture2D texture)
+{
+    if (textureCount < MAX_TEXTURES)
+    {
+        textureCache[textureCount] = (TextureEntry){
+            .key = data.u,
+            .texture = texture,
+            .lastUsedFrame = FRAME_COUNT,
+        };
+
+        textureCount++;
+        return;
+    }
+
+    // Kick out oldest texture.
+    int lruIndex = 0;
+    uint64_t oldest = textureCache[0].lastUsedFrame;
+
+    for (int i = 1; i < MAX_TEXTURES; i++)
+    {
+        if (textureCache[i].lastUsedFrame < oldest)
+        {
+            oldest = textureCache[i].lastUsedFrame;
+            lruIndex = i;
+        }
+    }
+
+    // Delete oldest texture.
+    UnloadTexture(textureCache[lruIndex].texture);
+
+    // Place new texture in oldest spot
+    textureCache[lruIndex] = (TextureEntry){
+        .key = data.u,
+        .texture = texture,
+        .lastUsedFrame = FRAME_COUNT,
+    };
+
+    return;
+}
+
+Texture2D *createTextureFromBlob(JSContext *ctx, JSValueConst data, JSValueConst element)
+{
+    // Is data really a Blob?
+    int size = JS_GetBlobSize(ctx, data);
+    uint8_t *imageData = malloc(size);
+    int status = JS_GetBlobUint8Array(ctx, data, imageData);
+    if (status < 0)
+    {
+        free(imageData);
+        return NULL;
+    }
+
+    // Get the type of the Blob.
+    JSValue typeValue = JS_GetPropertyStr(ctx, data, "type");
+    const char *type = JS_ToCString(ctx, typeValue);
+    JS_FreeValue(ctx, typeValue);
+    if (strncmp(type, "image/", 6))
+    {
+        JS_FreeCString(ctx, type);
+        free(imageData);
+        GUI_RenderImagePlaceholder(ctx, element);
+        return NULL;
+    }
+
+    // Now that we know the Blob type, load the blob with the correct encoding into memory.
+    char *imageExt = calloc(1, strlen(type) - 4);
+    imageExt[0] = '.';
+    strcpy(&imageExt[1], &type[6]);
+    JS_FreeCString(ctx, type);
+
+    Image img = LoadImageFromMemory(imageExt, imageData, size);
+
+    free(imageExt);
+    free(imageData);
+
+    Texture2D texture = LoadTextureFromImage(img);
+    AddTexture(data, texture);
+
+    UnloadImage(img);
+
+    return FindTexture(data);
+}
+
 void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 {
     JSValue props = JS_GetPropertyStr(ctx, element, "props");
@@ -22,42 +130,21 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
 
     JS_FreeValue(ctx, props);
 
-    int size = JS_GetBlobSize(ctx, data);
-    uint8_t *imageData = malloc(size);
-    int status = JS_GetBlobUint8Array(ctx, data, imageData);
-    if (status < 0)
+    // Check if we have texture in cache
+    Texture2D *texture = FindTexture(data);
+    if (texture == NULL)
     {
-        JS_FreeValue(ctx, data);
-        free(imageData);
-        GUI_RenderImagePlaceholder(ctx, element);
-        return;
+        // If not, cache it.
+        texture = createTextureFromBlob(ctx, data, element);
+        if (texture == NULL)
+        {
+            // If we couldn't cache it, show the placeholder.
+            GUI_RenderImagePlaceholder(ctx, element);
+            JS_FreeValue(ctx, data);
+            return;
+        }
     }
-
-    JSValue typeValue = JS_GetPropertyStr(ctx, data, "type");
-    const char *type = JS_ToCString(ctx, typeValue);
-    JS_FreeValue(ctx, typeValue);
     JS_FreeValue(ctx, data);
-    if (strncmp(type, "image/", 6))
-    {
-        JS_FreeCString(ctx, type);
-        free(imageData);
-        GUI_RenderImagePlaceholder(ctx, element);
-        return;
-    }
-
-    char *imageExt = calloc(1, strlen(type) - 4);
-    imageExt[0] = '.';
-    strcpy(&imageExt[1], &type[6]);
-    JS_FreeCString(ctx, type);
-
-    Image *img = malloc(sizeof(Image));
-    *img = LoadImageFromMemory(imageExt, imageData, size);
-
-    free(imageExt);
-    free(imageData);
-
-    Texture2D *texture = tex_alloc();
-    *texture = LoadTextureFromImage(*img);
 
     // Set filter value given by props.filter
     // default to trilinear (somehow looks the best for normal photos)
@@ -81,13 +168,13 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
     int width = STYLES_GetWidth(ctx, element);
     int height = STYLES_GetHeight(ctx, element);
 
-    float aspectRatio = (float)img->width / (float)img->height;
+    float aspectRatio = (float)texture->width / (float)texture->height;
 
     // If both values are not set (aka. -1)
     if (width == -1 && height == -1)
     {
-        width = img->width;
-        height = img->height;
+        width = texture->width;
+        height = texture->height;
     }
     else if (height < 0 && width > 0)
         height = width / aspectRatio;
@@ -110,7 +197,4 @@ void GUI_RenderImage(JSContext *ctx, JSValueConst element)
                                  })
     {
     }
-
-    UnloadImage(*img);
-    free(img);
 }
